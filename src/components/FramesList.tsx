@@ -36,7 +36,7 @@ const framesData: Frame[] = [
   {
     id: 3,
     name: 'Vintage Gold Leaf',
-    img: '/hero2.jpg',
+    img: '/hero3.jpg',
     price: 199.0,
     moq: 2,
     description: 'Handcrafted with genuine gold leaf finish',
@@ -97,56 +97,62 @@ const framesData: Frame[] = [
 
 const FramesGallery = () => {
   return (
-    <div className="min-h-screen bg-white py-20 px-4">
-      {/* Minimal Header */}
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-24 px-6">
+      {/* Header */}
       <motion.div
-        className="max-w-6xl mx-auto text-center mb-20"
+        className="max-w-7xl mx-auto text-center mb-20"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.7 }}
       >
-        <h1 className="text-4xl md:text-5xl font-light text-gray-900 mb-4">
+        <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
           Recent Collection
         </h1>
-        <div className="w-20 h-0.5 bg-gray-300 mx-auto"></div>
+        <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light leading-relaxed">
+          Explore our latest handcrafted frames — designed to elevate your art,
+          photography, and spaces with timeless craftsmanship.
+        </p>
+        <div className="w-24 h-[2px] bg-gray-300 mx-auto mt-8"></div>
       </motion.div>
 
-      {/* Clean Grid - Like an Art Gallery */}
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+      {/* Gallery Grid */}
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14">
           {framesData.map((frame, index) => (
             <motion.div
               key={frame.id}
-              className="group"
-              initial={{ opacity: 0, y: 30 }}
+              className="group rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-700"
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.6 }}
+              transition={{ delay: index * 0.08, duration: 0.6 }}
+              whileHover={{ y: -5 }}
             >
-              {/* Image with subtle frame-like border */}
-              <div className="relative mb-6 bg-gray-50 p-8 rounded-lg">
-                <img
+              {/* Image */}
+              <div className="relative overflow-hidden rounded-t-3xl bg-gray-50">
+                <motion.img
                   src={frame.img}
                   alt={frame.name}
-                  className="w-full h-80 object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
               </div>
 
-              {/* Clean Content */}
-              <div className="text-center">
-                <h3 className="text-xl font-normal text-gray-900 mb-2">
+              {/* Content */}
+              <div className="p-8 text-center">
+                <h3 className="text-2xl font-light text-gray-900 mb-3">
                   {frame.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                <p className="text-gray-600 text-sm mb-4 leading-relaxed font-light">
                   {frame.description}
                 </p>
 
-                <div className="flex justify-center items-center gap-6 mb-4 text-sm text-gray-500">
+                <div className="flex justify-center items-center gap-3 mb-6 text-sm text-gray-500">
                   <span>{frame.material}</span>
                   <span>•</span>
                   <span>{frame.size}</span>
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between border-t border-gray-100 pt-6">
                   <div className="text-left">
                     <p className="text-2xl font-light text-gray-900">
                       ${frame.price}
@@ -155,9 +161,9 @@ const FramesGallery = () => {
                   </div>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="bg-black text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-800 transition-colors text-sm"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="bg-[#F04E23] text-white px-6 py-3 rounded-full flex items-center gap-2 font-light hover:bg-[#e67e22] transition-all"
                   >
                     <FaWhatsapp />
                     Inquire
