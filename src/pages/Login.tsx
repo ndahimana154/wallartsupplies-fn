@@ -23,8 +23,8 @@ const Login = () => {
     { setSubmitting, resetForm }: any
   ) => {
     setStatusMessage({ type: null, message: '' });
+
     const response = await userRequests.loginRequest(values);
-    console.log(response);
 
     if (response.success === true) {
       setStatusMessage({
@@ -157,7 +157,7 @@ const Login = () => {
 
               <p className="text-sm text-gray-500 mt-6 text-center">
                 Forgot your password?{' '}
-                <Link to="/forgot" className="text-[#e67e22] underline">
+                <Link to="/a/forgot" className="text-[#e67e22] underline">
                   Reset it
                 </Link>
               </p>

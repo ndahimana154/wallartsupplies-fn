@@ -67,7 +67,7 @@ const SeoSetup = ({
 
   return (
     <Helmet>
-      <title>{title}</title>
+      <title>{title} | Wall Art Supplies</title>
       <meta name="description" content={description} />
       <meta name="author" content={author} />
       <meta
