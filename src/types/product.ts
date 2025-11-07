@@ -10,6 +10,7 @@ export interface NewProductValues {
 }
 
 export interface ProductData {
+    id: number;
     name: string;
     price: number;
     moq: number;

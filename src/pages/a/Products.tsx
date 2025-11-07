@@ -9,6 +9,24 @@ const Products = () => {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentImageIndex, setCurrentImageIndex] = useState<any>();
+
+  const [currentImageIndices, setCurrentImageIndices] = useState<{
+    [key: string]: number;
+  }>({});
+
+  // Helper function to update image index for a specific product
+  const setProductImageIndex = (productId: string, index: number) => {
+    setCurrentImageIndices((prev) => ({
+      ...prev,
+      [productId]: index,
+    }));
+  };
+
+  // Helper function to get image index for a specific product
+  const getProductImageIndex = (productId: string) => {
+    return currentImageIndices[productId] || 0;
+  };
 
   const fetchCategories = async () => {
     try {
@@ -292,22 +310,90 @@ const Products = () => {
                       >
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="flex -space-x-2">
-                              {product.images.slice(0, 3).map((img, idx) => (
-                                <img
-                                  key={idx}
-                                  src={
-                                    typeof img === 'string'
-                                      ? img
-                                      : URL.createObjectURL(img)
-                                  }
-                                  alt=""
-                                  className="w-8 h-8 rounded-lg border-2 border-white object-cover shadow-sm"
-                                />
-                              ))}
-                              {product.images.length > 3 && (
-                                <div className="w-8 h-8 rounded-lg bg-gray-100 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600">
-                                  +{product.images.length - 3}
+                            <div className="relative w-20 h-8 group">
+                              <div className="flex space-x-0 overflow-hidden">
+                                {product.images.map((img, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="flex-shrink-0 transition-transform duration-300 ease-in-out"
+                                    style={{
+                                      transform: `translateX(-${
+                                        currentImageIndex * 32
+                                      }px)`,
+                                      width: '32px',
+                                    }}
+                                  >
+                                    <img
+                                      src={
+                                        typeof img === 'string'
+                                          ? img
+                                          : URL.createObjectURL(img)
+                                      }
+                                      alt={`Product image ${idx + 1}`}
+                                      className="w-8 h-8 rounded-lg border-2 border-white object-cover shadow-sm"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+
+                              {product.images.length > 1 && (
+                                <>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const newIndex =
+                                        currentImageIndex === 0
+                                          ? product.images.length - 1
+                                          : currentImageIndex - 1;
+                                      setProductImageIndex(
+                                        product.id || index.toString(),
+                                        newIndex
+                                      );
+                                    }}
+                                    className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full shadow-sm flex items-center justify-center text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-[#e67e22] z-10"
+                                  >
+                                    ‹
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      const newIndex =
+                                        currentImageIndex ===
+                                        product.images.length - 1
+                                          ? 0
+                                          : currentImageIndex + 1;
+                                      setProductImageIndex(
+                                        product.id || index.toString(),
+                                        newIndex
+                                      );
+                                    }}
+                                    className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full shadow-sm flex items-center justify-center text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-[#e67e22] z-10"
+                                  >
+                                    ›
+                                  </button>
+                                </>
+                              )}
+
+                              {/* Dots Indicator */}
+                              {product.images.length > 1 && (
+                                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex space-x-1">
+                                  {product.images.map((_, idx) => (
+                                    <button
+                                      key={idx}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setProductImageIndex(
+                                          product.id || index.toString(),
+                                          idx
+                                        );
+                                      }}
+                                      className={`w-1 h-1 rounded-full transition-all ${
+                                        idx === currentImageIndex
+                                          ? 'bg-[#e67e22]'
+                                          : 'bg-gray-300'
+                                      }`}
+                                    />
+                                  ))}
                                 </div>
                               )}
                             </div>
@@ -425,7 +511,10 @@ const Products = () => {
 
       {isNewModalOpen && (
         <NewProductModal
-          onClose={() => setIsNewModalOpen(false)}
+          onClose={() => {
+            setIsNewModalOpen(false);
+            fetchProducts();
+          }}
           categories={categories}
         />
       )}
