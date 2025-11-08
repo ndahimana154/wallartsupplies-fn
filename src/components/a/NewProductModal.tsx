@@ -4,20 +4,38 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { uploadImageToCloudinary } from '../../helpers/cloudinay';
 import productRequests from '../../utils/requests/productRequests';
-import type { NewProductValues } from '../../types/product';
+import type { NewProductApiValues } from '../../types/product';
 
 interface Category {
   id: number;
   name: string;
 }
 
+interface CustomAttribute {
+  key: string;
+  value: string;
+}
+
+interface FormValues {
+  name: string;
+  price: number;
+  moq: number;
+  description: string;
+  images: File[];
+  categoryId: number;
+  customAttr: CustomAttribute[];
+}
+
 const validationSchema = Yup.object({
   name: Yup.string().required('Product name is required'),
   price: Yup.number()
     .typeError('Price must be a number')
+    .positive('Price must be positive')
     .required('Price is required'),
   moq: Yup.number()
     .typeError('MOQ must be a number')
+    .positive('MOQ must be positive')
+    .integer('MOQ must be a whole number')
     .required('MOQ is required'),
   description: Yup.string().required('Description is required'),
   categoryId: Yup.number()
@@ -28,7 +46,6 @@ const validationSchema = Yup.object({
     .of(Yup.mixed())
     .min(1, 'Upload at least one image')
     .required('Upload at least one image'),
-  imagesTouched: Yup.boolean(),
 });
 
 const NewProductModal = ({
@@ -40,12 +57,12 @@ const NewProductModal = ({
 }) => {
   const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = async (values: NewProductValues) => {
-    delete values.imagesTouched;
+  const handleSubmit = async (values: FormValues) => {
     try {
       setUploading(true);
       toast.loading('Uploading images...');
 
+      // Upload images to Cloudinary
       const uploadedUrls = await Promise.all(
         values.images.map(async (img: File) => {
           const { url } = await uploadImageToCloudinary(img);
@@ -56,11 +73,32 @@ const NewProductModal = ({
       toast.dismiss();
       toast.loading('Saving product...');
 
-      const finalData = { ...values, images: uploadedUrls };
-      console.log('A', finalData);
+      // Clean the customAttr array - remove empty key-value pairs
+      const cleanedCustomAttr = values.customAttr
+        .filter(
+          (attr: CustomAttribute) =>
+            attr.key.trim() !== '' && attr.value.trim() !== ''
+        )
+        .map((attr: CustomAttribute) => ({
+          key: attr.key.trim(),
+          value: attr.value.trim(),
+        }));
+
+      // Prepare the final data for API
+      const finalData: NewProductApiValues = {
+        name: values.name.trim(),
+        price: Number(values.price),
+        moq: Number(values.moq),
+        description: values.description.trim(),
+        categoryId: Number(values.categoryId),
+        images: uploadedUrls,
+        customAttr: cleanedCustomAttr, // Always array, never undefined
+      };
+
+      console.log('Final data to be sent:', finalData);
 
       const response = await productRequests.newProductRequest(finalData);
-      console.log(response);
+
       toast.dismiss();
       if (response.success) {
         toast.success('✅ Product added successfully!');
@@ -70,7 +108,12 @@ const NewProductModal = ({
       }
     } catch (error: any) {
       toast.dismiss();
-      toast.error(error?.message || 'Something went wrong');
+      console.error('Error submitting product:', error);
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong'
+      );
     } finally {
       setUploading(false);
     }
@@ -92,7 +135,7 @@ const NewProductModal = ({
           </button>
         </div>
 
-        <Formik<NewProductValues>
+        <Formik<FormValues>
           initialValues={{
             name: '',
             price: 0,
@@ -105,7 +148,7 @@ const NewProductModal = ({
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ values, setFieldValue, errors, touched }) => (
+          {({ values, setFieldValue, errors, touched, isValid, dirty }) => (
             <Form className="space-y-5">
               <div>
                 <label className="block font-medium mb-1">Product Name</label>
@@ -125,6 +168,8 @@ const NewProductModal = ({
                   <Field
                     type="number"
                     name="price"
+                    min="0"
+                    step="0.01"
                     className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22]"
                   />
                   {errors.price && touched.price && (
@@ -136,6 +181,7 @@ const NewProductModal = ({
                   <Field
                     type="number"
                     name="moq"
+                    min="1"
                     className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22]"
                   />
                   {errors.moq && touched.moq && (
@@ -146,12 +192,9 @@ const NewProductModal = ({
 
               <div>
                 <label className="block font-medium mb-1">Category</label>
-                <select
+                <Field
+                  as="select"
                   name="categoryId"
-                  value={values.categoryId}
-                  onChange={(e) =>
-                    setFieldValue('categoryId', Number(e.target.value))
-                  }
                   className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none"
                 >
                   <option value={0}>Select category</option>
@@ -160,8 +203,7 @@ const NewProductModal = ({
                       {cat.name}
                     </option>
                   ))}
-                </select>
-
+                </Field>
                 {errors.categoryId && touched.categoryId && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.categoryId}
@@ -196,14 +238,8 @@ const NewProductModal = ({
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       const newFiles = Array.from(e.target.files);
-                      const updatedImages = values.images
-                        ? [...values.images, ...newFiles]
-                        : newFiles;
-
+                      const updatedImages = [...values.images, ...newFiles];
                       setFieldValue('images', updatedImages);
-
-                      setFieldValue('imagesTouched', true);
-
                       e.target.value = '';
                     }
                   }}
@@ -216,28 +252,32 @@ const NewProductModal = ({
                   </p>
                 )}
 
-                {values.images && values.images.length > 0 && (
+                {values.images.length > 0 && (
                   <div className="mt-3">
                     <p className="text-sm text-gray-600 mb-2">
                       {values.images.length} image(s) selected
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {values.images.map((img, idx) => (
-                        <div key={idx} className="relative group">
+                      {values.images.map((img: File, index: number) => (
+                        <div
+                          key={`${img.name}-${index}`}
+                          className="relative group"
+                        >
                           <img
-                            src={
-                              typeof img === 'string'
-                                ? img
-                                : URL.createObjectURL(img)
-                            }
-                            alt={`preview-${idx}`}
+                            src={URL.createObjectURL(img)}
+                            alt={`preview-${index}`}
                             className="w-20 h-20 object-cover rounded-lg border"
+                            onError={(e) => {
+                              // Fallback for image preview errors
+                              e.currentTarget.src =
+                                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+                            }}
                           />
                           <button
                             type="button"
                             onClick={() => {
                               const filteredImages = values.images.filter(
-                                (_, i) => i !== idx
+                                (_, i) => i !== index
                               );
                               setFieldValue('images', filteredImages);
                             }}
@@ -251,6 +291,7 @@ const NewProductModal = ({
                   </div>
                 )}
               </div>
+
               <div>
                 <label className="block font-medium mb-2">
                   Custom Attributes
@@ -258,7 +299,7 @@ const NewProductModal = ({
                 <FieldArray name="customAttr">
                   {({ push, remove }) => (
                     <div className="space-y-2">
-                      {values.customAttr.map((attr, index) => (
+                      {values.customAttr.map((_, index: number) => (
                         <div
                           key={index}
                           className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-center"
@@ -266,28 +307,30 @@ const NewProductModal = ({
                           <Field
                             name={`customAttr.${index}.key`}
                             placeholder="e.g. Size"
-                            className="border border-gray-300 rounded-lg p-2"
+                            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none"
                           />
                           <Field
                             name={`customAttr.${index}.value`}
                             placeholder="e.g. 10x20"
-                            className="border border-gray-300 rounded-lg p-2"
+                            className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none"
                           />
-                          <button
-                            type="button"
-                            onClick={() => remove(index)}
-                            className="text-red-500 hover:underline"
-                          >
-                            Remove
-                          </button>
+                          {values.customAttr.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => remove(index)}
+                              className="text-red-500 hover:text-red-700 text-sm font-medium"
+                            >
+                              Remove
+                            </button>
+                          )}
                         </div>
                       ))}
                       <button
                         type="button"
                         onClick={() => push({ key: '', value: '' })}
-                        className="text-sm text-[#e67e22] hover:underline"
+                        className="text-sm text-[#e67e22] hover:text-[#cf711f] font-medium flex items-center gap-1"
                       >
-                        + Add Attribute
+                        <span>+</span> Add Attribute
                       </button>
                     </div>
                   )}
@@ -298,15 +341,15 @@ const NewProductModal = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50"
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={uploading}
+                  disabled={uploading || !isValid || !dirty}
                   className={`px-5 py-2 rounded-lg text-white font-medium transition ${
-                    uploading
+                    uploading || !isValid || !dirty
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-[#e67e22] hover:bg-[#cf711f]'
                   }`}

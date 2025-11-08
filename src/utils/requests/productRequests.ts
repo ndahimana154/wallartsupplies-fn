@@ -20,7 +20,23 @@ const getProducts = async () => {
     }
 }
 
+const getRecentFrames = async () => {
+    try {
+        const response = await axiosInstance.get("/api/product/customer-get-recent-collections");
+        return response.data
+    } catch (error) {
+        return handleError(error);
+    }
+}
 
+const getProductBySlug = async (slug: string) => {
+    try {
+        const response = await axiosInstance.get(`/api/product/customer-get-product/${slug}`)
+        return response.data
+    } catch (error) {
+        return handleError(error)
+    }
+}
 
 
 const newCategoryRequest = async (data: NewCategoryValues) => {
@@ -45,5 +61,7 @@ export default {
     newProductRequest,
     newCategoryRequest,
     getCategories,
-    getProducts
+    getProducts,
+    getRecentFrames,
+    getProductBySlug
 }
