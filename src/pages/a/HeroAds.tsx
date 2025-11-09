@@ -1,97 +1,165 @@
 import { useEffect, useState } from 'react';
-import NewProductModal from '../../components/a/NewProductModal';
-import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
-import type { ProductData } from '../../types/product';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Link as LinkIcon,
+  EyeOff,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import SeoSetup from '../../components/SeoSetup';
 import NewHeroAdsModal from '../../components/a/NewHeroAdsModal';
-import { Plus } from 'lucide-react';
-
-interface Category {
-  id: number;
-  name: string;
-}
+import heroAdsRequests from '../../utils/requests/heroAdsRequests';
+import type { iHeroAds, HeroAdFilters, QueryOptions } from '../../types/heroAd';
 
 const HeroAds = () => {
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<ProductData[]>([]);
+  const [heroAds, setHeroAds] = useState<iHeroAds[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentImageIndices, setCurrentImageIndices] = useState<{
-    [key: string]: number;
-  }>({});
+  const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const limit = 10;
 
-  const setProductImageIndex = (productId: string, index: number) => {
-    setCurrentImageIndices((prev) => ({
-      ...prev,
-      [productId]: index,
-    }));
-  };
-
-  const getProductImageIndex = (productId: string) => {
-    return currentImageIndices[productId] || 0;
-  };
-
-  const fetchCategories = async () => {
-    try {
-      const response = await productRequests.getCategories();
-      if (response.success === true) {
-        setCategories(response.data.data || []);
-        return;
-      }
-      throw new Error('An unknown error occurred.');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to fetch categories');
-    }
-  };
-
-  const fetchHeroAds = async () => {
+  const fetchHeroAds = async (page: number = 1, search: string = '') => {
     try {
       setLoading(true);
-      const response = await productRequests.getProducts();
+
+      const filters: HeroAdFilters = {};
+      if (search) {
+        filters.title = search;
+      }
+
+      const queries: QueryOptions = {
+        page,
+        limit,
+        sortBy: 'createdAt',
+        order: 'DESC',
+      };
+
+      const response = await heroAdsRequests.getAllHeroAdsRequest(
+        filters,
+        queries
+      );
 
       if (response.success === true) {
-        setProducts(response.data || []);
+        setHeroAds(response.data.data || []);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+        setTotalCount(response.data.pagination?.total || 0);
         return;
       }
-      throw new Error('An unknown error occurred.');
+      throw new Error(response.message || 'An unknown error occurred.');
     } catch (error: any) {
-      toast.error(error.message || 'Failed to fetch products');
+      toast.error(error.message || 'Failed to fetch hero ads');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
-    fetchHeroAds();
+    fetchHeroAds(1, '');
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentPage(1);
+    fetchHeroAds(1, searchTerm);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      fetchHeroAds(newPage, searchTerm);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setCurrentPage(1);
+    fetchHeroAds(1, '');
+  };
 
   const getStatusBadge = (status: boolean) => {
     return (
       <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+          status
+            ? 'bg-green-100 text-green-800 border border-green-200'
+            : 'bg-red-100 text-red-800 border border-red-200'
         }`}
       >
-        {status ? (
-          <>
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-            Active
-          </>
-        ) : (
-          <>
-            <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1"></span>
-            Inactive
-          </>
-        )}
+        <span
+          className={`w-2 h-2 rounded-full mr-2 ${
+            status ? 'bg-green-500' : 'bg-red-500'
+          }`}
+        ></span>
+        {status ? 'Active' : 'Inactive'}
       </span>
     );
   };
 
+  const handleDeleteAd = async (adId: number) => {
+    if (window.confirm('Are you sure you want to delete this hero ad?')) {
+      try {
+        const response = await heroAdsRequests.deleteHeroAdRequest(adId);
+        if (response.success) {
+          toast.success('Hero ad deleted successfully');
+          fetchHeroAds(currentPage, searchTerm);
+        } else {
+          throw new Error(response.message);
+        }
+      } catch (error: any) {
+        toast.error(error.message || 'Failed to delete hero ad');
+      }
+    }
+  };
+
+  const handleToggleStatus = async (ad: iHeroAds) => {
+    try {
+      const response = await heroAdsRequests.updateHeroAdRequest(ad.id, {
+        ...ad,
+        isActive: !ad.isActive,
+      });
+      if (response.success) {
+        toast.success(
+          `Hero ad ${!ad.isActive ? 'activated' : 'deactivated'} successfully`
+        );
+        fetchHeroAds(currentPage, searchTerm);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update hero ad status');
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisiblePages = 5;
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50/30 p-6">
-      <SeoSetup mainData={{ title: 'Hero Ads' }} />
+      <SeoSetup mainData={{ title: 'Hero Ads Management' }} />
       <Toaster position="top-right" />
 
       <div className="max-w-7xl mx-auto">
@@ -99,74 +167,64 @@ const HeroAds = () => {
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
             <div className="flex-1">
               <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-                Hero Ads
+                Hero Ads Management
               </h1>
               <p className="text-gray-600 mt-2">
-                Manage your product catalog and inventory
+                Manage your hero banner advertisements and promotions
               </p>
             </div>
             <button
               onClick={() => setIsNewModalOpen(true)}
-              className="flex items-center gap-2 bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+              className="flex cursor-pointer  items-center gap-2 bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
             >
-              <Plus />
-              New Ad
+              <Plus className="w-5 h-5" />
+              New Hero Ad
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+          <div className="mt-6">
+            <form onSubmit={handleSearch} className="flex gap-3">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search hero ads by title..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-[#e67e22] cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:bg-[#d35400] transition-colors"
+              >
+                Search
+              </button>
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  className="bg-gray-500 cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-600 transition-colors"
+                >
+                  Clear
+                </button>
+              )}
+            </form>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-orange-800">
-                    Total Products
+                    Total Hero Ads
                   </p>
                   <p className="text-2xl font-bold text-orange-900 mt-1">
-                    {products.length}
+                    {totalCount}
                   </p>
                 </div>
                 <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-orange-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m8-8V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v1m4 0h-4"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-800">
-                    Active Products
-                  </p>
-                  <p className="text-2xl font-bold text-blue-900 mt-1">
-                    {products.filter((p) => p.status).length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-blue-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <LinkIcon className="w-6 h-6 text-orange-600" />
                 </div>
               </div>
             </div>
@@ -175,58 +233,30 @@ const HeroAds = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-green-800">
-                    Categories
+                    Active Ads
                   </p>
                   <p className="text-2xl font-bold text-green-900 mt-1">
-                    {categories.length}
+                    {heroAds.filter((ad) => ad.isActive).length}
                   </p>
                 </div>
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                    />
-                  </svg>
+                  <Eye className="w-6 h-6 text-green-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 rounded-xl p-4">
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-purple-800">
-                    Avg. Price
+                  <p className="text-sm font-medium text-blue-800">
+                    Inactive Ads
                   </p>
-                  <p className="text-2xl font-bold text-purple-900 mt-1">
-                    $
-                    {(
-                      products.reduce((acc, p) => acc + p.price, 0) /
-                      (products.length || 1)
-                    ).toFixed(2)}
+                  <p className="text-2xl font-bold text-blue-900 mt-1">
+                    {heroAds.filter((ad) => !ad.isActive).length}
                   </p>
                 </div>
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-purple-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                    />
-                  </svg>
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <EyeOff className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </div>
@@ -238,33 +268,35 @@ const HeroAds = () => {
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e67e22]"></div>
             </div>
-          ) : products.length === 0 ? (
+          ) : heroAds.length === 0 ? (
             <div className="text-center py-12">
-              <svg
-                className="w-16 h-16 text-gray-300 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1}
-                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m8-8V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v1m4 0h-4"
-                />
-              </svg>
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <LinkIcon className="w-8 h-8 text-gray-400" />
+              </div>
               <h3 className="text-lg font-medium text-gray-900 mb-2">
-                No products found
+                {searchTerm ? 'No hero ads found' : 'No hero ads found'}
               </h3>
               <p className="text-gray-500 mb-4">
-                Get started by adding your first product.
+                {searchTerm
+                  ? 'Try adjusting your search terms or clear the search to see all ads.'
+                  : 'Get started by creating your first hero advertisement.'}
               </p>
-              <button
-                onClick={() => setIsNewModalOpen(true)}
-                className="bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-2 rounded-lg font-medium transition-colors"
-              >
-                Add Product
-              </button>
+              {!searchTerm && (
+                <button
+                  onClick={() => setIsNewModalOpen(true)}
+                  className="bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                >
+                  Create Hero Ad
+                </button>
+              )}
+              {searchTerm && (
+                <button
+                  onClick={clearSearch}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                >
+                  Clear Search
+                </button>
+              )}
             </div>
           ) : (
             <>
@@ -273,16 +305,10 @@ const HeroAds = () => {
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="text-left p-4 font-semibold text-gray-700 text-sm uppercase tracking-wider">
-                        Product
+                        Ad Content
                       </th>
                       <th className="text-left p-4 font-semibold text-gray-700 text-sm uppercase tracking-wider">
-                        Category
-                      </th>
-                      <th className="text-left p-4 font-semibold text-gray-700 text-sm uppercase tracking-wider">
-                        Price
-                      </th>
-                      <th className="text-left p-4 font-semibold text-gray-700 text-sm uppercase tracking-wider">
-                        Attributes
+                        Button & Link
                       </th>
                       <th className="text-left p-4 font-semibold text-gray-700 text-sm uppercase tracking-wider">
                         Status
@@ -293,216 +319,152 @@ const HeroAds = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {products.map((product, index) => {
-                      const currentImageIndex = getProductImageIndex(
-                        String(product.id) || index.toString()
-                      );
-                      const productImages = product.images || [];
-
-                      return (
-                        <tr
-                          key={product.id || index}
-                          className="hover:bg-gray-50 transition-colors"
-                        >
-                          <td className="p-4">
-                            <div className="flex items-center gap-3">
-                              <div className="relative w-20 h-8 group">
-                                <div className="flex space-x-0 overflow-hidden">
-                                  {productImages.map((img, idx) => (
-                                    <div
-                                      key={idx}
-                                      className="flex-shrink-0 transition-transform duration-300 ease-in-out"
-                                      style={{
-                                        transform: `translateX(-${
-                                          currentImageIndex * 32
-                                        }px)`,
-                                        width: '32px',
-                                      }}
-                                    >
-                                      <img
-                                        src={
-                                          typeof img === 'string'
-                                            ? img
-                                            : URL.createObjectURL(img)
-                                        }
-                                        alt={`Product image ${idx + 1}`}
-                                        className="w-8 h-8 rounded-lg border-2 border-white object-cover shadow-sm"
-                                        onError={(e) => {
-                                          e.currentTarget.src =
-                                            'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNiAxMk0xNiAyMCIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
-                                        }}
-                                      />
-                                    </div>
-                                  ))}
-                                </div>
-
-                                {productImages.length > 1 && (
-                                  <>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const newIndex =
-                                          currentImageIndex === 0
-                                            ? productImages.length - 1
-                                            : currentImageIndex - 1;
-                                        setProductImageIndex(
-                                          String(product.id) ||
-                                            index.toString(),
-                                          newIndex
-                                        );
-                                      }}
-                                      className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full shadow-sm flex items-center justify-center text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-[#e67e22] z-10"
-                                    >
-                                      ‹
-                                    </button>
-                                    <button
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const newIndex =
-                                          currentImageIndex ===
-                                          productImages.length - 1
-                                            ? 0
-                                            : currentImageIndex + 1;
-                                        setProductImageIndex(
-                                          String(product.id) ||
-                                            index.toString(),
-                                          newIndex
-                                        );
-                                      }}
-                                      className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full shadow-sm flex items-center justify-center text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-[#e67e22] z-10"
-                                    >
-                                      ›
-                                    </button>
-                                  </>
-                                )}
-
-                                {productImages.length > 1 && (
-                                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex space-x-1">
-                                    {productImages.map((_, idx) => (
-                                      <button
-                                        key={idx}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setProductImageIndex(
-                                            String(product.id) ||
-                                              index.toString(),
-                                            idx
-                                          );
-                                        }}
-                                        className={`w-1 h-1 rounded-full transition-all ${
-                                          idx === currentImageIndex
-                                            ? 'bg-[#e67e22]'
-                                            : 'bg-gray-300'
-                                        }`}
-                                      />
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                              <div>
-                                <p className="font-medium text-gray-900">
-                                  {product.name}
-                                </p>
-                                <p className="text-sm text-gray-500 truncate max-w-xs">
-                                  {product.description}
-                                </p>
+                    {heroAds.map((ad, index) => (
+                      <tr
+                        key={ad.id || index}
+                        className="hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="p-4">
+                          <div className="flex items-start gap-4">
+                            <img
+                              src={ad.image}
+                              alt={ad.title}
+                              className="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                              onError={(e) => {
+                                e.currentTarget.src =
+                                  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyNE0zMiA0MCIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+                              }}
+                            />
+                            <div className="flex-1 min-w-0">
+                              <h3 className="font-semibold text-gray-900 text-lg mb-1">
+                                {ad.title}
+                              </h3>
+                              <p className="text-gray-600 text-sm line-clamp-2">
+                                {ad.description}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="space-y-2">
+                            <div>
+                              <span className="text-sm font-medium text-gray-700">
+                                Button:
+                              </span>
+                              <div className="inline-flex items-center px-3 py-1 bg-[#e67e22] text-white text-sm rounded-full ml-2">
+                                {ad.buttonText}
                               </div>
                             </div>
-                          </td>
-                          <td className="p-4">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {product.category?.name || 'Uncategorized'}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <span className="font-semibold text-gray-900">
-                              ${product.price}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex flex-wrap gap-1 max-w-xs">
-                              {(product.customAttr || [])
-                                ?.slice(0, 2)
-                                .map((attr, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-gray-100 text-gray-700"
-                                  >
-                                    {attr.key}: {attr.value}
-                                  </span>
-                                ))}
-                              {product.customAttr &&
-                                product.customAttr.length > 2 && (
-                                  <span className="inline-flex items-center px-2 py-1 rounded-md text-xs bg-gray-100 text-gray-500">
-                                    +{product.customAttr.length - 2} more
-                                  </span>
-                                )}
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            {getStatusBadge(product.status || false)}
-                          </td>
-                          <td className="p-4">
-                            <div className="flex justify-end gap-2">
-                              <button
-                                title="Edit"
-                                className="p-2 text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
+                            <div>
+                              <span className="text-sm font-medium text-gray-700">
+                                Link:
+                              </span>
+                              <a
+                                href={ad.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 text-sm ml-2 truncate block max-w-xs"
+                                title={ad.link}
                               >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                  />
-                                </svg>
-                              </button>
-                              <button
-                                title="Delete"
-                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
-                              </button>
+                                {ad.link}
+                              </a>
                             </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="space-y-2">
+                            {getStatusBadge(ad.isActive || false)}
+                            <button
+                              onClick={() => handleToggleStatus(ad)}
+                              className={`text-xs font-medium px-2 py-1 rounded border transition-colors ${
+                                ad.isActive
+                                  ? 'text-red-600 border-red-200 hover:bg-red-50'
+                                  : 'text-green-600 border-green-200 hover:bg-green-50'
+                              }`}
+                            >
+                              {ad.isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              title="Edit"
+                              className="p-2 text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
+                              onClick={() => {}}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button
+                              title="Delete"
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              onClick={() => handleDeleteAd(ad.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
 
-              {/* Footer */}
               <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
-                <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                   <p className="text-sm text-gray-700">
                     Showing{' '}
-                    <span className="font-semibold">{products.length}</span>{' '}
-                    products
+                    <span className="font-semibold">
+                      {(currentPage - 1) * limit + 1} -{' '}
+                      {Math.min(currentPage * limit, totalCount)}
+                    </span>{' '}
+                    of <span className="font-semibold">{totalCount}</span> hero
+                    ads
+                    {searchTerm && (
+                      <span className="ml-2 text-gray-500">
+                        (filtered by "{searchTerm}")
+                      </span>
+                    )}
                   </p>
+
                   <div className="flex items-center gap-2">
-                    <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                      Previous
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`p-2 rounded-lg border ${
+                        currentPage === 1
+                          ? 'text-gray-400 border-gray-200 cursor-not-allowed'
+                          : 'text-gray-700 border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
                     </button>
-                    <button className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                      Next
+
+                    {getPageNumbers().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`px-3 py-1 text-sm rounded-lg border ${
+                          currentPage === page
+                            ? 'bg-[#e67e22] text-white border-[#e67e22]'
+                            : 'text-gray-700 border-gray-300 hover:bg-gray-100'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+
+                    {/* Next Button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={`p-2 rounded-lg border ${
+                        currentPage === totalPages
+                          ? 'text-gray-400 border-gray-200 cursor-not-allowed'
+                          : 'text-gray-700 border-gray-300 hover:bg-gray-100'
+                      }`}
+                    >
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -516,7 +478,7 @@ const HeroAds = () => {
         <NewHeroAdsModal
           onClose={() => {
             setIsNewModalOpen(false);
-            fetchHeroAds();
+            fetchHeroAds(currentPage, searchTerm);
           }}
         />
       )}

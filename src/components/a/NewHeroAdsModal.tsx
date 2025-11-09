@@ -71,7 +71,6 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
 
       const response = await heroAdsRequests.newHeroAdRequest(finalData);
 
-      console.log(response);
       toast.dismiss();
       if (response.success) {
         toast.success('✅ Hero Ad added successfully!');
