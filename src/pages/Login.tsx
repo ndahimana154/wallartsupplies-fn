@@ -27,6 +27,7 @@ const Login = () => {
     const response = await userRequests.loginRequest(values);
 
     if (response.success === true) {
+      sessionStorage.setItem('token', response.data.session.token);
       setStatusMessage({
         type: 'success',
         message: 'Login successful! Redirecting...',

@@ -12,6 +12,10 @@ const axiosInstance = axios.create({
     }
 })
 
+export const adminPhone = import.meta.env.VITE_ADMIN_PHONE_NUMBER
+export const frontendUrl = import.meta.env.VITE_FRONTEND_URL
+export const adminEmail = import.meta.env.VITE_ADMIN_EMAIL_ADDRESS
+
 axiosInstance.interceptors.request.use((config) => {
     const token = getToken();
     if (token) {
