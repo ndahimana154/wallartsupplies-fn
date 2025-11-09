@@ -172,7 +172,7 @@ I'd like to know more about customization options and shipping.`;
               </div>
               <div className="flex-1">
                 <h4 className="font-semibold text-gray-900 mb-1">Production</h4>
-                <p className="text-gray-600 text-sm">2-3 weeks</p>
+                <p className="text-gray-600 text-sm">0-6 days</p>
                 <p className="text-gray-500 text-xs mt-1">
                   Handcrafted manufacturing with quality checks
                 </p>

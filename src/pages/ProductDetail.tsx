@@ -11,7 +11,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import productRequests from '../utils/requests/productRequests';
 import type { ProductData } from '../types/product';
 import { adminPhone, frontendUrl } from '../utils/axiosInstance';
-import ShippingTab from './ShippingTab';
+import ShippingTab from '../components/ShippingTab';
+import RelatedProducts from '../components/RelatedProducts';
+import SeoSetup from '../components/SeoSetup';
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -30,6 +32,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const response = await productRequests.getProductBySlug(slug);
+      console.log(response);
       if (response.success === true) {
         setProduct(response.data);
         setQuantity(response.data.moq || 1);
@@ -78,7 +81,7 @@ I'd like to know more about customization options and shipping.`;
           url: productLink,
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        console.error('Error sharing:', err);
       }
     } else {
       navigator.clipboard.writeText(productLink);
@@ -110,6 +113,7 @@ I'd like to know more about customization options and shipping.`;
   if (error || !product) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
+        <SeoSetup mainData={{ title: '404 Product not found' }} />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -134,7 +138,12 @@ I'd like to know more about customization options and shipping.`;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
-      {/* Navigation */}
+      <SeoSetup
+        mainData={{
+          title: `${product.name}`,
+          description: `${product.description}`,
+        }}
+      />
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -341,23 +350,7 @@ I'd like to know more about customization options and shipping.`;
             </div>
           </motion.div>
         </div>
-        <div className="max-w-5xl mx-auto mt-20 border-t border-gray-100 pt-12">
-          <div className="flex justify-center gap-8 mb-8">
-            {['details', 'specifications', 'shipping'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pb-2 text-lg font-light transition-all ${
-                  activeTab === tab
-                    ? 'text-[#F04E23] border-b-2 border-[#F04E23]'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
-          </div>
-
+        <div className="max-w-7xl mx-auto mt-20 border-t border-gray-100 pt-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -367,84 +360,81 @@ I'd like to know more about customization options and shipping.`;
               transition={{ duration: 0.3 }}
               className="max-w-3xl mx-auto"
             >
-              {activeTab === 'details' && (
-                <div className="text-gray-700 space-y-4">
-                  <p className="text-lg leading-relaxed font-light">
-                    {product.description}
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-gray-900">
-                        Premium Features
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                          Handcrafted quality
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                          Premium materials
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                          Custom sizing available
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-gray-900">
-                        Quality Assurance
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                          1-year warranty
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                          Quality inspection
-                        </li>
-                        <li className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                          Professional packaging
-                        </li>
-                      </ul>
-                    </div>
+              <div className="text-gray-700 space-y-4">
+                <p className="text-lg leading-relaxed font-light">
+                  {product.description}
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-900">
+                      Premium Features
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
+                        Handcrafted quality
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
+                        Premium materials
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
+                        Custom sizing available
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-900">
+                      Quality Assurance
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
+                        1-year warranty
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
+                        Quality inspection
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
+                        Professional packaging
+                      </li>
+                    </ul>
                   </div>
                 </div>
-              )}
-
-              {activeTab === 'specifications' && product.customAttr && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {product.customAttr.map((attr, index) => (
-                      <div
-                        key={index}
-                        className="flex justify-between items-center py-3 border-b border-gray-100"
-                      >
-                        <span className="text-gray-600 font-light">
-                          {attr.key}
-                        </span>
-                        <span className="text-gray-900 font-medium">
-                          {attr.value}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+              </div>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {product.customAttr.map((attr, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center py-3 border-b border-gray-100"
+                    >
+                      <span className="text-gray-600 font-light">
+                        {attr.key}
+                      </span>
+                      <span className="text-gray-900 font-medium">
+                        {attr.value}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
-              {activeTab === 'shipping' && (
-                <ShippingTab
-                  product={product}
-                  quantity={quantity}
-                  frontendUrl={frontendUrl}
-                />
-              )}
+              <ShippingTab
+                product={product}
+                quantity={quantity}
+                frontendUrl={frontendUrl}
+              />
             </motion.div>
           </AnimatePresence>
         </div>
+        <RelatedProducts
+          relatedProducts={product.relatedProducts}
+          currentProductSlug={product.slug}
+        />
       </div>
     </div>
   );

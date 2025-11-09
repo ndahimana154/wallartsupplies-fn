@@ -46,7 +46,7 @@ const Products = () => {
     try {
       setLoading(true);
       const response = await productRequests.getProducts();
-      console.log('AA', response);
+
       if (response.success === true) {
         setProducts(response.data || []);
         return;
@@ -90,7 +90,6 @@ const Products = () => {
     <div className="min-h-screen bg-gray-50/30 p-6">
       <Toaster position="top-right" />
 
-      {/* Header Section */}
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -123,7 +122,6 @@ const Products = () => {
             </button>
           </div>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
             <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
               <div className="flex items-center justify-between">
@@ -243,7 +241,6 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Products Table */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           {loading ? (
             <div className="flex justify-center items-center py-12">

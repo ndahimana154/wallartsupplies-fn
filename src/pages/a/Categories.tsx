@@ -4,6 +4,7 @@ import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
 import type { CategoryData } from '../../types/product';
 import { Edit, Trash } from 'lucide-react';
+import SeoSetup from '../../components/SeoSetup';
 
 const Categories = () => {
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
@@ -12,7 +13,7 @@ const Categories = () => {
   const fetchCategories = async () => {
     try {
       const response = await productRequests.getCategories();
-
+      console.log(response);
       if (response.success === true) {
         setCategories(response.data.data);
         return;
@@ -27,6 +28,7 @@ const Categories = () => {
   }, []);
   return (
     <div>
+      <SeoSetup mainData={{ title: 'Admin Categories list' }} />
       <Toaster position="top-right" />
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
         <div>
@@ -50,6 +52,7 @@ const Categories = () => {
           <thead className="bg-gradient-to-r from-[#e67e22]/10 to-[#e67e22]/5 sticky top-0">
             <tr className="text-left border-b border-gray-100">
               <th className="p-3 font-semibold text-gray-700">#</th>
+              <th className="p-3 font-semibold text-gray-700">Image</th>
               <th className="p-3 font-semibold text-gray-700">Category</th>
               <th className="p-3 font-semibold text-gray-700 text-center">
                 Action
@@ -63,6 +66,13 @@ const Categories = () => {
                 className="border-b border-gray-100 hover:bg-[#e67e22]/5 transition-all duration-200"
               >
                 <td className="p-3 font-medium text-gray-800">{++idx}</td>
+                <td className="p-3 font-medium text-gray-800">
+                  <img
+                    src={category.image}
+                    className="w-8 h-8 rounded-lg border-2 border-white object-cover shadow-sm"
+                    alt={category.name}
+                  />
+                </td>
                 <td className="p-3 font-medium text-gray-800">
                   {category.name}
                 </td>

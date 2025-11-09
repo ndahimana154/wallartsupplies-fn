@@ -62,7 +62,6 @@ const NewProductModal = ({
       setUploading(true);
       toast.loading('Uploading images...');
 
-      // Upload images to Cloudinary
       const uploadedUrls = await Promise.all(
         values.images.map(async (img: File) => {
           const { url } = await uploadImageToCloudinary(img);
@@ -73,7 +72,6 @@ const NewProductModal = ({
       toast.dismiss();
       toast.loading('Saving product...');
 
-      // Clean the customAttr array - remove empty key-value pairs
       const cleanedCustomAttr = values.customAttr
         .filter(
           (attr: CustomAttribute) =>
@@ -84,7 +82,6 @@ const NewProductModal = ({
           value: attr.value.trim(),
         }));
 
-      // Prepare the final data for API
       const finalData: NewProductApiValues = {
         name: values.name.trim(),
         price: Number(values.price),
@@ -92,10 +89,8 @@ const NewProductModal = ({
         description: values.description.trim(),
         categoryId: Number(values.categoryId),
         images: uploadedUrls,
-        customAttr: cleanedCustomAttr, // Always array, never undefined
+        customAttr: cleanedCustomAttr,
       };
-
-      console.log('Final data to be sent:', finalData);
 
       const response = await productRequests.newProductRequest(finalData);
 

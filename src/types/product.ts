@@ -31,6 +31,7 @@ export interface ProductData {
     customAttr: { key: string; value: string }[];
     slug: string;
     status: boolean;
+    relatedProducts?: ProductData[]
 }
 
 export interface NewProductFormValues {
@@ -45,10 +46,13 @@ export interface NewProductFormValues {
 }
 
 export interface CategoryData {
+    id: string
     name: string;
     slug: number;
+    image: string;
 }
 
 export interface NewCategoryValues {
     name: string;
+    image: any;
 }

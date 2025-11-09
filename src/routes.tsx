@@ -8,8 +8,9 @@ import Dashboard from './pages/a/Dashboard';
 import Layout from './pages/a/Layout';
 import Products from './pages/a/Products';
 import Categories from './pages/a/Categories';
-import ProductDetail from './components/ProductDetail';
+import ProductDetail from './pages/ProductDetail';
 import ClientsLayout from './pages/ClientsLayout';
+import ANotFound from './pages/a/ANotFound';
 
 const AppRouter = () => {
   return (
@@ -27,6 +28,7 @@ const AppRouter = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="products" element={<Products />} />
         <Route path="categories" element={<Categories />} />
+        <Route path="*" element={<ANotFound />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

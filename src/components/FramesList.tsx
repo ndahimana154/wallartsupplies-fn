@@ -125,11 +125,9 @@ const FramesGallery = () => {
         </motion.div>
       )}
 
-      {/* Success State - Products Grid */}
       {!loading && !error && (
         <div className="max-w-7xl mx-auto">
           {framesData.length === 0 ? (
-            // Empty State
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -153,7 +151,6 @@ const FramesGallery = () => {
               </div>
             </motion.div>
           ) : (
-            // Products Grid
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14">
               {framesData.map((frame: ProductData, index) => (
                 <motion.div
