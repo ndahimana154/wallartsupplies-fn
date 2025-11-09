@@ -66,6 +66,15 @@ const getBestCategories = async () => {
     }
 }
 
+const getCategoryProducts = async (slug: string) => {
+    try {
+        const response = await axiosInstance.get(`/api/product/category/customer-get-products/${slug}`)
+        return response.data
+    } catch (error) {
+        return handleError(error)
+    }
+}
+
 export default {
     newProductRequest,
     newCategoryRequest,
@@ -73,5 +82,6 @@ export default {
     getProducts,
     getRecentFrames,
     getProductBySlug,
-    getBestCategories
+    getBestCategories,
+    getCategoryProducts
 }

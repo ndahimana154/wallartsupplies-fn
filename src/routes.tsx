@@ -11,6 +11,7 @@ import Categories from './pages/a/Categories';
 import ProductDetail from './pages/ProductDetail';
 import ClientsLayout from './pages/ClientsLayout';
 import ANotFound from './pages/a/ANotFound';
+import CategoriesProducts from './pages/CategoriesProducts';
 
 const AppRouter = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter = () => {
       <Route path="" element={<ClientsLayout />}>
         <Route path="/" element={<Homepage />} />
         <Route path="/product-detail/:slug" element={<ProductDetail />} />
+        <Route path="/categories/:slug" element={<CategoriesProducts />} />
       </Route>
 
       <Route path="/a/login" element={<Login />} />

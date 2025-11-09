@@ -23,7 +23,6 @@ const ProductDetail = () => {
   const [error, setError] = useState('');
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('details');
   const [isZoomed, setIsZoomed] = useState(false);
 
   const fetchProductDetail = async () => {
@@ -353,7 +352,6 @@ I'd like to know more about customization options and shipping.`;
         <div className="max-w-7xl mx-auto mt-20 border-t border-gray-100 pt-12">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeTab}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}

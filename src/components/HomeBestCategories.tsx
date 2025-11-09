@@ -9,7 +9,7 @@ const HomeBestCategories = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-  console.log('SD', categories);
+
   const fetchBestCategories = async () => {
     try {
       setLoading(true);

@@ -170,7 +170,6 @@ const FramesGallery = () => {
                       alt={frame.name}
                       className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
                       onError={(e) => {
-                        // Fallback for broken images
                         e.currentTarget.src = '/api/placeholder/400/320';
                         e.currentTarget.alt = 'Image not available';
                       }}
@@ -185,13 +184,10 @@ const FramesGallery = () => {
                     >
                       {frame.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed font-light">
-                      {frame.description}
-                    </p>
 
                     {frame.customAttr &&
                       frame.customAttr.length > 0 &&
-                      frame.customAttr.map((attr, attrIndex) => (
+                      frame.customAttr.slice(0, 2).map((attr, attrIndex) => (
                         <div
                           key={attrIndex}
                           className="flex justify-center items-center gap-3 mb-6 text-sm text-gray-500"
