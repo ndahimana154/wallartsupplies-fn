@@ -42,7 +42,6 @@ const deleteHeroAdRequest = async (id: number) => {
 
 const updateHeroAdRequest = async (id: number, data: any) => {
     try {
-        console.log(data)
         const response = await axiosInstance.put(`/api/hero-ads/update/${id}`, data);
         return response.data
     } catch (error) {

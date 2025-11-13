@@ -1,4 +1,5 @@
-import type { NewCategoryValues, NewProductValues } from "../../types/product";
+import type { QueryOptions } from "../../types/heroAd";
+import type { CategoriesFilters, CategoryData, NewCategoryValues, NewProductValues, UpdateCategoryData } from "../../types/product";
 import axiosInstance from "../axiosInstance";
 import { handleError } from "./welcome";
 
@@ -48,9 +49,18 @@ const newCategoryRequest = async (data: NewCategoryValues) => {
     }
 }
 
-const getCategories = async () => {
+const getCategories = async (filters: CategoriesFilters, queries: QueryOptions) => {
     try {
-        const response = await axiosInstance.get("/api/product/category/list");
+        const params: any = {}
+
+        if (filters.name) params.name = filters.name
+
+        if (queries.page) params.page = queries.page;
+        if (queries.limit) params.limit = queries.limit;
+        if (queries.sortBy) params.sortBy = queries.sortBy;
+        if (queries.order) params.order = queries.order;
+
+        const response = await axiosInstance.get("/api/product/category/list", { params });
         return response.data
     } catch (error) {
         return handleError(error)
@@ -75,6 +85,15 @@ const getCategoryProducts = async (slug: string) => {
     }
 }
 
+const updateCategoryRequest = async (id: number, data: UpdateCategoryData) => {
+    try {
+        const response = await axiosInstance.put(`/api/product/category/update/${id}`, data);
+        return response.data;
+    } catch (error: any) {
+        return handleError(error);
+    }
+}
+
 export default {
     newProductRequest,
     newCategoryRequest,
@@ -83,5 +102,6 @@ export default {
     getRecentFrames,
     getProductBySlug,
     getBestCategories,
-    getCategoryProducts
+    getCategoryProducts,
+    updateCategoryRequest
 }

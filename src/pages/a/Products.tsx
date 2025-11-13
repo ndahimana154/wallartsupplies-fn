@@ -3,6 +3,7 @@ import NewProductModal from '../../components/a/NewProductModal';
 import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
 import type { ProductData } from '../../types/product';
+import type { QueryOptions } from '../../types/heroAd';
 
 interface Category {
   id: number;
@@ -29,9 +30,16 @@ const Products = () => {
     return currentImageIndices[productId] || 0;
   };
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (page: number = 1) => {
     try {
-      const response = await productRequests.getCategories();
+      const queries: QueryOptions = {
+        page,
+        limit: 100,
+        sortBy: 'updatedAt',
+        order: 'DESC',
+      };
+
+      const response = await productRequests.getCategories({}, queries);
       if (response.success === true) {
         setCategories(response.data.data || []);
         return;

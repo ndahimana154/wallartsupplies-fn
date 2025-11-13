@@ -31,7 +31,7 @@ const ProductDetail = () => {
     try {
       setLoading(true);
       const response = await productRequests.getProductBySlug(slug);
-      console.log(response);
+
       if (response.success === true) {
         setProduct(response.data);
         setQuantity(response.data.moq || 1);
