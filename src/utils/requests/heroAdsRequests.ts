@@ -30,10 +30,10 @@ const getAllHeroAdsRequest = async (filters: HeroAdFilters = {}, queries: QueryO
     }
 }
 
-const deleteHeroAdRequest = async () => {
+const deleteHeroAdRequest = async (id: number) => {
     try {
 
-        const response = await axiosInstance.get("/api/hero-ads/");
+        const response = await axiosInstance.delete(`/api/hero-ads/delete/${id}`);
         return response.data
     } catch (error) {
         return handleError(error)
@@ -42,16 +42,39 @@ const deleteHeroAdRequest = async () => {
 
 const updateHeroAdRequest = async (id: number, data: any) => {
     try {
-        const response = await axiosInstance.get(`/api/hero-ads/${id}`, data);
+        console.log(data)
+        const response = await axiosInstance.put(`/api/hero-ads/update/${id}`, data);
         return response.data
     } catch (error) {
         return handleError(error)
     }
 }
 
+const getCustomersHeroAdsRequest = async (filters: HeroAdFilters = {}, queries: QueryOptions = {}) => {
+    try {
+        const params: any = {};
+
+        if (filters.title) params.title = filters.title;
+        if (filters.description) params.description = filters.description;
+        if (filters.isActive !== undefined) params.isActive = filters.isActive;
+
+        if (queries.page) params.page = queries.page;
+        if (queries.limit) params.limit = queries.limit;
+        if (queries.sortBy) params.sortBy = queries.sortBy;
+        if (queries.order) params.order = queries.order;
+
+        const response = await axiosInstance.get("/api/hero-ads/customer-get-ads", { params });
+        return response.data;
+    } catch (error) {
+        return handleError(error);
+    }
+}
+
+
 export default {
     newHeroAdRequest,
     getAllHeroAdsRequest,
     deleteHeroAdRequest,
-    updateHeroAdRequest
+    updateHeroAdRequest,
+    getCustomersHeroAdsRequest
 }

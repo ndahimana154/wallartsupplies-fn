@@ -15,9 +15,12 @@ import SeoSetup from '../../components/SeoSetup';
 import NewHeroAdsModal from '../../components/a/NewHeroAdsModal';
 import heroAdsRequests from '../../utils/requests/heroAdsRequests';
 import type { iHeroAds, HeroAdFilters, QueryOptions } from '../../types/heroAd';
+import EditHeroAdsModal from '../../components/a/EditHeroAdsModal';
 
 const HeroAds = () => {
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [adToEdit, setAdToEdit] = useState<iHeroAds>({});
   const [heroAds, setHeroAds] = useState<iHeroAds[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -138,7 +141,6 @@ const HeroAds = () => {
     }
   };
 
-  // Generate page numbers for pagination
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
@@ -160,8 +162,15 @@ const HeroAds = () => {
   return (
     <div className="min-h-screen bg-gray-50/30 p-6">
       <SeoSetup mainData={{ title: 'Hero Ads Management' }} />
-      <Toaster position="top-right" />
-
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          position: 'fixed',
+          top: '1rem',
+          right: '1rem',
+          zIndex: 9999,
+        }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -391,7 +400,10 @@ const HeroAds = () => {
                             <button
                               title="Edit"
                               className="p-2 text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
-                              onClick={() => {}}
+                              onClick={() => {
+                                setIsEditOpen(true);
+                                setAdToEdit(ad);
+                              }}
                             >
                               <Edit className="w-4 h-4" />
                             </button>
@@ -480,6 +492,15 @@ const HeroAds = () => {
             setIsNewModalOpen(false);
             fetchHeroAds(currentPage, searchTerm);
           }}
+        />
+      )}
+      {isEditOpen && (
+        <EditHeroAdsModal
+          onClose={() => {
+            setIsEditOpen(false);
+            fetchHeroAds(currentPage, searchTerm);
+          }}
+          ad={adToEdit}
         />
       )}
     </div>

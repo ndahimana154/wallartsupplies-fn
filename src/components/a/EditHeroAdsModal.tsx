@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { uploadImageToCloudinary } from '../../helpers/cloudinay';
-import type { NewHeroAdApiValues } from '../../types/heroAd';
+import type { NewHeroAdApiValues, iHeroAds } from '../../types/heroAd';
 import heroAdsRequests from '../../utils/requests/heroAdsRequests';
 import SeoSetup from '../SeoSetup';
 import { Image } from 'lucide-react';
@@ -48,7 +48,11 @@ const validationSchema = Yup.object({
           ['image/jpeg', 'image/png', 'image/webp'].includes(value.type))
     ),
 });
-const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
+interface EditHeroAdsProps {
+  onClose: () => void;
+  ad: iHeroAds;
+}
+const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
   const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -77,11 +81,14 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      setUploading(true);
-      toast.loading('Uploading images...');
-
-      const { url } = await uploadImageToCloudinary(values.image);
-
+      let imageUrl = values.image;
+      if (values.image instanceof File) {
+        setUploading(true);
+        toast.loading('Uploading image...');
+        const { url } = await uploadImageToCloudinary(values.image);
+        imageUrl = url;
+        toast.dismiss();
+      }
       toast.dismiss();
       toast.loading('Saving Ad...');
 
@@ -90,14 +97,17 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
         description: values.description,
         buttonText: values.buttonText,
         link: values.link,
-        image: url,
+        image: imageUrl,
       };
 
-      const response = await heroAdsRequests.newHeroAdRequest(finalData);
+      const response = await heroAdsRequests.updateHeroAdRequest(
+        ad.id,
+        finalData
+      );
 
       toast.dismiss();
       if (response.success) {
-        toast.success('✅ Hero Ad added successfully!');
+        toast.success('✅ Hero Ad updated successfully!');
         onClose();
       } else {
         toast.error(response.message || 'Failed to add Hero Ad');
@@ -122,7 +132,7 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
-            Add New Hero Ad
+            Edit Ad "{ad.title}"
           </h2>
           <button
             onClick={onClose}
@@ -134,11 +144,11 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
 
         <Formik<FormValues>
           initialValues={{
-            title: '',
-            description: '',
-            buttonText: '',
-            link: '',
-            image: '',
+            title: ad.title,
+            description: ad.description,
+            buttonText: ad.buttonText,
+            link: ad.link,
+            image: ad.image,
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -202,7 +212,74 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                   Hero Ad Image
                 </label>
 
-                {!previewImage ? (
+                {previewImage ? (
+                  <div className="relative group">
+                    <img
+                      src={previewImage}
+                      alt="Hero Ad preview"
+                      className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeImage(setFieldValue)}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    >
+                      ×
+                    </button>
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      {values?.image instanceof File
+                        ? values.image.name
+                        : 'New image selected'}
+                    </div>
+                  </div>
+                ) : values.image && typeof values.image === 'string' ? (
+                  // Show existing ad image with replace option
+                  <div className="relative group">
+                    <img
+                      src={values.image}
+                      alt={`Current: ${ad.title}`}
+                      className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+                      }}
+                    />
+                    <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      Current image
+                    </div>
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Trigger file input click to replace image
+                          const fileInput = document.getElementById(
+                            'image-upload'
+                          ) as HTMLInputElement;
+                          if (fileInput) {
+                            fileInput.click();
+                          }
+                        }}
+                        className="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-blue-600"
+                        title="Replace image"
+                      >
+                        ↻
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Remove current image (set to empty so upload area shows)
+                          setFieldValue('image', '');
+                          setPreviewImage(null);
+                        }}
+                        className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                        title="Remove image"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  // Show upload area
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#e67e22] transition-colors cursor-pointer">
                     <input
                       type="file"
@@ -226,31 +303,16 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                       </p>
                     </label>
                   </div>
-                ) : (
-                  <div className="relative group">
-                    <img
-                      src={previewImage}
-                      alt="Hero Ad preview"
-                      className="w-full h-48 object-cover rounded-lg border border-gray-300"
-                      onError={(e) => {
-                        e.currentTarget.src =
-                          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(setFieldValue)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                    >
-                      ×
-                    </button>
-                    <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                      {values?.image instanceof File
-                        ? values.image.name
-                        : 'Selected image'}
-                    </div>
-                  </div>
                 )}
+
+                {/* Hidden file input for the replace functionality */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e, setFieldValue)}
+                  className="hidden"
+                  id="image-upload"
+                />
 
                 {errors.image && touched.image && (
                   <p className="text-red-500 text-sm mt-2">
@@ -313,4 +375,4 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default NewHeroAdsModal;
+export default EditHeroAdsModal;
