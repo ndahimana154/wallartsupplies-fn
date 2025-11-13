@@ -12,6 +12,7 @@ import ProductDetail from './pages/ProductDetail';
 import ClientsLayout from './pages/ClientsLayout';
 import ANotFound from './pages/a/ANotFound';
 import CategoriesProducts from './pages/CategoriesProducts';
+import HeroAds from './pages/a/HeroAds';
 
 const AppRouter = () => {
   return (
@@ -30,6 +31,7 @@ const AppRouter = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="products" element={<Products />} />
         <Route path="categories" element={<Categories />} />
+        <Route path="hero-ads" element={<HeroAds />} />
         <Route path="*" element={<ANotFound />} />
       </Route>
 

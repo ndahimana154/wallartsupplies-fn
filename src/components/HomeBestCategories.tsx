@@ -14,7 +14,6 @@ const HomeBestCategories = () => {
     try {
       setLoading(true);
       setError('');
-      console.log('Fetching categories...');
 
       const response = await productRequests.getBestCategories();
 

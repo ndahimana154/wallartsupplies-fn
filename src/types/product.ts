@@ -3,7 +3,7 @@ export interface NewProductApiValues {
     price: number;
     moq: number;
     description: string;
-    images: string[]; // Only URLs for API
+    images: string[];
     categoryId: number;
     customAttr: { key: string; value: string }[];
 }
