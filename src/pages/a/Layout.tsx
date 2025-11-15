@@ -3,7 +3,6 @@ import {
   FaHome,
   FaChartBar,
   FaTags,
-  FaShoppingBag,
   FaChevronLeft,
   FaChevronRight,
 } from 'react-icons/fa';

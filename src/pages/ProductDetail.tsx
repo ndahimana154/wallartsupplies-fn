@@ -58,8 +58,6 @@ const ProductDetail = () => {
 • Total Amount: $${totalPrice}
 • MOQ: ${product.moq} units
 
-${product.description}
-
 I'd like to know more about customization options and shipping.`;
 
     const encodedMessage = encodeURIComponent(message);
@@ -359,9 +357,12 @@ I'd like to know more about customization options and shipping.`;
               className="max-w-3xl mx-auto"
             >
               <div className="text-gray-700 space-y-4">
-                <p className="text-lg leading-relaxed font-light">
-                  {product.description}
-                </p>
+                <p
+                  className="text-lg leading-relaxed font-light"
+                  dangerouslySetInnerHTML={{
+                    __html: product.description || '',
+                  }}
+                ></p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
                   <div className="space-y-3">
                     <h4 className="font-medium text-gray-900">

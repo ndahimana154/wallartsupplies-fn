@@ -1,5 +1,5 @@
 import type { QueryOptions } from "../../types/heroAd";
-import type { CategoriesFilters, CategoryData, NewCategoryValues, NewProductValues, UpdateCategoryData } from "../../types/product";
+import type { CategoriesFilters, NewCategoryValues, NewProductValues, UpdateCategoryData } from "../../types/product";
 import axiosInstance from "../axiosInstance";
 import { handleError } from "./welcome";
 

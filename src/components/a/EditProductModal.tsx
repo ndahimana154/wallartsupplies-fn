@@ -49,7 +49,7 @@ const validationSchema = Yup.object({
     .required('Upload at least one image'),
 });
 
-const NewProductModal = ({
+const EditProductModal = ({
   onClose,
   categories,
 }: {
@@ -361,4 +361,4 @@ const NewProductModal = ({
   );
 };
 
-export default NewProductModal;
+export default EditProductModal;

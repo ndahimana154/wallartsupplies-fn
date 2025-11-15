@@ -20,7 +20,7 @@ import EditHeroAdsModal from '../../components/a/EditHeroAdsModal';
 const HeroAds = () => {
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [adToEdit, setAdToEdit] = useState<iHeroAds>({});
+  const [adToEdit, setAdToEdit] = useState<iHeroAds>();
   const [heroAds, setHeroAds] = useState<iHeroAds[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -328,7 +328,7 @@ const HeroAds = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {heroAds.map((ad, index) => (
+                    {heroAds.map((ad: iHeroAds, index) => (
                       <tr
                         key={ad.id || index}
                         className="hover:bg-gray-50 transition-colors"
@@ -399,7 +399,7 @@ const HeroAds = () => {
                           <div className="flex justify-end gap-2">
                             <button
                               title="Edit"
-                              className="p-2 text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
+                              className="p-2 cursor-pointer text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
                               onClick={() => {
                                 setIsEditOpen(true);
                                 setAdToEdit(ad);
@@ -409,7 +409,7 @@ const HeroAds = () => {
                             </button>
                             <button
                               title="Delete"
-                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-2 cursor-pointer text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                               onClick={() => handleDeleteAd(ad.id)}
                             >
                               <Trash2 className="w-4 h-4" />

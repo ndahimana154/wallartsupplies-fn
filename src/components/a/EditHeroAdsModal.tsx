@@ -13,9 +13,10 @@ interface FormValues {
   description: string;
   buttonText: string;
   link: string;
-  image: any;
+  image: File | string | null;
 }
 
+// Fix the validation schema for image
 const validationSchema = Yup.object({
   title: Yup.string()
     .required('Hero ad title is required')
@@ -33,25 +34,27 @@ const validationSchema = Yup.object({
     .url('Please enter a valid URL'),
   image: Yup.mixed()
     .required('Upload an image first')
-    .test(
-      'fileSize',
-      'File too large',
-      (value) =>
-        !value || (value instanceof File && value.size <= 10 * 1024 * 1024) // 10MB
-    )
-    .test(
-      'fileType',
-      'Unsupported file format',
-      (value) =>
-        !value ||
-        (value instanceof File &&
-          ['image/jpeg', 'image/png', 'image/webp'].includes(value.type))
-    ),
+    .test('fileSize', 'File too large', (value) => {
+      if (!value) return false; // No image at all
+      if (typeof value === 'string') return true; // Existing image URL is fine
+      if (value instanceof File) return value.size <= 10 * 1024 * 1024; // 10MB
+      return false;
+    })
+    .test('fileType', 'Unsupported file format', (value) => {
+      if (!value) return false;
+      if (typeof value === 'string') return true; // Existing image URL is fine
+      if (value instanceof File) {
+        return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
+      }
+      return false;
+    }),
 });
+
 interface EditHeroAdsProps {
   onClose: () => void;
-  ad: iHeroAds;
+  ad: iHeroAds | undefined;
 }
+
 const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
   const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -64,14 +67,13 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
 
     if (file) {
       setFieldValue('image', file);
-
       const previewUrl = URL.createObjectURL(file);
       setPreviewImage(previewUrl);
     }
   };
 
   const removeImage = (setFieldValue: any) => {
-    setFieldValue('image', '');
+    setFieldValue('image', null);
     setPreviewImage(null);
 
     if (previewImage) {
@@ -82,6 +84,8 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
   const handleSubmit = async (values: FormValues) => {
     try {
       let imageUrl = values.image;
+
+      // Only upload if it's a new file
       if (values.image instanceof File) {
         setUploading(true);
         toast.loading('Uploading image...');
@@ -89,7 +93,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
         imageUrl = url;
         toast.dismiss();
       }
-      toast.dismiss();
+
       toast.loading('Saving Ad...');
 
       const finalData: NewHeroAdApiValues = {
@@ -97,11 +101,11 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
         description: values.description,
         buttonText: values.buttonText,
         link: values.link,
-        image: imageUrl,
+        image: imageUrl as string, // Ensure it's string for API
       };
 
       const response = await heroAdsRequests.updateHeroAdRequest(
-        ad.id,
+        Number(ad?.id),
         finalData
       );
 
@@ -132,7 +136,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
-            Edit Ad "{ad.title}"
+            Edit Ad "{ad?.title}"
           </h2>
           <button
             onClick={onClose}
@@ -144,14 +148,15 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
 
         <Formik<FormValues>
           initialValues={{
-            title: ad.title,
-            description: ad.description,
-            buttonText: ad.buttonText,
-            link: ad.link,
-            image: ad.image,
+            title: ad?.title || '',
+            description: ad?.description || '',
+            buttonText: ad?.buttonText || '',
+            link: ad?.link || '',
+            image: ad?.image || null,
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          enableReinitialize
         >
           {({ values, setFieldValue, errors, touched, isValid, dirty }) => (
             <Form className="space-y-5">
@@ -233,11 +238,10 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                     </div>
                   </div>
                 ) : values.image && typeof values.image === 'string' ? (
-                  // Show existing ad image with replace option
                   <div className="relative group">
                     <img
                       src={values.image}
-                      alt={`Current: ${ad.title}`}
+                      alt={`Current: ${String(ad?.title)}`}
                       className="w-full h-48 object-cover rounded-lg border border-gray-300"
                       onError={(e) => {
                         e.currentTarget.src =
@@ -251,7 +255,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                       <button
                         type="button"
                         onClick={() => {
-                          // Trigger file input click to replace image
                           const fileInput = document.getElementById(
                             'image-upload'
                           ) as HTMLInputElement;
@@ -267,8 +270,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                       <button
                         type="button"
                         onClick={() => {
-                          // Remove current image (set to empty so upload area shows)
-                          setFieldValue('image', '');
+                          setFieldValue('image', null);
                           setPreviewImage(null);
                         }}
                         className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
@@ -358,7 +360,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                 <button
                   type="submit"
                   disabled={uploading || !isValid || !dirty}
-                  className={`px-5 py-2 rounded-lg text-white font-medium transition ${
+                  className={`px-5 py-2 cursor-pointer rounded-lg text-white font-medium transition ${
                     uploading || !isValid || !dirty
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-[#e67e22] hover:bg-[#cf711f]'
