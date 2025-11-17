@@ -4,7 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { uploadImageToCloudinary } from '../../helpers/cloudinay';
 import productRequests from '../../utils/requests/productRequests';
-import type { NewProductApiValues } from '../../types/product';
+import type { NewProductApiValues, ProductData } from '../../types/product';
 import RichTextEditor from '../RichTextEditor';
 
 interface Category {
@@ -22,7 +22,7 @@ interface FormValues {
   price: number;
   moq: number;
   description: string;
-  images: File[];
+  images: (File | string)[];
   categoryId: number;
   customAttr: CustomAttribute[];
 }
@@ -44,7 +44,18 @@ const validationSchema = Yup.object({
     .min(1, 'Please select a category')
     .required('Category is required'),
   images: Yup.array()
-    .of(Yup.mixed())
+    .of(
+      Yup.mixed().test('is-valid-image', 'Invalid image', (value) => {
+        if (!value) return false;
+
+        if (typeof value === 'string') return true;
+
+        if (value instanceof File) {
+          return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
+        }
+        return false;
+      })
+    )
     .min(1, 'Upload at least one image')
     .required('Upload at least one image'),
 });
@@ -52,26 +63,45 @@ const validationSchema = Yup.object({
 const EditProductModal = ({
   onClose,
   categories,
+  product,
 }: {
   onClose: () => void;
   categories: Category[];
+  product: ProductData;
 }) => {
   const [uploading, setUploading] = useState(false);
 
   const handleSubmit = async (values: FormValues) => {
     try {
       setUploading(true);
-      toast.loading('Uploading images...');
+      toast.loading('Processing images...');
 
-      const uploadedUrls = await Promise.all(
-        values.images.map(async (img: File) => {
-          const { url } = await uploadImageToCloudinary(img);
-          return url;
-        })
-      );
+      const existingImageUrls: string[] = [];
+      const newImageFiles: File[] = [];
+
+      values.images.forEach((img) => {
+        if (typeof img === 'string') {
+          existingImageUrls.push(img);
+        } else if (img instanceof File) {
+          newImageFiles.push(img);
+        }
+      });
+
+      let uploadedUrls: string[] = [];
+      if (newImageFiles.length > 0) {
+        toast.loading(`Uploading ${newImageFiles.length} new image(s)...`);
+        uploadedUrls = await Promise.all(
+          newImageFiles.map(async (img: File) => {
+            const { url } = await uploadImageToCloudinary(img);
+            return url;
+          })
+        );
+      }
+
+      const allImageUrls = [...existingImageUrls, ...uploadedUrls];
 
       toast.dismiss();
-      toast.loading('Saving product...');
+      toast.loading('Updating product...');
 
       const cleanedCustomAttr = values.customAttr
         .filter(
@@ -87,24 +117,27 @@ const EditProductModal = ({
         name: values.name.trim(),
         price: Number(values.price),
         moq: Number(values.moq),
-        description: values.description.trim(), // This now comes from Formik
+        description: values.description.trim(),
         categoryId: Number(values.categoryId),
-        images: uploadedUrls,
+        images: allImageUrls,
         customAttr: cleanedCustomAttr,
       };
 
-      const response = await productRequests.newProductRequest(finalData);
+      const response = await productRequests.updateProductRequest(
+        product.id,
+        finalData
+      );
 
       toast.dismiss();
       if (response.success) {
-        toast.success('✅ Product added successfully!');
+        toast.success('✅ Product updated successfully!');
         onClose();
       } else {
-        toast.error(response.message || 'Failed to add product');
+        toast.error(response.message || 'Failed to update product');
       }
     } catch (error: any) {
       toast.dismiss();
-      console.error('Error submitting product:', error);
+      console.error('Error updating product:', error);
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
@@ -115,17 +148,32 @@ const EditProductModal = ({
     }
   };
 
+  const getImageSrc = (img: File | string): string => {
+    if (typeof img === 'string') {
+      return img;
+    }
+    return URL.createObjectURL(img);
+  };
+
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Toaster />
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          position: 'fixed',
+          top: '1rem',
+          right: '1rem',
+          zIndex: 9999,
+        }}
+      />{' '}
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
-            Add New Product
+            Edit Product: {product.name}
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+            className="text-gray-400 cursor-pointer hover:text-gray-600 text-2xl font-bold"
           >
             ×
           </button>
@@ -133,16 +181,17 @@ const EditProductModal = ({
 
         <Formik<FormValues>
           initialValues={{
-            name: '',
-            price: 0,
-            moq: 1,
-            description: '',
-            images: [],
-            categoryId: 0,
-            customAttr: [{ key: '', value: '' }],
+            name: product.name,
+            price: product.price,
+            moq: product.moq,
+            description: product.description,
+            images: product.images as (File | string)[], // Cast to accept both types
+            categoryId: Number(product.categoryId),
+            customAttr: product.customAttr,
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          enableReinitialize
         >
           {({ values, setFieldValue, errors, touched, isValid, dirty }) => (
             <Form className="space-y-5">
@@ -252,37 +301,42 @@ const EditProductModal = ({
                   <div className="mt-3">
                     <p className="text-sm text-gray-600 mb-2">
                       {values.images.length} image(s) selected
+                      <span className="text-xs text-gray-400 ml-2">
+                        (Existing images + new uploads)
+                      </span>
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {values.images.map((img: File, index: number) => (
-                        <div
-                          key={`${img.name}-${index}`}
-                          className="relative group"
-                        >
-                          <img
-                            src={URL.createObjectURL(img)}
-                            alt={`preview-${index}`}
-                            className="w-20 h-20 object-cover rounded-lg border"
-                            onError={(e) => {
-                              // Fallback for image preview errors
-                              e.currentTarget.src =
-                                'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lWR0g9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
-                            }}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const filteredImages = values.images.filter(
-                                (_, i) => i !== index
-                              );
-                              setFieldValue('images', filteredImages);
-                            }}
-                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
+                      {values.images.map(
+                        (img: File | string, index: number) => (
+                          <div key={index} className="relative group">
+                            <img
+                              src={getImageSrc(img)}
+                              alt={`preview-${index}`}
+                              className="w-20 h-20 object-cover rounded-lg border"
+                              onError={(e) => {
+                                // Fallback for image preview errors
+                                e.currentTarget.src =
+                                  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
+                              }}
+                            />
+                            <div className="absolute bottom-1 left-1 bg-black/70 text-white text-xs px-1 py-0.5 rounded">
+                              {typeof img === 'string' ? 'Existing' : 'New'}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const filteredImages = values.images.filter(
+                                  (_, i) => i !== index
+                                );
+                                setFieldValue('images', filteredImages);
+                              }}
+                              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
                 )}
@@ -350,7 +404,7 @@ const EditProductModal = ({
                       : 'bg-[#e67e22] hover:bg-[#cf711f]'
                   }`}
                 >
-                  {uploading ? 'Uploading...' : 'Save Product'}
+                  {uploading ? 'Updating...' : 'Update Product'}
                 </button>
               </div>
             </Form>

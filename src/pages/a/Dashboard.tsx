@@ -13,13 +13,11 @@ const Dashboard = () => {
         </p>
       </div>
 
-      {/* Stats Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
           { label: 'Products', value: 128, icon: <FaBox /> },
           { label: 'Orders', value: 54, icon: <FaShoppingBag /> },
           { label: 'Categories', value: 6, icon: <FaTags /> },
-          { label: 'Visitors', value: '2.1K', icon: <FaChartBar /> },
         ].map((stat, index) => (
           <div
             key={stat.label}

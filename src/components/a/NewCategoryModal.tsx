@@ -83,7 +83,15 @@ const NewCategoryModal = ({ onClose }: Props) => {
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <SeoSetup mainData={{ title: 'New category' }} />
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          position: 'fixed',
+          top: '1rem',
+          right: '1rem',
+          zIndex: 9999,
+        }}
+      />{' '}
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">

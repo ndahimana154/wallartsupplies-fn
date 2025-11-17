@@ -94,6 +94,15 @@ const updateCategoryRequest = async (id: number, data: UpdateCategoryData) => {
     }
 }
 
+const updateProductRequest = async (id: number, data: NewProductValues) => {
+    try {
+        const response = await axiosInstance.put(`/api/product/edit/${id}`, data)
+        return response.data
+    } catch (error: any) {
+        return handleError(error)
+    }
+}
+
 export default {
     newProductRequest,
     newCategoryRequest,
@@ -103,5 +112,6 @@ export default {
     getProductBySlug,
     getBestCategories,
     getCategoryProducts,
-    updateCategoryRequest
+    updateCategoryRequest,
+    updateProductRequest
 }

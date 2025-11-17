@@ -4,7 +4,8 @@ import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
 import type { ProductData } from '../../types/product';
 import type { QueryOptions } from '../../types/heroAd';
-import { Plus } from 'lucide-react';
+import { Delete, Edit, Plus } from 'lucide-react';
+import EditProductModal from '../../components/a/EditProductModal';
 
 interface Category {
   id: number;
@@ -13,6 +14,9 @@ interface Category {
 
 const Products = () => {
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [productToEdit, setProductToEdit] = useState<ProductData>();
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,8 +101,15 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-gray-50/30 p-6">
-      <Toaster position="top-right" />
-
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          position: 'fixed',
+          top: '1rem',
+          right: '1rem',
+          zIndex: 9999,
+        }}
+      />{' '}
       <div className="max-w-7xl mx-auto">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
@@ -452,39 +463,13 @@ const Products = () => {
                             <div className="flex justify-end gap-2">
                               <button
                                 title="Edit"
-                                className="p-2 text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
+                                className="p-2 cursor-pointer text-gray-400 hover:text-[#e67e22] hover:bg-orange-50 rounded-lg transition-colors"
+                                onClick={() => {
+                                  setProductToEdit(product);
+                                  setIsEditModalOpen(true);
+                                }}
                               >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                  />
-                                </svg>
-                              </button>
-                              <button
-                                title="Delete"
-                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                              >
-                                <svg
-                                  className="w-4 h-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                  />
-                                </svg>
+                                <Edit className="w-4 h-4" />
                               </button>
                             </div>
                           </td>
@@ -495,7 +480,6 @@ const Products = () => {
                 </table>
               </div>
 
-              {/* Footer */}
               <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
                   <p className="text-sm text-gray-700">
@@ -517,13 +501,22 @@ const Products = () => {
           )}
         </div>
       </div>
-
       {isNewModalOpen && (
         <NewProductModal
           onClose={() => {
             setIsNewModalOpen(false);
             fetchProducts();
           }}
+          categories={categories}
+        />
+      )}
+      {isEditModalOpen && (
+        <EditProductModal
+          onClose={() => {
+            setIsEditModalOpen(false);
+            fetchProducts();
+          }}
+          product={productToEdit}
           categories={categories}
         />
       )}

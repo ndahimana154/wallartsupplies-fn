@@ -117,7 +117,15 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Toaster />
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          position: 'fixed',
+          top: '1rem',
+          right: '1rem',
+          zIndex: 9999,
+        }}
+      />{' '}
       <SeoSetup mainData={{ title: 'New Hero Ad' }} />
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
