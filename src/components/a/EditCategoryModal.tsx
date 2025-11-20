@@ -1,63 +1,94 @@
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster, toast } from 'react-hot-toast';
 import { useState } from 'react';
+import type { CategoryData, UpdateCategoryData } from '../../types/product';
+import productRequests from '../../utils/requests/productRequests';
 import { uploadImageToCloudinary } from '../../helpers/cloudinay';
-import type { NewHeroAdApiValues, iHeroAds } from '../../types/heroAd';
-import heroAdsRequests from '../../utils/requests/heroAdsRequests';
 import SeoSetup from '../SeoSetup';
 import { Image } from 'lucide-react';
 
-interface FormValues {
-  title: string;
-  description: string;
-  buttonText: string;
-  link: string;
-  image: File | string | null;
-}
-
-// Fix the validation schema for image
 const validationSchema = Yup.object({
-  title: Yup.string()
-    .required('Hero ad title is required')
-    .min(5, 'Title should be at least 5 characters')
-    .max(60, 'Title should not exceed 60 characters'),
-  description: Yup.string()
-    .required('Description is required')
-    .min(20, 'Description should be at least 20 characters')
-    .max(200, 'Description should not exceed 200 characters'),
-  buttonText: Yup.string()
-    .required('Button text is required')
-    .max(25, 'Button text should not exceed 25 characters'),
-  link: Yup.string()
-    .required('Link is required')
-    .url('Please enter a valid URL'),
+  name: Yup.string().trim().required('Category name is required'),
   image: Yup.mixed()
-    .required('Upload an image first')
+    .required('Category image is required')
     .test('fileSize', 'File too large', (value) => {
-      if (!value) return false; // No image at all
-      if (typeof value === 'string') return true; // Existing image URL is fine
-      if (value instanceof File) return value.size <= 10 * 1024 * 1024; // 10MB
-      return false;
+      if (typeof value === 'string') return true;
+      return (
+        !value || (value instanceof File && value.size <= 10 * 1024 * 1024)
+      );
     })
     .test('fileType', 'Unsupported file format', (value) => {
-      if (!value) return false;
-      if (typeof value === 'string') return true; // Existing image URL is fine
-      if (value instanceof File) {
-        return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
-      }
-      return false;
+      if (typeof value === 'string') return true;
+      return (
+        !value ||
+        (value instanceof File &&
+          ['image/jpeg', 'image/png', 'image/webp'].includes(value.type))
+      );
     }),
 });
 
-interface EditHeroAdsProps {
+interface Props {
   onClose: () => void;
-  ad: iHeroAds | undefined;
+  category: CategoryData;
 }
 
-const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
+interface FormValues {
+  name: string;
+  image: any;
+}
+
+const EditCategoryModal = ({ onClose, category }: Props) => {
   const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const handleSubmit = async (values: FormValues) => {
+    try {
+      setUploading(true);
+
+      let imageUrl = values.image;
+
+      if (values.image instanceof File) {
+        toast.loading('Uploading image...');
+        const { url } = await uploadImageToCloudinary(values.image);
+        imageUrl = url;
+        toast.dismiss();
+      }
+
+      toast.loading('Updating category...');
+
+      const finalValues: UpdateCategoryData = {
+        name: values.name,
+        image: imageUrl as string,
+      };
+
+      const categoryId =
+        typeof category.id === 'string' ? parseInt(category.id) : category.id;
+
+      const response = await productRequests.updateCategoryRequest(
+        categoryId,
+        finalValues
+      );
+
+      toast.dismiss();
+
+      if (response?.success) {
+        toast.success('Category updated successfully!');
+        setPreviewImage(null);
+        setTimeout(onClose, 1000);
+      } else {
+        toast.error(response?.message || 'Failed to update category.');
+      }
+    } catch (error: any) {
+      console.error('Error updating category:', error);
+      toast.error(
+        error?.response?.data?.message ||
+          'Something went wrong. Please try again.'
+      );
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -73,7 +104,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
   };
 
   const removeImage = (setFieldValue: any) => {
-    setFieldValue('image', null);
+    setFieldValue('image', '');
     setPreviewImage(null);
 
     if (previewImage) {
@@ -81,56 +112,9 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
     }
   };
 
-  const handleSubmit = async (values: FormValues) => {
-    try {
-      let imageUrl = values.image;
-
-      // Only upload if it's a new file
-      if (values.image instanceof File) {
-        setUploading(true);
-        toast.loading('Uploading image...');
-        const { url } = await uploadImageToCloudinary(values.image);
-        imageUrl = url;
-        toast.dismiss();
-      }
-
-      toast.loading('Saving Ad...');
-
-      const finalData: NewHeroAdApiValues = {
-        title: values.title,
-        description: values.description,
-        buttonText: values.buttonText,
-        link: values.link,
-        image: imageUrl as string, // Ensure it's string for API
-      };
-
-      const response = await heroAdsRequests.updateHeroAdRequest(
-        Number(ad?.id),
-        finalData
-      );
-
-      toast.dismiss();
-      if (response.success) {
-        toast.success('✅ Hero Ad updated successfully!');
-        onClose();
-      } else {
-        toast.error(response.message || 'Failed to add Hero Ad');
-      }
-    } catch (error: any) {
-      toast.dismiss();
-      console.error('Error submitting Ad:', error);
-      toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong'
-      );
-    } finally {
-      setUploading(false);
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <SeoSetup mainData={{ title: 'Edit category' }} />
       <Toaster
         position="top-right"
         containerStyle={{
@@ -140,15 +124,14 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
           zIndex: 9999,
         }}
       />{' '}
-      <SeoSetup mainData={{ title: 'New Hero Ad' }} />
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
-            Edit Ad "{ad?.title}"
+            Edit Category
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
+            className="text-gray-400 cursor-pointer hover:text-gray-600 text-2xl font-bold leading-none"
           >
             ×
           </button>
@@ -156,80 +139,46 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
 
         <Formik<FormValues>
           initialValues={{
-            title: ad?.title || '',
-            description: ad?.description || '',
-            buttonText: ad?.buttonText || '',
-            link: ad?.link || '',
-            image: ad?.image || null,
+            name: category.name,
+            image: category.image,
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
-          enableReinitialize
         >
-          {({ values, setFieldValue, errors, touched, isValid, dirty }) => (
+          {({ errors, setFieldValue, touched, isSubmitting, values }) => (
             <Form className="space-y-5">
               <div>
-                <label className="block font-medium mb-1">Title</label>
+                <label
+                  htmlFor="name"
+                  className="block font-medium mb-1 text-gray-700"
+                >
+                  Category Name
+                </label>
                 <Field
-                  name="title"
-                  placeholder="Enter hero ad title"
-                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none"
+                  id="name"
+                  name="name"
+                  placeholder="Enter category name"
+                  className={`w-full border ${
+                    errors.name && touched.name
+                      ? 'border-red-400'
+                      : 'border-gray-300'
+                  } rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none`}
                 />
-                {errors.title && touched.title && (
-                  <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+                {errors.name && touched.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
                 )}
               </div>
 
               <div>
                 <label className="block font-medium mb-1 text-gray-700">
-                  Description
-                  <span className="text-sm font-normal text-gray-500 ml-2">
-                    {values.description.length}/200 characters
-                  </span>
-                </label>
-                <Field
-                  as="textarea"
-                  name="description"
-                  rows={4}
-                  placeholder="Enter compelling description for your hero banner..."
-                  className={`w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#e67e22] focus:outline-none resize-y text-gray-800 ${
-                    values.description.length > 200
-                      ? 'border-red-300'
-                      : values.description.length > 150
-                      ? 'border-yellow-300'
-                      : 'border-gray-300'
-                  }`}
-                />
-                <div className="flex justify-between mt-1">
-                  {errors.description && touched.description ? (
-                    <p className="text-red-500 text-sm">{errors.description}</p>
-                  ) : (
-                    <div />
-                  )}
-                  <span
-                    className={`text-sm ${
-                      values.description.length > 200
-                        ? 'text-red-500 font-medium'
-                        : values.description.length > 180
-                        ? 'text-yellow-500'
-                        : 'text-gray-400'
-                    }`}
-                  >
-                    {200 - values.description.length} characters remaining
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium mb-1 text-gray-700">
-                  Hero Ad Image
+                  Category Image
                 </label>
 
                 {previewImage ? (
                   <div className="relative group">
                     <img
                       src={previewImage}
-                      alt="Hero Ad preview"
+                      alt="Category preview"
                       className="w-full h-48 object-cover rounded-lg border border-gray-300"
                     />
                     <button
@@ -249,7 +198,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                   <div className="relative group">
                     <img
                       src={values.image}
-                      alt={`Current: ${String(ad?.title)}`}
+                      alt={`Current: ${category.name}`}
                       className="w-full h-48 object-cover rounded-lg border border-gray-300"
                       onError={(e) => {
                         e.currentTarget.src =
@@ -278,7 +227,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                       <button
                         type="button"
                         onClick={() => {
-                          setFieldValue('image', null);
+                          setFieldValue('image', '');
                           setPreviewImage(null);
                         }}
                         className="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
@@ -289,7 +238,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                     </div>
                   </div>
                 ) : (
-                  // Show upload area
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#e67e22] transition-colors cursor-pointer">
                     <input
                       type="file"
@@ -315,7 +263,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                   </div>
                 )}
 
-                {/* Hidden file input for the replace functionality */}
                 <input
                   type="file"
                   accept="image/*"
@@ -331,50 +278,21 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                 )}
               </div>
 
-              <div>
-                <label className="block font-medium mb-1">Button text</label>
-                <Field
-                  name="buttonText"
-                  placeholder="Enter hero ad  Button text"
-                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none"
-                />
-                {errors.buttonText && touched.buttonText && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.buttonText}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="block font-medium mb-1">Link</label>
-                <Field
-                  name="link"
-                  placeholder="Enter hero ad  Link"
-                  className="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#e67e22] focus:outline-none"
-                />
-                {errors.link && touched.link && (
-                  <p className="text-red-500 text-sm mt-1">{errors.link}</p>
-                )}
-              </div>
-
               <div className="flex justify-end gap-3 pt-4 border-t">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+                  disabled={isSubmitting || uploading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={uploading || !isValid || !dirty}
-                  className={`px-5 py-2 cursor-pointer rounded-lg text-white font-medium transition ${
-                    uploading || !isValid || !dirty
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-[#e67e22] hover:bg-[#cf711f]'
-                  }`}
+                  disabled={isSubmitting || uploading || !values.image}
+                  className="px-5 py-2 cursor-pointer rounded-lg bg-[#e67e22] text-white font-medium hover:bg-[#cf711f] transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {uploading ? 'Uploading...' : 'Save Hero Ad'}
+                  {isSubmitting || uploading ? 'Saving...' : 'Update Category'}
                 </button>
               </div>
             </Form>
@@ -385,4 +303,4 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
   );
 };
 
-export default EditHeroAdsModal;
+export default EditCategoryModal;

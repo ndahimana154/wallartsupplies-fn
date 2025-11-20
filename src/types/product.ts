@@ -46,13 +46,28 @@ export interface NewProductFormValues {
 }
 
 export interface CategoryData {
-    id: string
+    id: number
     name: string;
-    slug: number;
+    slug: string;
     image: string;
 }
+
+export interface UpdateCategoryData {
+    name: string;
+    image: string;
+}
+
 
 export interface NewCategoryValues {
     name: string;
     image: any;
+}
+
+
+export interface CategoriesFilters {
+    name?: string;
+}
+
+export interface ProductsFilters {
+    name?: string
 }
