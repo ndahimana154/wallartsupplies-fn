@@ -16,7 +16,10 @@ const FramesGallery = () => {
     try {
       setLoading(true);
       setError('');
-      const response = await productRequests.getRecentFrames();
+      const response = await productRequests.getRecentFrames(
+        {},
+        { page: 1, limit: 12 }
+      );
       if (response.success === true) {
         setFramesData(response.data.data);
       } else {
@@ -72,7 +75,6 @@ const FramesGallery = () => {
         <div className="w-24 h-[2px] bg-gray-300 mx-auto mt-8"></div>
       </motion.div>
 
-      {/* Loading State */}
       {loading && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -86,7 +88,6 @@ const FramesGallery = () => {
         </motion.div>
       )}
 
-      {/* Error State */}
       {error && !loading && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}

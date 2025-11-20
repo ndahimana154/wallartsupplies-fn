@@ -4,7 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { uploadImageToCloudinary } from '../../helpers/cloudinay';
 import productRequests from '../../utils/requests/productRequests';
-import type { NewProductApiValues, ProductData } from '../../types/product';
+import type { NewProductApiValues } from '../../types/product';
 import RichTextEditor from '../RichTextEditor';
 
 interface Category {
@@ -67,7 +67,7 @@ const EditProductModal = ({
 }: {
   onClose: () => void;
   categories: Category[];
-  product: ProductData;
+  product: any;
 }) => {
   const [uploading, setUploading] = useState(false);
 

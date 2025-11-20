@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 interface Testimonial {
   id: number;
@@ -86,13 +87,11 @@ const TestimonialsGrid = () => {
             onHoverStart={() => setHoveredCard(testimonial.id)}
             onHoverEnd={() => setHoveredCard(null)}
           >
-            {/* Background glow effect */}
             <div
               className={`absolute inset-0 bg-gradient-to-r from-orange-400 to-amber-400 rounded-3xl blur-md opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
             />
 
             <div className="relative bg-white rounded-2xl shadow-xl border border-orange-100 p-8 h-full flex flex-col">
-              {/* Rating stars */}
               <div className="flex mb-4">
                 {[...Array(5)].map((_, i) => (
                   <motion.svg
@@ -109,7 +108,6 @@ const TestimonialsGrid = () => {
                 ))}
               </div>
 
-              {/* Testimonial text */}
               <motion.p
                 className="text-gray-700 text-lg mb-6 flex-grow leading-relaxed"
                 animate={{
@@ -133,7 +131,6 @@ const TestimonialsGrid = () => {
                 <p className="text-orange-500 text-sm">{testimonial.role}</p>
               </div>
 
-              {/* Quote icon */}
               <div className="absolute top-6 right-6 text-orange-200 text-6xl opacity-60">
                 "
               </div>
@@ -142,7 +139,6 @@ const TestimonialsGrid = () => {
         ))}
       </div>
 
-      {/* CTA Section */}
       <motion.div
         className="text-center mt-16"
         initial={{ opacity: 0 }}
@@ -150,9 +146,12 @@ const TestimonialsGrid = () => {
         transition={{ delay: 0.8 }}
       >
         <p className="text-gray-600 mb-6">Ready to join our happy customers?</p>
-        <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+        <Link
+          to={'/products'}
+          className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+        >
           Get Started Today
-        </button>
+        </Link>
       </motion.div>
     </div>
   );

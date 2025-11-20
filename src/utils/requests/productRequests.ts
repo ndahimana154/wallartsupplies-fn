@@ -1,5 +1,5 @@
 import type { QueryOptions } from "../../types/heroAd";
-import type { CategoriesFilters, NewCategoryValues, NewProductValues, UpdateCategoryData } from "../../types/product";
+import type { CategoriesFilters, NewCategoryValues, NewProductValues, ProductsFilters, UpdateCategoryData } from "../../types/product";
 import axiosInstance from "../axiosInstance";
 import { handleError } from "./welcome";
 
@@ -21,9 +21,18 @@ const getProducts = async () => {
     }
 }
 
-const getRecentFrames = async () => {
+const getRecentFrames = async (filters: ProductsFilters, queries: QueryOptions) => {
     try {
-        const response = await axiosInstance.get("/api/product/customer-get-recent-collections");
+        const params: any = {}
+
+        if (filters.name) params.name = filters.name
+
+        if (queries.page) params.page = queries.page;
+        if (queries.limit) params.limit = queries.limit;
+        if (queries.sortBy) params.sortBy = queries.sortBy;
+        if (queries.order) params.order = queries.order;
+
+        const response = await axiosInstance.get("/api/product/customer-get-recent-collections", { params });
         return response.data
     } catch (error) {
         return handleError(error);
@@ -103,6 +112,15 @@ const updateProductRequest = async (id: number, data: NewProductValues) => {
     }
 }
 
+const getDashoardData = async () => {
+    try {
+        const response = await axiosInstance.get("/api/product/get-dashboard-data");
+        return response.data
+    } catch (error) {
+        return handleError(error)
+    }
+}
+
 export default {
     newProductRequest,
     newCategoryRequest,
@@ -113,5 +131,6 @@ export default {
     getBestCategories,
     getCategoryProducts,
     updateCategoryRequest,
-    updateProductRequest
+    updateProductRequest,
+    getDashoardData
 }

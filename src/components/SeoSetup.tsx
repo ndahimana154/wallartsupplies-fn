@@ -58,7 +58,7 @@ const SeoSetup = ({
       name: 'Kickside Rwanda',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://www.kickside.rw/logo.png',
+        url: 'https://www.wallartsupplies.com/main-logo.png',
       },
     },
     mainEntityOfPage: currentUrl,

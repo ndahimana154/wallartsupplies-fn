@@ -4,7 +4,7 @@ import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
 import type { ProductData } from '../../types/product';
 import type { QueryOptions } from '../../types/heroAd';
-import { Delete, Edit, Plus } from 'lucide-react';
+import { Edit, Plus } from 'lucide-react';
 import EditProductModal from '../../components/a/EditProductModal';
 
 interface Category {
@@ -118,7 +118,7 @@ const Products = () => {
                 Products
               </h1>
               <p className="text-gray-600 mt-2">
-                Manage your product catalog and inventory
+                Manage your products catalog and inventory
               </p>
             </div>
             <button
@@ -181,34 +181,6 @@ const Products = () => {
                       strokeLinejoin="round"
                       strokeWidth={2}
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-800">
-                    Categories
-                  </p>
-                  <p className="text-2xl font-bold text-green-900 mt-1">
-                    {categories.length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
                     />
                   </svg>
                 </div>

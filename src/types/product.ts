@@ -67,3 +67,7 @@ export interface NewCategoryValues {
 export interface CategoriesFilters {
     name?: string;
 }
+
+export interface ProductsFilters {
+    name?: string
+}
