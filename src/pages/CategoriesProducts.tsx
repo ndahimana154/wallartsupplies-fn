@@ -105,7 +105,6 @@ const CategoriesProducts = () => {
         }}
       />
 
-      {/* Header Section */}
       <div className="relative overflow-hidden py-16 md:py-20 text-center">
         <motion.div
           initial={{ opacity: 0 }}

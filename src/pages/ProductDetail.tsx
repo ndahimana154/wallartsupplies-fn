@@ -49,6 +49,7 @@ const ProductDetail = () => {
     if (!product) return;
 
     const totalPrice = (product.price * quantity).toFixed(2);
+    const productLink = `${window.location.origin}/product-detail/${product.slug}`;
 
     const message = `Hello, I'm interested in the ${product.name}:
 
@@ -57,6 +58,7 @@ const ProductDetail = () => {
 • Unit Price: $${product.price}
 • Total Amount: $${totalPrice}
 • MOQ: ${product.moq} units
+• Link: ${productLink}
 
 I'd like to know more about customization options and shipping.`;
 

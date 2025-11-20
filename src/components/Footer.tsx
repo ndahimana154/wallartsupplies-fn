@@ -75,7 +75,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Navigation Links */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Explore
@@ -118,14 +117,13 @@ const Footer = () => {
             </nav>
           </div>
 
-          {/* Quick Links */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Company
             </h2>
             <nav className="flex flex-col gap-3 text-gray-300 text-sm">
               <Link
-                to="/about"
+                to="/about-us"
                 className="hover:text-[#F04E23] transition-colors duration-200"
               >
                 About Us
@@ -151,7 +149,6 @@ const Footer = () => {
             </nav>
           </div>
 
-          {/* Contact Info */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Contact Us

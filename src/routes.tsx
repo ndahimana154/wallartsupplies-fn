@@ -13,6 +13,7 @@ import ClientsLayout from './pages/ClientsLayout';
 import ANotFound from './pages/a/ANotFound';
 import CategoriesProducts from './pages/CategoriesProducts';
 import HeroAds from './pages/a/HeroAds';
+import Search from './pages/Search';
 
 const AppRouter = () => {
   return (
@@ -21,6 +22,8 @@ const AppRouter = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/product-detail/:slug" element={<ProductDetail />} />
         <Route path="/categories/:slug" element={<CategoriesProducts />} />
+        <Route path="/search" element={<Search />} />
+        <Route path="/products" element={<Search />} />
       </Route>
 
       <Route path="/a/login" element={<Login />} />
