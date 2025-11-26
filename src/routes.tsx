@@ -14,6 +14,8 @@ import ANotFound from './pages/a/ANotFound';
 import CategoriesProducts from './pages/CategoriesProducts';
 import HeroAds from './pages/a/HeroAds';
 import Search from './pages/Search';
+import AboutUs from './pages/AboutUs';
+import ContactUs from './pages/ContactUs';
 
 const AppRouter = () => {
   return (
@@ -24,6 +26,8 @@ const AppRouter = () => {
         <Route path="/categories/:slug" element={<CategoriesProducts />} />
         <Route path="/search" element={<Search />} />
         <Route path="/products" element={<Search />} />
+        <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/contact-us" element={<ContactUs />} />
       </Route>
 
       <Route path="/a/login" element={<Login />} />
