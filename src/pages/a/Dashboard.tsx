@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import SeoSetup from '../../components/SeoSetup';
 import { Link } from 'react-router-dom';
 import { MdAdsClick } from 'react-icons/md';
+import NewProductModal from '../../components/a/NewProductModal';
+import type { QueryOptions } from '../../types/heroAd';
 
 interface DashboardStats {
   totalProducts: number;
@@ -20,7 +22,16 @@ interface RecentProduct {
   createdAt: string;
 }
 
+interface Category {
+  id: number;
+  name: string;
+}
+
 const Dashboard = () => {
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
   const [stats, setStats] = useState<DashboardStats>({
     totalProducts: 0,
     totalCategories: 0,
@@ -57,8 +68,29 @@ const Dashboard = () => {
     }
   };
 
+  const fetchCategories = async (page: number = 1) => {
+    try {
+      const queries: QueryOptions = {
+        page,
+        limit: 100,
+        sortBy: 'updatedAt',
+        order: 'DESC',
+      };
+
+      const response = await productRequests.getCategories({}, queries);
+      if (response.success === true) {
+        setCategories(response.data.data || []);
+        return;
+      }
+      throw new Error('An unknown error occurred.');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to fetch categories');
+    }
+  };
+
   useEffect(() => {
     fetchData();
+    fetchCategories()
   }, []);
 
   const statCards = [
@@ -219,13 +251,15 @@ const Dashboard = () => {
                       <p className="text-sm mt-1">
                         Get started by adding your first product
                       </p>
-                      <Link
-                        to="/products/add"
-                        className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#e67e22] hover:bg-[#d35400] transition-colors"
+                      <button
+                        onClick={() => setIsNewModalOpen(true)}
+                        className="bg-[#e67e22] mt-3 cursor-pointer  hover:bg-[#d35400] text-white px-6 py-2 rounded-lg font-medium transition-colors"
                       >
-                        <FaPlus className="mr-2 text-xs" />
-                        Add Product
-                      </Link>
+                       <span>
+                         Add Product
+                        </span>
+                      </button>
+
                     </div>
                   </td>
                 </tr>
@@ -285,7 +319,17 @@ const Dashboard = () => {
           </div>
         </Link>
       </div>
+      {isNewModalOpen && (
+        <NewProductModal
+          onClose={() => {
+            setIsNewModalOpen(false);
+            fetchData();
+          }}
+          categories={categories}
+        />
+      )}
     </div>
+
   );
 };
 

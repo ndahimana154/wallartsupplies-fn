@@ -166,7 +166,7 @@ const EditProductModal = ({
           zIndex: 9999,
         }}
       />{' '}
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl pt-6 px-6 pb-4 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Edit Product: {product.name}

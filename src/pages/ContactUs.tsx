@@ -8,19 +8,17 @@ import {
   FaMapMarkerAlt,
 } from 'react-icons/fa';
 import { adminEmail, adminPhone, companyAddress } from '../utils/axiosInstance';
+import { uploadImageToCloudinary } from '../helpers/cloudinay';
+import toast, { Toaster } from 'react-hot-toast';
+import inquiriesRequests from '../utils/requests/inquiriesRequests';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    projectType: '',
-    frameStyle: '',
-    dimensions: '',
-    budget: '',
-    deadline: '',
     description: '',
-    referenceImages: [] as File[],
+    referenceImages: [] as any[],
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,22 +63,39 @@ const ContactUs = () => {
     try {
       console.log('Form data:', formData);
 
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      let uploadedUrls: string[] = [];
+      if (formData.referenceImages && formData.referenceImages.length > 0) {
+        const uploadPromises = formData.referenceImages.map((file) =>
+          uploadImageToCloudinary(file)
+        );
+        const results = await Promise.all(uploadPromises);
+        uploadedUrls = results.map((r) => r.url);
+      }
 
-      setSubmitStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        projectType: '',
-        frameStyle: '',
-        dimensions: '',
-        budget: '',
-        deadline: '',
-        description: '',
-        referenceImages: [],
-      });
+      const payload = {
+        fullNames: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        projectDescription: formData.description,
+        images: uploadedUrls,
+      };
+
+      const response = await inquiriesRequests.newCustomInquiry(payload);
+      console.log('API response:', response);
+      if(response.success ==true) {
+        toast.success('Your custom order request has been submitted. We will contact you within 24 hours.');
+        setSubmitStatus('success');
+        setFormData({
+            name: '',
+            email: '',
+            phone: '',
+            description: '',
+            referenceImages: [],
+          });
+
+        } 
     } catch (error) {
+      console.error('Submit error:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -89,6 +104,7 @@ const ContactUs = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4 sm:px-6 lg:px-8">
+      <Toaster position='top-right'/>
       <div className="py-16  md:py-20"></div>{' '}
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -169,7 +185,6 @@ const ContactUs = () => {
             </div>
           </motion.div>
 
-          {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -180,7 +195,6 @@ const ContactUs = () => {
               onSubmit={handleSubmit}
               className="bg-white rounded-2xl shadow-lg p-8"
             >
-              {/* Personal Information */}
               <div className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Personal Information

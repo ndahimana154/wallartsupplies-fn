@@ -107,8 +107,8 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
       console.error('Error submitting Ad:', error);
       toast.error(
         error?.response?.data?.message ||
-          error?.message ||
-          'Something went wrong'
+        error?.message ||
+        'Something went wrong'
       );
     } finally {
       setUploading(false);
@@ -177,13 +177,12 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                   name="description"
                   rows={4}
                   placeholder="Enter compelling description for your hero banner..."
-                  className={`w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#e67e22] focus:outline-none resize-y text-gray-800 ${
-                    values.description.length > 200
+                  className={`w-full border rounded-lg p-3 focus:ring-2 focus:ring-[#e67e22] focus:outline-none resize-y text-gray-800 ${values.description.length > 200
                       ? 'border-red-300'
                       : values.description.length > 150
-                      ? 'border-yellow-300'
-                      : 'border-gray-300'
-                  }`}
+                        ? 'border-yellow-300'
+                        : 'border-gray-300'
+                    }`}
                 />
                 <div className="flex justify-between mt-1">
                   {errors.description && touched.description ? (
@@ -192,16 +191,20 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                     <div />
                   )}
                   <span
-                    className={`text-sm ${
-                      values.description.length > 200
+                    className={`text-sm ${values.description.length > 200
                         ? 'text-red-500 font-medium'
                         : values.description.length > 180
-                        ? 'text-yellow-500'
-                        : 'text-gray-400'
-                    }`}
+                          ? 'text-yellow-500'
+                          : 'text-gray-400'
+                      }`}
                   >
-                    {200 - values.description.length} characters remaining
-                  </span>
+                    {
+                      (200 - values.description.length) >= 0 && (
+                        <span>
+                          {200 - values.description.length} characters remaining
+                        </span>
+                      )
+                    }                  </span>
                 </div>
               </div>
 
@@ -304,11 +307,10 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                 <button
                   type="submit"
                   disabled={uploading || !isValid || !dirty}
-                  className={`px-5 py-2 rounded-lg text-white font-medium transition ${
-                    uploading || !isValid || !dirty
+                  className={`px-5 py-2 rounded-lg text-white font-medium transition ${uploading || !isValid || !dirty
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-[#e67e22] hover:bg-[#cf711f]'
-                  }`}
+                    }`}
                 >
                   {uploading ? 'Uploading...' : 'Save Hero Ad'}
                 </button>

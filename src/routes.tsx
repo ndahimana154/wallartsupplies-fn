@@ -6,6 +6,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyResetLink from './pages/VerifyResetLink';
 import Dashboard from './pages/a/Dashboard';
 import Layout from './pages/a/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
 import Products from './pages/a/Products';
 import Categories from './pages/a/Categories';
 import ProductDetail from './pages/ProductDetail';
@@ -16,6 +17,8 @@ import HeroAds from './pages/a/HeroAds';
 import Search from './pages/Search';
 import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
+import Inquiries from './pages/a/Inquiries';
+import Logout from './pages/a/Logout';
 
 const AppRouter = () => {
   return (
@@ -34,11 +37,20 @@ const AppRouter = () => {
       <Route path="/a/forgot" element={<ForgotPassword />} />
       <Route path="/a/verify-reset" element={<VerifyResetLink />} />
 
-      <Route path="a" element={<Layout />}>
+      <Route
+        path="a"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="products" element={<Products />} />
         <Route path="categories" element={<Categories />} />
         <Route path="hero-ads" element={<HeroAds />} />
+        <Route path="inquiries" element={<Inquiries />} />
+        <Route path="logout" element={<Logout />} />
         <Route path="*" element={<ANotFound />} />
       </Route>
 
