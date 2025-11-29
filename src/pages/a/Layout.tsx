@@ -10,6 +10,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { useState } from 'react';
 import AdminHeader from '../../components/a/AdminHeader';
 import { MdAdsClick } from 'react-icons/md';
+import { BsInfoSquareFill } from 'react-icons/bs';
 
 const Layout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -19,6 +20,7 @@ const Layout = () => {
     { name: 'Products', icon: <FaBox />, path: '/a/products' },
     { name: 'Categories', icon: <FaTags />, path: '/a/categories' },
     { name: 'Hero Ads', icon: <MdAdsClick />, path: '/a/hero-ads' },
+    { name: 'Inquiries', icon: <BsInfoSquareFill />, path: '/a/inquiries' },
     { name: 'Home', icon: <FaHome />, path: '/' },
   ];
 

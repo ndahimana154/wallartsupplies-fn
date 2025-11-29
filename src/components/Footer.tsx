@@ -10,6 +10,7 @@ import {
 import productRequests from '../utils/requests/productRequests';
 import { useEffect, useState } from 'react';
 import type { CategoryData } from '../types/product';
+import { adminEmail, adminPhone } from '../utils/axiosInstance';
 
 const Footer = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
@@ -75,7 +76,6 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Navigation Links */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Explore
@@ -113,19 +113,18 @@ const Footer = () => {
                 to="/products"
                 className="hover:text-[#F04E23] transition-colors duration-200"
               >
-                All Products
+                Latest collections
               </Link>
             </nav>
           </div>
 
-          {/* Quick Links */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Company
             </h2>
             <nav className="flex flex-col gap-3 text-gray-300 text-sm">
               <Link
-                to="/about"
+                to="/about-us"
                 className="hover:text-[#F04E23] transition-colors duration-200"
               >
                 About Us
@@ -151,7 +150,6 @@ const Footer = () => {
             </nav>
           </div>
 
-          {/* Contact Info */}
           <div className="flex flex-col items-center md:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Contact Us
@@ -159,15 +157,15 @@ const Footer = () => {
             <div className="flex flex-col gap-3 text-sm text-gray-300">
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>support@wallartsupplies.com</span>
+                <span>{adminEmail}</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>+1 (555) 555-5555</span>
+                <span>{adminPhone}</span>
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>Kigali, Rwanda</span>
+                <span>Zhejiang, China</span>
               </div>
 
               <div className="flex gap-4 mt-4">

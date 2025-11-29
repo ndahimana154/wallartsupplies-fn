@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
 import { BsWhatsapp } from 'react-icons/bs';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -7,6 +7,7 @@ import type { CategoryData } from '../types/product';
 import productRequests from '../utils/requests/productRequests';
 import HeaderLoading from './header/HeaderLoading';
 import HeaderError from './header/HeaderError';
+import { whatsAppClick } from '../helpers/product';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Header = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
   const fetchBestCategories = async () => {
     try {
@@ -43,8 +45,10 @@ const Header = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    setMenuOpen(false);
     if (searchQuery.trim()) {
-      console.log('Searching for:', searchQuery);
+      navigate(`/search?search=${searchQuery}`);
+      setSearchQuery('');
     }
   };
 
@@ -72,6 +76,14 @@ const Header = () => {
           >
             Home
           </Link>
+
+          <Link
+            to="/search"
+            className="hover:text-[#e67e22] transition-colors duration-200 py-2"
+          >
+            Our collections
+          </Link>
+
           {categories?.slice(0, 4).map((cat) => (
             <Link
               key={cat.id}
@@ -102,7 +114,6 @@ const Header = () => {
           )}
         </nav>
 
-        {/* Logo */}
         <div className="flex-1 flex justify-center lg:justify-center">
           <Link to="/" className="flex-shrink-0">
             <img
@@ -113,9 +124,7 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Right section */}
         <div className="hidden lg:flex items-center gap-4">
-          {/* Search bar */}
           <form onSubmit={handleSearch} className="flex items-center">
             <div className="flex items-center border border-gray-300 rounded-full overflow-hidden transition-all duration-300 focus-within:border-[#e67e22] focus-within:ring-2 focus-within:ring-[#e67e22]/20">
               <input
@@ -140,18 +149,22 @@ const Header = () => {
           >
             Contact Us
           </Link>
+          <Link
+            to="/about-us"
+            className="text-gray-700 hover:text-[#e67e22] font-medium transition-colors duration-200 whitespace-nowrap"
+          >
+            About Us
+          </Link>
 
-          <a
-            href="https://wa.me/yourNumber"
-            target="_blank"
+          <button
+            onClick={() => whatsAppClick()}
             rel="noopener noreferrer"
             className="text-green-500 hover:text-green-600 transition-colors duration-200"
           >
             <BsWhatsapp className="w-5 h-5" />
-          </a>
+          </button>
         </div>
 
-        {/* Mobile menu button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="lg:hidden p-2 text-gray-700 hover:text-[#e67e22] transition-colors duration-200"
@@ -161,7 +174,6 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -177,6 +189,13 @@ const Header = () => {
                 className="py-2 hover:text-[#e67e22] transition-colors"
               >
                 Home
+              </Link>
+              <Link
+                to="/search"
+                onClick={() => setMenuOpen(false)}
+                className="py-2 hover:text-[#e67e22] transition-colors"
+              >
+                Our collections
               </Link>
 
               {categories.map((cat) => (
@@ -216,16 +235,14 @@ const Header = () => {
                 Contact Us
               </Link>
 
-              <a
-                href="https://wa.me/yourNumber"
-                target="_blank"
+              <button
+                onClick={() => whatsAppClick()}
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 py-2 text-green-500 hover:text-green-600 transition-colors"
-                onClick={() => setMenuOpen(false)}
+                className="text-green-500 hover:text-green-600 transition-colors duration-200"
               >
                 <BsWhatsapp className="w-5 h-5" />
                 <span>Chat on WhatsApp</span>
-              </a>
+              </button>
             </nav>
           </motion.div>
         )}

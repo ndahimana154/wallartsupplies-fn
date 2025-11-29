@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useState } from 'react';
 import userRequests from '../utils/requests/userRequests';
+import auth from '../utils/auth';
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -27,7 +28,8 @@ const Login = () => {
     const response = await userRequests.loginRequest(values);
 
     if (response.success === true) {
-      sessionStorage.setItem('token', response.data.session.token);
+      // store token with 2 hour TTL
+      auth.setAuth(response.data.session.token, 7200);
       setStatusMessage({
         type: 'success',
         message: 'Login successful! Redirecting...',
