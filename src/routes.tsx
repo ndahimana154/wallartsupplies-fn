@@ -19,6 +19,7 @@ import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import Inquiries from './pages/a/Inquiries';
 import Logout from './pages/a/Logout';
+import Chatbot from './components/Chatbot';
 
 const AppRouter = () => {
   return (
@@ -31,6 +32,7 @@ const AppRouter = () => {
         <Route path="/products" element={<Search />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/chat-bot" element={<Chatbot />} />
       </Route>
 
       <Route path="/a/login" element={<Login />} />
