@@ -1,22 +1,23 @@
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import chatbotRequests from '../utils/requests/chatbotRequests';
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import chatbotRequests from "../utils/requests/chatbotRequests";
+import ReactMarkdown from "react-markdown";
 
 function Chatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const BRAND = {
-    color: '#e67e22',
-    lightBg: '#fff6ef',
-    name: 'Wall Art Supplies',
+    color: "#e67e22",
+    lightBg: "#fff6ef",
+    name: "Wall Art Supplies",
   };
 
   useEffect(() => {
     // when opening for first time, show a friendly welcome
     if (open && messages.length === 0) {
       const welcome = {
-        sender: 'bot',
+        sender: "bot",
         text: `Hi! 👋 I'm ${BRAND.name}'s assistant — how can I help with frames, orders, or sizing today?`,
       };
       setMessages([welcome]);
@@ -26,7 +27,7 @@ function Chatbot() {
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMsg = { sender: 'user', text: input };
+    const userMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, userMsg]);
 
     try {
@@ -36,18 +37,29 @@ function Chatbot() {
         response?.data?.reply ??
         response?.reply ??
         response?.data?.message ??
-        'Sorry, I could not respond.';
-      const botMsg = { sender: 'bot', text: reply };
+        "Sorry, I could not respond.";
+      const botMsg = { sender: "bot", text: reply };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
       const botMsg = {
-        sender: 'bot',
-        text: 'Something went wrong. Please try again later.',
+        sender: "bot",
+        text: "Something went wrong. Please try again later.",
       };
       setMessages((prev) => [...prev, botMsg]);
     }
 
-    setInput('');
+    setInput("");
+  };
+  const makeLinksClickable = (text: any) => {
+    return text.replace(
+      /(https?:\/\/[^\s]+)/g,
+      (url: any) => `[${url}](${url})`
+    );
+  };
+  const normalizeText = (text: any) => {
+    if (Array.isArray(text)) return text.join(" ");
+    if (typeof text === "object") return JSON.stringify(text);
+    return String(text);
   };
 
   return (
@@ -59,7 +71,7 @@ function Chatbot() {
         whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.95 }}
         className="fixed bottom-6 right-6 p-3 rounded-full shadow-2xl"
-        style={{ background: BRAND.color, color: '#fff' }}
+        style={{ background: BRAND.color, color: "#fff" }}
         onClick={() => setOpen((v) => !v)}
         aria-label="Open chat"
       >
@@ -81,8 +93,8 @@ function Chatbot() {
               style={{
                 background: BRAND.lightBg,
                 color: BRAND.color,
-                display: 'grid',
-                placeItems: 'center',
+                display: "grid",
+                placeItems: "center",
               }}
             >
               <img
@@ -100,24 +112,44 @@ function Chatbot() {
           </div>
 
           <div className="h-64 overflow-y-auto p-3 space-y-2 bg-gray-50">
-            {messages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${
-                  msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
+            {messages.map((msg, idx) => {
+              const raw = normalizeText(msg.text);
+              const formatted = makeLinksClickable(raw);
+
+              return (
                 <div
-                  className={`${
-                    msg.sender === 'user'
-                      ? 'bg-[#e67e22] text-white'
-                      : 'bg-white border'
-                  } px-3 py-2 rounded-lg max-w-[80%] shadow-sm`}
+                  key={idx}
+                  className={`flex ${
+                    msg.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
-                  {msg.text}
+                  <div
+                    className={`${
+                      msg.sender === "user"
+                        ? "bg-[#e67e22] text-white"
+                        : "bg-white border"
+                    } px-3 py-2 rounded-lg max-w-[80%] shadow-sm`}
+                  >
+                    <div className="prose prose-sm max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ node, ...props }) => (
+                            <a
+                              {...props}
+                              className="text-yellow-600 underline"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            />
+                          ),
+                        }}
+                      >
+                        {formatted}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="px-3 py-3 border-t bg-white flex gap-2">
@@ -127,7 +159,7 @@ function Chatbot() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="How can I help you today?"
               onKeyDown={(e) => {
-                if (e.key === 'Enter') sendMessage();
+                if (e.key === "Enter") sendMessage();
               }}
             />
             <button
