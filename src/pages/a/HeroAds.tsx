@@ -466,7 +466,6 @@ const HeroAds = () => {
                       </button>
                     ))}
 
-                    {/* Next Button */}
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}

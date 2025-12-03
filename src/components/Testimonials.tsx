@@ -117,7 +117,6 @@ const TestimonialsGrid = () => {
                 "{testimonial.text}"
               </motion.p>
 
-              {/* Client info */}
               <div className="border-t border-gray-100 pt-4">
                 <motion.h3
                   className="font-semibold text-gray-900 text-lg"
@@ -147,7 +146,7 @@ const TestimonialsGrid = () => {
       >
         <p className="text-gray-600 mb-6">Ready to join our happy customers?</p>
         <Link
-          to={'/products'}
+          to={'/contact-us'}
           className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
         >
           Get Started Today

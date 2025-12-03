@@ -321,7 +321,6 @@ const Categories = () => {
               </table>
             </div>
 
-            {/* Pagination */}
             <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <p className="text-sm text-gray-700">

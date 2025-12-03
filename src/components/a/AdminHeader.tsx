@@ -10,7 +10,6 @@ const AdminHeader = () => {
   return (
     <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-black/60 shadow-lg border-b border-white/10">
       <div className="flex justify-between items-center px-6 py-4">
-        {/* Logo & Title */}
         <Link
           to="/a/dashboard"
           className="flex items-center gap-3 group transition-all"
@@ -26,7 +25,6 @@ const AdminHeader = () => {
           </h1>
         </Link>
 
-        {/* User Menu */}
         <div className="relative">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}

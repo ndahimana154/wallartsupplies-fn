@@ -87,7 +87,7 @@ const NewProductModal = ({
         name: values.name.trim(),
         price: Number(values.price),
         moq: Number(values.moq),
-        description: values.description.trim(), // This now comes from Formik
+        description: values.description.trim(),
         categoryId: Number(values.categoryId),
         images: uploadedUrls,
         customAttr: cleanedCustomAttr,

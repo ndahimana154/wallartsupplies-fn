@@ -1,5 +1,5 @@
 import axios from "axios"
-import { getToken, getAuth, clearAuth } from './auth'
+import { getAuth, clearAuth } from './auth'
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -16,7 +16,7 @@ export const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS
 axiosInstance.interceptors.request.use((config) => {
     try {
         const auth = getAuth();
-        // only check expiry if we actually have an auth payload
+
         if (auth && Date.now() > auth.expiry) {
             clearAuth();
             window.location.href = '/a/login';
@@ -28,14 +28,12 @@ axiosInstance.interceptors.request.use((config) => {
             config.headers["Authorization"] = `Bearer ${token}`;
         }
     } catch (err) {
-        // silent fallthrough
     }
     return config
 }, (error) => {
     return Promise.reject(error)
 })
 
-// Response interceptor: if server returns 401, clear auth and redirect to login
 axiosInstance.interceptors.response.use(
     (res) => res,
     (error) => {

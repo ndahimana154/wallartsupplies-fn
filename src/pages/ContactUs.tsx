@@ -11,6 +11,7 @@ import { adminEmail, adminPhone, companyAddress } from '../utils/axiosInstance';
 import { uploadImageToCloudinary } from '../helpers/cloudinay';
 import toast, { Toaster } from 'react-hot-toast';
 import inquiriesRequests from '../utils/requests/inquiriesRequests';
+import SeoSetup from '../components/SeoSetup';
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({
@@ -82,18 +83,19 @@ const ContactUs = () => {
 
       const response = await inquiriesRequests.newCustomInquiry(payload);
       console.log('API response:', response);
-      if(response.success ==true) {
-        toast.success('Your custom order request has been submitted. We will contact you within 24 hours.');
+      if (response.success == true) {
+        toast.success(
+          'Your custom order request has been submitted. We will contact you within 24 hours.'
+        );
         setSubmitStatus('success');
         setFormData({
-            name: '',
-            email: '',
-            phone: '',
-            description: '',
-            referenceImages: [],
-          });
-
-        } 
+          name: '',
+          email: '',
+          phone: '',
+          description: '',
+          referenceImages: [],
+        });
+      }
     } catch (error) {
       console.error('Submit error:', error);
       setSubmitStatus('error');
@@ -104,7 +106,16 @@ const ContactUs = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4 sm:px-6 lg:px-8">
-      <Toaster position='top-right'/>
+      <Toaster position="top-right" />
+      <SeoSetup
+        mainData={{
+          title: 'Contact Us - Wall Art Supplies',
+          description:
+            "Get in touch for custom framing quotes, orders, and general inquiries. We're happy to help with product info, shipping and custom projects.",
+          image: '/main-logo.png',
+          type: 'website',
+        }}
+      />
       <div className="py-16  md:py-20"></div>{' '}
       <div className="max-w-7xl mx-auto">
         <motion.div

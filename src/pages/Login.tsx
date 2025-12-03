@@ -28,7 +28,6 @@ const Login = () => {
     const response = await userRequests.loginRequest(values);
 
     if (response.success === true) {
-      // store token with 2 hour TTL
       auth.setAuth(response.data.session.token, 7200);
       setStatusMessage({
         type: 'success',

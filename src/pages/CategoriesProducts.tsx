@@ -144,7 +144,6 @@ const CategoriesProducts = () => {
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="max-w-7xl mx-auto px-6 pb-20">
         {products.length === 0 ? (
           <motion.div
@@ -171,7 +170,6 @@ const CategoriesProducts = () => {
           </motion.div>
         ) : (
           <>
-            {/* Products Count */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -184,7 +182,6 @@ const CategoriesProducts = () => {
               </p>
             </motion.div>
 
-            {/* Products Grid */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -200,7 +197,6 @@ const CategoriesProducts = () => {
               ))}
             </motion.div>
 
-            {/* Load More (if needed in future) */}
             {products.length >= 12 && (
               <motion.div
                 initial={{ opacity: 0 }}

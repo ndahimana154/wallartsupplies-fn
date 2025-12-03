@@ -59,7 +59,6 @@ const ProductItemRelatedSection = ({
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
 
-        {/* Price Badge */}
         <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-lg">
           <span className="text-[#F04E23] font-light text-lg">
             ${product.price}

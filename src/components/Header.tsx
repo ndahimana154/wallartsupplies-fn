@@ -8,6 +8,7 @@ import productRequests from '../utils/requests/productRequests';
 import HeaderLoading from './header/HeaderLoading';
 import HeaderError from './header/HeaderError';
 import { whatsAppClick } from '../helpers/product';
+import Chatbot from './Chatbot';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -247,6 +248,7 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <Chatbot />
     </header>
   );
 };

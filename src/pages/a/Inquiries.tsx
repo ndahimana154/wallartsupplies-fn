@@ -84,12 +84,10 @@ const Inquiries = () => {
       } else {
         throw new Error('Failed to fetch inquiries');
       }
-      // Fetch unresolved total for badge (only when backend supports pagination.total)
       try {
         const unresolvedFilters: InquiriesFilters = {
           ...(filters || {}),
         } as InquiriesFilters;
-        // if caller already filtered by UNRESOLVED, reuse the main response's total
         if (filters.status === 'UNRESOLVED') {
           setUnresolvedCount(response.data.pagination?.total || 0);
         } else {
@@ -103,7 +101,6 @@ const Inquiries = () => {
           }
         }
       } catch (e) {
-        // don't block main flow for badge failures
         console.warn('Failed to fetch unresolved count', e);
       }
     } catch (error: any) {
@@ -240,7 +237,6 @@ const Inquiries = () => {
                     | 'UNRESOLVED'
                     | 'RESOLVED';
                   setCurrentPage(1);
-                  // try fetching with the desired status first; only update UI if backend responds
                   const ok = await fetchData(1, searchTerm, newStatus);
                   if (ok) {
                     setStatusFilter(newStatus);

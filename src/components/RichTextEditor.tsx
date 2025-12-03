@@ -16,7 +16,6 @@ const RichTextEditor = ({
     const toolbarEl = toolbarRef.current;
     if (!editorEl || quillRef.current) return;
 
-    // Clear any existing content
     editorEl.innerHTML = '';
     if (toolbarEl) toolbarEl.innerHTML = '';
 
@@ -24,7 +23,6 @@ const RichTextEditor = ({
       theme: 'snow',
       placeholder: placeholder,
       modules: {
-        // Use explicit toolbar container (prevents Quill from creating another toolbar)
         toolbar: toolbarEl || [
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
           [{ font: [] }],
@@ -40,12 +38,10 @@ const RichTextEditor = ({
       },
     });
 
-    // Set initial value
     if (value) {
       quillRef.current.root.innerHTML = value;
     }
 
-    // Handle text changes
     const handleTextChange = () => {
       const content = quillRef.current?.root.innerHTML || '';
       onChange(content);
@@ -60,7 +56,6 @@ const RichTextEditor = ({
       } catch (e) {}
       try {
         if (quillRef.current) {
-          // destroy quill instance by clearing reference
           quillRef.current = null;
         }
       } catch (e) {}

@@ -1,179 +1,289 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import chatbotRequests from "../utils/requests/chatbotRequests";
-import ReactMarkdown from "react-markdown";
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import chatbotRequests from '../utils/requests/chatbotRequests';
+import ReactMarkdown from 'react-markdown';
+import { FiX, FiSend } from 'react-icons/fi';
+import { BsRobot } from 'react-icons/bs';
 
 function Chatbot() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<any[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+
   const BRAND = {
-    color: "#e67e22",
-    lightBg: "#fff6ef",
-    name: "Wall Art Supplies",
+    color: '#e67e22',
+    lightBg: '#fff6ef',
+    name: 'Wall Art Supplies',
   };
 
   useEffect(() => {
-    // when opening for first time, show a friendly welcome
     if (open && messages.length === 0) {
-      const welcome = {
-        sender: "bot",
-        text: `Hi! 👋 I'm ${BRAND.name}'s assistant — how can I help with frames, orders, or sizing today?`,
-      };
-      setMessages([welcome]);
+      setMessages([
+        {
+          sender: 'bot',
+          text: `Hi! 👋 I'm ${BRAND.name}'s assistant — how can I help with frames, orders, or sizing today?`,
+        },
+      ]);
     }
   }, [open]);
 
   const sendMessage = async () => {
     if (!input.trim()) return;
 
-    const userMsg = { sender: "user", text: input };
+    const userMsg = { sender: 'user', text: input };
     setMessages((prev) => [...prev, userMsg]);
+    setInput('');
+    setLoading(true);
 
     try {
       const response = await chatbotRequests.askChatbot(input);
-      // response shape may vary; try common locations
+
       const reply =
         response?.data?.reply ??
         response?.reply ??
         response?.data?.message ??
-        "Sorry, I could not respond.";
-      const botMsg = { sender: "bot", text: reply };
-      setMessages((prev) => [...prev, botMsg]);
+        '';
+
+      if (!reply || reply.trim() === '') {
+        setMessages((prev) => [
+          ...prev,
+          {
+            sender: 'bot',
+            text: "I'm not quite sure how to answer that. 🤔 Could you rephrase or ask something else about our frames, orders, or sizing?",
+          },
+        ]);
+      } else {
+        setMessages((prev) => [...prev, { sender: 'bot', text: reply }]);
+      }
     } catch (err) {
-      const botMsg = {
-        sender: "bot",
-        text: "Something went wrong. Please try again later.",
-      };
-      setMessages((prev) => [...prev, botMsg]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: 'bot',
+          text: 'Sorry, I ran into a hiccup. 😅 Please try again in a moment or reach out to us directly.',
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
-
-    setInput("");
-  };
-  const makeLinksClickable = (text: any) => {
-    return text.replace(
-      /(https?:\/\/[^\s]+)/g,
-      (url: any) => `[${url}](${url})`
-    );
-  };
-  const normalizeText = (text: any) => {
-    if (Array.isArray(text)) return text.join(" ");
-    if (typeof text === "object") return JSON.stringify(text);
-    return String(text);
   };
 
-  return (
-    <>
-      {/* Floating button */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 p-3 rounded-full shadow-2xl"
-        style={{ background: BRAND.color, color: "#fff" }}
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Open chat"
-      >
-        <span className="text-xl">💬</span>
-      </motion.button>
-
-      {/* Chat window */}
-      {open && (
+  const LoadingDots = () => (
+    <div className="flex gap-1">
+      {[0, 1, 2].map((i) => (
         <motion.div
-          initial={{ opacity: 0, y: 18, scale: 0.98 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 8 }}
-          transition={{ duration: 0.25 }}
-          className="fixed bottom-20 right-6 w-80 bg-white shadow-2xl rounded-2xl overflow-hidden"
-        >
-          <div className="flex items-center gap-3 px-4 py-3 border-b">
-            <div
-              className="w-10 h-10 rounded-full"
+          key={i}
+          className="w-2 h-2 rounded-full"
+          style={{ background: BRAND.color }}
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.1 }}
+        />
+      ))}
+    </div>
+  );
+
+  const content = (
+    <>
+      <div className="fixed bottom-6 right-6 z-[999999]">
+        {!open && (
+          <>
+            <motion.div
+              className="absolute inset-0 rounded-full"
               style={{
-                background: BRAND.lightBg,
-                color: BRAND.color,
-                display: "grid",
-                placeItems: "center",
+                background: BRAND.color,
+                opacity: 0.2,
               }}
-            >
-              <img
-                src="/text-logo.svg"
-                alt="logo"
-                className="w-8 h-8 object-contain"
-              />
-            </div>
-            <div>
-              <div className="font-semibold">{BRAND.name} Assistant</div>
-              <div className="text-xs text-gray-500">
-                Here to help — ask me anything
-              </div>
-            </div>
-          </div>
-
-          <div className="h-64 overflow-y-auto p-3 space-y-2 bg-gray-50">
-            {messages.map((msg, idx) => {
-              const raw = normalizeText(msg.text);
-              const formatted = makeLinksClickable(raw);
-
-              return (
-                <div
-                  key={idx}
-                  className={`flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  <div
-                    className={`${
-                      msg.sender === "user"
-                        ? "bg-[#e67e22] text-white"
-                        : "bg-white border"
-                    } px-3 py-2 rounded-lg max-w-[80%] shadow-sm`}
-                  >
-                    <div className="prose prose-sm max-w-none">
-                      <ReactMarkdown
-                        components={{
-                          a: ({ node, ...props }) => (
-                            <a
-                              {...props}
-                              className="text-yellow-600 underline"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            />
-                          ),
-                        }}
-                      >
-                        {formatted}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="px-3 py-3 border-t bg-white flex gap-2">
-            <input
-              className="flex-1 border rounded-lg px-3 py-2 focus:outline-none"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="How can I help you today?"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") sendMessage();
+              animate={{
+                scale: [1, 1.4, 1.8],
+                opacity: [0.4, 0.2, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: 'easeOut',
               }}
             />
-            <button
-              onClick={sendMessage}
-              className="px-4 py-2 rounded-lg text-white"
-              style={{ background: BRAND.color }}
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: BRAND.color,
+                opacity: 0.1,
+              }}
+              animate={{
+                scale: [1, 1.3, 1.6],
+                opacity: [0.3, 0.15, 0],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                ease: 'easeOut',
+                delay: 0.3,
+              }}
+            />
+          </>
+        )}
+
+        <motion.button
+          initial={{ scale: 0 }}
+          animate={open ? { scale: 1 } : { scale: 1 }}
+          whileHover={{ scale: 1.12 }}
+          whileTap={{ scale: 0.88 }}
+          className="relative p-4 cursor-pointer rounded-full shadow-2xl transition-all hover:shadow-2xl"
+          style={{ background: BRAND.color, color: '#fff' }}
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Open chat assistant"
+        >
+          <motion.div
+            animate={open ? { y: 0 } : { y: [0, -8, 0] }}
+            transition={
+              open
+                ? { duration: 0.3 }
+                : {
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: 0.5,
+                  }
+            }
+          >
+            <BsRobot className="w-8 h-8 text-white" />
+          </motion.div>
+
+          <motion.div
+            className="absolute inset-0 rounded-full flex items-center justify-center"
+            animate={open ? { rotate: 90 } : { rotate: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {!open && messages.length > 0 && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center"
+              style={{
+                animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+              }}
             >
-              Send
-            </button>
-          </div>
-        </motion.div>
-      )}
+              {Math.min(messages.length, 9)}
+            </motion.div>
+          )}
+        </motion.button>
+      </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-20 right-6 w-80 bg-white shadow-2xl rounded-2xl overflow-hidden z-[999999] flex flex-col"
+          >
+            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b bg-gradient-to-r from-white to-gray-50">
+              <div className="flex items-center gap-3">
+                <div
+                  className="w-10 h-10 rounded-full flex-shrink-0"
+                  style={{
+                    background: BRAND.lightBg,
+                    color: BRAND.color,
+                    display: 'grid',
+                    placeItems: 'center',
+                  }}
+                >
+                  <img src="/text-logo.svg" className="w-8 h-8" alt="logo" />
+                </div>
+                <div>
+                  <div className="font-semibold text-gray-900">
+                    {BRAND.name} Assistant
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Here to help — ask me anything
+                  </div>
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setOpen(false)}
+                className="p-1 hover:bg-gray-100 rounded-full transition cursor-pointer"
+                aria-label="Close chat"
+              >
+                <FiX size={20} className="text-gray-500" />
+              </motion.button>
+            </div>
+
+            <div className="flex-1 h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white">
+              <AnimatePresence>
+                {messages.map((msg, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className={`flex ${
+                      msg.sender === 'user' ? 'justify-end' : 'justify-start'
+                    }`}
+                  >
+                    <div
+                      className={`${
+                        msg.sender === 'user'
+                          ? 'bg-gradient-to-r from-[#e67e22] to-[#f04e23] text-white rounded-2xl rounded-tr-sm'
+                          : 'bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm'
+                      } px-4 py-2.5 max-w-xs shadow-sm`}
+                    >
+                      <div className="text-sm leading-relaxed">
+                        <ReactMarkdown>{msg.text}</ReactMarkdown>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+                {loading && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="flex justify-start"
+                  >
+                    <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm">
+                      <LoadingDots />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <div className="px-4 py-3 border-t bg-white flex gap-2 items-center">
+              <input
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e67e22] transition"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask something..."
+                onKeyDown={(e) =>
+                  e.key === 'Enter' && !loading && sendMessage()
+                }
+                disabled={loading}
+              />
+              <motion.button
+                whileHover={!loading ? { scale: 1.05 } : {}}
+                whileTap={!loading ? { scale: 0.95 } : {}}
+                onClick={sendMessage}
+                disabled={loading}
+                className="p-2 rounded-lg text-white transition disabled:opacity-50 cursor-pointer"
+                style={{ background: BRAND.color }}
+                aria-label="Send message"
+              >
+                <FiSend size={18} />
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
+
+  return createPortal(content, document.body);
 }
 
 export default Chatbot;
