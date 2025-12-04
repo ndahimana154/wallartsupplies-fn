@@ -71,6 +71,7 @@ const GalleryOpenModal = ({
               src={galleryImages[galleryIndex]}
               alt={`Gallery ${galleryIndex + 1}`}
               className="w-full h-[70vh] object-contain bg-black"
+              loading="lazy"
             />
           </div>
 

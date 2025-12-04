@@ -82,6 +82,7 @@ const AboutUs = () => {
                 src="/hero1.jpg"
                 alt="Wall Art Supllies Workshop - Master framers at work"
                 className="w-full h-96 object-cover"
+                loading="lazy"
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -131,6 +132,7 @@ const AboutUs = () => {
                     src="/about/manufacturing1.JPG"
                     alt="Wall Art Supllies workshop interior"
                     className="w-full h-64 object-cover"
+                    loading="lazy"
                   />
                 </div>
                 <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -138,6 +140,7 @@ const AboutUs = () => {
                     src="/about/materials1.JPG"
                     alt="Premium framing materials"
                     className="w-full h-48 object-cover"
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -147,6 +150,7 @@ const AboutUs = () => {
                     src="/about/interior1.JPG"
                     alt="Framed art in gallery setting"
                     className="w-full h-48 object-cover"
+                    loading="lazy"
                   />
                 </div>
                 <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -154,6 +158,7 @@ const AboutUs = () => {
                     src="/about/interior2.jpg"
                     alt="Master framer at work"
                     className="w-full h-64 object-cover"
+                    loading="lazy"
                   />
                 </div>
               </div>

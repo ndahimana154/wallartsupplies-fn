@@ -65,6 +65,7 @@ const Footer = () => {
                     'hidden'
                   );
                 }}
+                loading="lazy"
               />
               <h1 className="text-2xl font-semibold text-[#F04E23] mb-3 hidden">
                 Wall Art Supplies

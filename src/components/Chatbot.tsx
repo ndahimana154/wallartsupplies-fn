@@ -192,7 +192,12 @@ function Chatbot() {
                     placeItems: 'center',
                   }}
                 >
-                  <img src="/text-logo.svg" className="w-8 h-8" alt="logo" />
+                  <img
+                    src="/text-logo.svg"
+                    className="w-8 h-8"
+                    alt="logo"
+                    loading="lazy"
+                  />
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900">

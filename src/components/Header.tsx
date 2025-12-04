@@ -121,6 +121,7 @@ const Header = () => {
               src="/text-logo.svg"
               alt="Logo"
               className="h-12 w-auto hover:opacity-90 transition-opacity duration-200"
+              loading="lazy"
             />
           </Link>
         </div>

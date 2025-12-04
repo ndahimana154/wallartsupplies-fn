@@ -464,6 +464,7 @@ const Dashboard = () => {
                                 className="h-10 w-10 object-cover"
                                 src={product.images[0]}
                                 alt={product.name}
+                                loading="lazy"
                               />
                             ) : (
                               <div className="h-10 w-10 bg-gray-300 flex items-center justify-center">
@@ -552,6 +553,7 @@ const Dashboard = () => {
                                 className="h-10 w-10 object-cover"
                                 src={item.product.images[0]}
                                 alt={item.product.name}
+                                loading="lazy"
                               />
                             ) : (
                               <div className="h-10 w-10 bg-gray-300 flex items-center justify-center">

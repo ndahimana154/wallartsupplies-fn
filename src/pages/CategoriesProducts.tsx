@@ -116,6 +116,7 @@ const CategoriesProducts = () => {
               src={category.image}
               alt={category.name}
               className="w-full h-full object-cover opacity-5 blur-sm"
+              loading="lazy"
             />
           )}
         </motion.div>

@@ -175,6 +175,7 @@ I'd like to know more about customization options and shipping.`;
           src={String(product.images[0])}
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-5 blur-sm"
+          loading="lazy"
         />
         <div className="relative z-10">
           <motion.h1
@@ -257,6 +258,7 @@ I'd like to know more about customization options and shipping.`;
                       src={String(image)}
                       alt={`${product.name} view ${index + 1}`}
                       className="w-20 h-20 object-cover"
+                      loading="lazy"
                     />
                   </button>
                 ))}

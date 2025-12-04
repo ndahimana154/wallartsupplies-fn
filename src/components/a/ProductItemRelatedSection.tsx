@@ -56,6 +56,7 @@ const ProductItemRelatedSection = ({
           onError={(e) => {
             e.currentTarget.src = '/placeholder-image.jpg';
           }}
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
 

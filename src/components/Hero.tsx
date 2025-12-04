@@ -201,7 +201,7 @@ const Hero = () => {
                       }`}
                       onLoad={() => handleImageLoad(index)}
                       onError={() => handleImageError(index)}
-                      loading="eager"
+                      loading="lazy"
                     />
                   )}
                 </div>

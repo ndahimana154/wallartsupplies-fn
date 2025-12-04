@@ -116,7 +116,12 @@ const VerifyResetLink = () => {
         >
           <div className="absolute inset-0 bg-black/50"></div>
           <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-20 text-white">
-            <img src="/text-logo.svg" className="w-40 mb-8" alt="Logo" />
+            <img
+              src="/text-logo.svg"
+              className="w-40 mb-8"
+              alt="Logo"
+              loading="lazy"
+            />
             <h2 className="text-3xl md:text-5xl font-bold mb-4">
               Reset Your Password
             </h2>

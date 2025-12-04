@@ -229,6 +229,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                       src={previewImage}
                       alt="Hero Ad preview"
                       className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                      loading="lazy"
                     />
                     <button
                       type="button"
@@ -253,6 +254,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                         e.currentTarget.src =
                           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
                       }}
+                      loading="lazy"
                     />
                     <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                       Current image
