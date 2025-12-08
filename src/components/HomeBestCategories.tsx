@@ -195,7 +195,6 @@ const HomeBestCategories = () => {
                 alt={cat.name}
                 className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                 onError={(e) => {
-                  // Fallback image if the category image fails to load
                   e.currentTarget.src =
                     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDMyMCAyNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjQwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTIwTDE2MCAxMjBNMTIwIDE2MEgxMjBNMjAwIDE2MEgyMDAiIHN0cm9rZT0iIzhDOTNBQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==';
                 }}

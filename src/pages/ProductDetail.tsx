@@ -112,7 +112,14 @@ I'd like to know more about customization options and shipping.`;
   if (error || !product) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
-        <SeoSetup mainData={{ title: '404 Product not found' }} />
+        <SeoSetup
+          mainData={{
+            title: '404 Product not found',
+            description: 'The product you requested could not be found.',
+            image: '/main-logo.png',
+            type: 'website',
+          }}
+        />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -139,9 +146,15 @@ I'd like to know more about customization options and shipping.`;
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       <SeoSetup
         mainData={{
-          title: `${product.name}`,
-          description: `${product.description}`,
+          title: `${product.name} — Wall Art Supplies`,
+          description: String(product.description)
+            .replace(/<[^>]+>/g, '')
+            .slice(0, 160),
+          image: String(product.images?.[0] ?? '/main-logo.png'),
+          type: 'product',
+          publishedAt: (product as any).createdAt ?? undefined,
         }}
+        canonicalUrl={`${frontendUrl}/product-detail/${product.slug}`}
       />
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -162,6 +175,7 @@ I'd like to know more about customization options and shipping.`;
           src={String(product.images[0])}
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-5 blur-sm"
+          loading="lazy"
         />
         <div className="relative z-10">
           <motion.h1
@@ -244,6 +258,7 @@ I'd like to know more about customization options and shipping.`;
                       src={String(image)}
                       alt={`${product.name} view ${index + 1}`}
                       className="w-20 h-20 object-cover"
+                      loading="lazy"
                     />
                   </button>
                 ))}

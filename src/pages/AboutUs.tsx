@@ -82,6 +82,7 @@ const AboutUs = () => {
                 src="/hero1.jpg"
                 alt="Wall Art Supllies Workshop - Master framers at work"
                 className="w-full h-96 object-cover"
+                loading="lazy"
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -131,6 +132,7 @@ const AboutUs = () => {
                     src="/about/manufacturing1.JPG"
                     alt="Wall Art Supllies workshop interior"
                     className="w-full h-64 object-cover"
+                    loading="lazy"
                   />
                 </div>
                 <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -138,6 +140,7 @@ const AboutUs = () => {
                     src="/about/materials1.JPG"
                     alt="Premium framing materials"
                     className="w-full h-48 object-cover"
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -147,6 +150,7 @@ const AboutUs = () => {
                     src="/about/interior1.JPG"
                     alt="Framed art in gallery setting"
                     className="w-full h-48 object-cover"
+                    loading="lazy"
                   />
                 </div>
                 <div className="rounded-2xl overflow-hidden shadow-lg">
@@ -154,6 +158,7 @@ const AboutUs = () => {
                     src="/about/interior2.jpg"
                     alt="Master framer at work"
                     className="w-full h-64 object-cover"
+                    loading="lazy"
                   />
                 </div>
               </div>
@@ -222,25 +227,6 @@ const AboutUs = () => {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-      {/* Team Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Meet Our Team
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Passionate experts dedicated to bringing out the best in your
-              artwork.
-            </p>
-          </motion.div>
         </div>
       </section>
       <section className="py-20 bg-gradient-to-r from-[#e67e22] to-orange-500">

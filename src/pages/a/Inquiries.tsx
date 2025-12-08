@@ -84,12 +84,10 @@ const Inquiries = () => {
       } else {
         throw new Error('Failed to fetch inquiries');
       }
-      // Fetch unresolved total for badge (only when backend supports pagination.total)
       try {
         const unresolvedFilters: InquiriesFilters = {
           ...(filters || {}),
         } as InquiriesFilters;
-        // if caller already filtered by UNRESOLVED, reuse the main response's total
         if (filters.status === 'UNRESOLVED') {
           setUnresolvedCount(response.data.pagination?.total || 0);
         } else {
@@ -103,7 +101,6 @@ const Inquiries = () => {
           }
         }
       } catch (e) {
-        // don't block main flow for badge failures
         console.warn('Failed to fetch unresolved count', e);
       }
     } catch (error: any) {
@@ -240,7 +237,6 @@ const Inquiries = () => {
                     | 'UNRESOLVED'
                     | 'RESOLVED';
                   setCurrentPage(1);
-                  // try fetching with the desired status first; only update UI if backend responds
                   const ok = await fetchData(1, searchTerm, newStatus);
                   if (ok) {
                     setStatusFilter(newStatus);
@@ -417,6 +413,7 @@ const Inquiries = () => {
                                         e.currentTarget.src =
                                           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAxNk0yNCAzMiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
                                       }}
+                                      loading="lazy"
                                     />
                                   </button>
                                 ))

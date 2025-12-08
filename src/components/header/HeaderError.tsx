@@ -36,6 +36,7 @@ const HeaderError = ({
                 src="/text-logo.svg"
                 alt="Logo"
                 className="h-12 w-auto hover:opacity-90 transition"
+                loading="lazy"
               />
             </Link>
           </div>

@@ -8,6 +8,7 @@ import productRequests from '../utils/requests/productRequests';
 import HeaderLoading from './header/HeaderLoading';
 import HeaderError from './header/HeaderError';
 import { whatsAppClick } from '../helpers/product';
+import Chatbot from './Chatbot';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -120,6 +121,7 @@ const Header = () => {
               src="/text-logo.svg"
               alt="Logo"
               className="h-12 w-auto hover:opacity-90 transition-opacity duration-200"
+              loading="lazy"
             />
           </Link>
         </div>
@@ -247,6 +249,7 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      <Chatbot />
     </header>
   );
 };

@@ -16,7 +16,6 @@ interface FormValues {
   image: File | string | null;
 }
 
-// Fix the validation schema for image
 const validationSchema = Yup.object({
   title: Yup.string()
     .required('Hero ad title is required')
@@ -35,14 +34,14 @@ const validationSchema = Yup.object({
   image: Yup.mixed()
     .required('Upload an image first')
     .test('fileSize', 'File too large', (value) => {
-      if (!value) return false; // No image at all
-      if (typeof value === 'string') return true; // Existing image URL is fine
-      if (value instanceof File) return value.size <= 10 * 1024 * 1024; // 10MB
+      if (!value) return false;
+      if (typeof value === 'string') return true;
+      if (value instanceof File) return value.size <= 10 * 1024 * 1024;
       return false;
     })
     .test('fileType', 'Unsupported file format', (value) => {
       if (!value) return false;
-      if (typeof value === 'string') return true; // Existing image URL is fine
+      if (typeof value === 'string') return true;
       if (value instanceof File) {
         return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
       }
@@ -85,7 +84,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
     try {
       let imageUrl = values.image;
 
-      // Only upload if it's a new file
       if (values.image instanceof File) {
         setUploading(true);
         toast.loading('Uploading image...');
@@ -101,7 +99,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
         description: values.description,
         buttonText: values.buttonText,
         link: values.link,
-        image: imageUrl as string, // Ensure it's string for API
+        image: imageUrl as string,
       };
 
       const response = await heroAdsRequests.updateHeroAdRequest(
@@ -231,6 +229,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                       src={previewImage}
                       alt="Hero Ad preview"
                       className="w-full h-48 object-cover rounded-lg border border-gray-300"
+                      loading="lazy"
                     />
                     <button
                       type="button"
@@ -255,6 +254,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                         e.currentTarget.src =
                           'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyOE00MCA1MiIgc3Ryb2tlPSIjOEM5M0FBIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K';
                       }}
+                      loading="lazy"
                     />
                     <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                       Current image
@@ -289,7 +289,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                     </div>
                   </div>
                 ) : (
-                  // Show upload area
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#e67e22] transition-colors cursor-pointer">
                     <input
                       type="file"
@@ -315,7 +314,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                   </div>
                 )}
 
-                {/* Hidden file input for the replace functionality */}
                 <input
                   type="file"
                   accept="image/*"

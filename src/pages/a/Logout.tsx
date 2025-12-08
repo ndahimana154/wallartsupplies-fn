@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiLogOut } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { clearAuth } from '../../utils/auth';

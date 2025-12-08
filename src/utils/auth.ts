@@ -2,7 +2,7 @@ const AUTH_KEY = 'auth';
 
 type AuthPayload = {
     token: string;
-    expiry: number; // epoch ms
+    expiry: number;
 };
 
 export const setAuth = (token: string, ttlSeconds = 7200) => {

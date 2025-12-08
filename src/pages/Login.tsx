@@ -28,7 +28,6 @@ const Login = () => {
     const response = await userRequests.loginRequest(values);
 
     if (response.success === true) {
-      // store token with 2 hour TTL
       auth.setAuth(response.data.session.token, 7200);
       setStatusMessage({
         type: 'success',
@@ -55,7 +54,12 @@ const Login = () => {
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-20 text-white">
-          <img src="/text-logo.svg" className="w-40 mb-8" alt="Logo" />
+          <img
+            src="/text-logo.svg"
+            className="w-40 mb-8"
+            alt="Logo"
+            loading="lazy"
+          />
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Welcome back, Boss!
           </h2>
