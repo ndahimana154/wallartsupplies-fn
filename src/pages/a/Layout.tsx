@@ -1,6 +1,5 @@
 import {
   FaBox,
-  FaHome,
   FaChartBar,
   FaTags,
   FaChevronLeft,
@@ -21,7 +20,6 @@ const Layout = () => {
     { name: 'Categories', icon: <FaTags />, path: '/a/categories' },
     { name: 'Hero Ads', icon: <MdAdsClick />, path: '/a/hero-ads' },
     { name: 'Inquiries', icon: <BsInfoSquareFill />, path: '/a/inquiries' },
-    { name: 'Home', icon: <FaHome />, path: '/' },
   ];
 
   return (
@@ -32,7 +30,7 @@ const Layout = () => {
         <aside
           className={`${
             isSidebarOpen ? 'w-64' : 'w-20'
-          } bg-white border-r border-gray-100 shadow-md transition-all duration-300 h-[calc(100vh-4rem)] fixed top-16 left-0 flex flex-col`}
+          } bg-white border-r border-gray-100 shadow-md transition-all duration-300 h-[calc(100vh-4rem)] fixed top-16 left-0 flex flex-col z-11`}
         >
           <div className="flex justify-between items-center px-4 py-3 border-b border-gray-100">
             <h2

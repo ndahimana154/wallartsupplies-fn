@@ -19,6 +19,18 @@ export interface NewProductValues {
     imagesTouched?: boolean;
 }
 
+export interface UpdateProductValues {
+    name: string;
+    price: number;
+    moq: number;
+    description: string;
+    images: (File | string)[];
+    categoryId: number;
+    customAttr: { key: string; value: string }[];
+    imagesTouched?: boolean;
+    status?: boolean;
+}
+
 export interface ProductData {
     id: number;
     name: string;

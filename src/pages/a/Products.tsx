@@ -6,10 +6,15 @@ import type { ProductData } from '../../types/product';
 import type { QueryOptions } from '../../types/heroAd';
 import { Edit, Plus } from 'lucide-react';
 import EditProductModal from '../../components/a/EditProductModal';
+import { FaEye } from 'react-icons/fa';
 
 interface Category {
   id: number;
   name: string;
+}
+
+interface ProductStatusData extends ProductData {
+  status: boolean;
 }
 
 const Products = () => {
@@ -19,6 +24,7 @@ const Products = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductData[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [currentImageIndices, setCurrentImageIndices] = useState<{
     [key: string]: number;
@@ -72,33 +78,68 @@ const Products = () => {
     }
   };
 
+  const handleStatusToggle = async (product: any, currentStatus: boolean) => {
+    const newStatus = !currentStatus;
+
+    setProducts((prevProducts) =>
+      prevProducts.map((p) =>
+        p.id === product.id ? { ...p, status: newStatus } : p
+      )
+    );
+
+    try {
+      const response = await productRequests.updateProductStatusRequest(
+        product.id,
+        newStatus
+      );
+
+      if (response.success) {
+        toast.success(
+          `Product "${product.name}" status changed to ${
+            newStatus ? 'Active' : 'Inactive'
+          }.`
+        );
+      } else {
+        setProducts((prevProducts) =>
+          prevProducts.map((p) =>
+            p.id === product.id ? { ...p, status: currentStatus } : p
+          )
+        );
+        throw new Error('Failed to update status on server.');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to update product status');
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
     fetchProducts();
   }, []);
 
-  const getStatusBadge = (status: boolean) => {
+  const getStatusBadge = (product: ProductStatusData, status: boolean) => {
     return (
-      <span
-        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-          status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}
+      <button
+        type="button"
+        onClick={() => {
+          handleStatusToggle(product, status);
+        }}
+        className={`${
+          status ? 'bg-[#e67e22]' : 'bg-gray-400'
+        } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#e67e22] focus:ring-offset-2`}
+        role="switch"
+        aria-checked={status}
       >
-        {status ? (
-          <>
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
-            Active
-          </>
-        ) : (
-          <>
-            <span className="w-1.5 h-1.5 bg-red-500 rounded-full mr-1"></span>
-            Inactive
-          </>
-        )}
-      </span>
+        <span className="sr-only">Toggle Status</span>
+        <span
+          aria-hidden="true"
+          className={`${
+            status ? 'translate-x-5' : 'translate-x-0'
+          } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
+        />
+      </button>
     );
   };
-
   return (
     <div className="min-h-screen bg-gray-50/30 p-6">
       <Toaster
@@ -395,9 +436,6 @@ const Products = () => {
                                 <p className="font-medium text-gray-900">
                                   {product.name}
                                 </p>
-                                <p className="text-sm text-gray-500 truncate max-w-xs">
-                                  {product.description}
-                                </p>
                               </div>
                             </div>
                           </td>
@@ -413,25 +451,7 @@ const Products = () => {
                           </td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <svg
-                                className="w-4 h-4 text-gray-400"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                                />
-                              </svg>
+                              <FaEye className="text-gray-400 w-4 h-4" />
                               <span className="text-gray-900 font-medium">
                                 {(product as any).views || 0}
                               </span>
@@ -458,7 +478,10 @@ const Products = () => {
                             </div>
                           </td>
                           <td className="p-4">
-                            {getStatusBadge(product.status || false)}
+                            {getStatusBadge(
+                              product as ProductStatusData,
+                              product.status || false
+                            )}{' '}
                           </td>
                           <td className="p-4">
                             <div className="flex justify-end gap-2">
