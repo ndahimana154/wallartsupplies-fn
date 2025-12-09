@@ -1,5 +1,5 @@
 import type { QueryOptions } from "../../types/heroAd";
-import type { CategoriesFilters, NewCategoryValues, NewProductValues, ProductsFilters, UpdateCategoryData } from "../../types/product";
+import type { CategoriesFilters, NewCategoryValues, NewProductValues, ProductsFilters, UpdateCategoryData, UpdateProductValues } from "../../types/product";
 import axiosInstance from "../axiosInstance";
 import { handleError } from "./welcome";
 
@@ -103,9 +103,18 @@ const updateCategoryRequest = async (id: number, data: UpdateCategoryData) => {
     }
 }
 
-const updateProductRequest = async (id: number, data: NewProductValues) => {
+const updateProductRequest = async (id: number, data: UpdateProductValues) => {
     try {
         const response = await axiosInstance.put(`/api/product/edit/${id}`, data)
+        return response.data
+    } catch (error: any) {
+        return handleError(error)
+    }
+}
+
+const updateProductStatusRequest = async (id: number, status: boolean) => {
+    try {
+        const response = await axiosInstance.put(`/api/product/edit/${id}`, { status })
         return response.data
     } catch (error: any) {
         return handleError(error)
@@ -132,5 +141,6 @@ export default {
     getCategoryProducts,
     updateCategoryRequest,
     updateProductRequest,
+    updateProductStatusRequest,
     getDashoardData
 }

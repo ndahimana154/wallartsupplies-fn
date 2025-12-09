@@ -326,7 +326,7 @@ const Dashboard = () => {
           <div className="flex gap-2 mt-4">
             <button
               onClick={() => setChartType('line')}
-              className={`px-4 py-2 rounded-lg transition-all ${
+              className={`px-4 py-2 rounded-lg transition-all cursor-pointer  ${
                 chartType === 'line'
                   ? 'bg-orange-100  text-[#e67e22] border border-purple-200'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
@@ -336,7 +336,7 @@ const Dashboard = () => {
             </button>
             <button
               onClick={() => setChartType('bar')}
-              className={`px-4 py-2 rounded-lg transition-all ${
+              className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${
                 chartType === 'bar'
                   ? 'bg-orange-100  text-[#e67e22] border border-purple-200'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
