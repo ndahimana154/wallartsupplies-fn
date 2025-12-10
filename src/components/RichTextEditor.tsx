@@ -8,22 +8,27 @@ const RichTextEditor = ({
   placeholder = 'Enter text here',
 }: any) => {
   const editorRef = useRef<HTMLDivElement>(null);
-  const toolbarRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
 
   useEffect(() => {
-    const editorEl = editorRef.current;
-    const toolbarEl = toolbarRef.current;
-    if (!editorEl || quillRef.current) return;
+    if (!containerRef.current || quillRef.current) return;
 
-    editorEl.innerHTML = '';
-    if (toolbarEl) toolbarEl.innerHTML = '';
+    // Clear container
+    containerRef.current.innerHTML = '';
 
-    quillRef.current = new Quill(editorEl, {
+    // Create a container for Quill
+    const editorContainer = document.createElement('div');
+    editorContainer.style.minHeight = '180px';
+    editorContainer.style.maxHeight = '40vh';
+    editorContainer.style.overflowY = 'auto';
+    containerRef.current.appendChild(editorContainer);
+
+    quillRef.current = new Quill(editorContainer, {
       theme: 'snow',
       placeholder: placeholder,
       modules: {
-        toolbar: toolbarEl || [
+        toolbar: [
           [{ header: [1, 2, 3, 4, 5, 6, false] }],
           [{ font: [] }],
           [{ size: ['small', false, 'large', 'huge'] }],
@@ -49,18 +54,10 @@ const RichTextEditor = ({
     quillRef.current.on('text-change', handleTextChange);
 
     return () => {
-      try {
-        if (quillRef.current) {
-          quillRef.current.off('text-change', handleTextChange as any);
-        }
-      } catch (e) {}
-      try {
-        if (quillRef.current) {
-          quillRef.current = null;
-        }
-      } catch (e) {}
-      if (editorEl) editorEl.innerHTML = '';
-      if (toolbarEl) toolbarEl.innerHTML = '';
+      if (quillRef.current) {
+        quillRef.current.off('text-change', handleTextChange as any);
+        quillRef.current = null;
+      }
     };
   }, []);
 
@@ -72,11 +69,7 @@ const RichTextEditor = ({
 
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden">
-      <div ref={toolbarRef} className="ql-toolbar" />
-      <div
-        ref={editorRef}
-        style={{ minHeight: '180px', maxHeight: '40vh', overflowY: 'auto' }}
-      />
+      <div ref={containerRef} />
     </div>
   );
 };
