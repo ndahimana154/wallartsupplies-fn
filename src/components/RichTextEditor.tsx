@@ -7,17 +7,14 @@ const RichTextEditor = ({
   onChange,
   placeholder = 'Enter text here',
 }: any) => {
-  const editorRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const quillRef = useRef<Quill | null>(null);
 
   useEffect(() => {
     if (!containerRef.current || quillRef.current) return;
 
-    // Clear container
     containerRef.current.innerHTML = '';
 
-    // Create a container for Quill
     const editorContainer = document.createElement('div');
     editorContainer.style.minHeight = '180px';
     editorContainer.style.maxHeight = '40vh';

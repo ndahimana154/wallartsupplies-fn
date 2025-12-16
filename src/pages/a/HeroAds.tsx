@@ -112,7 +112,10 @@ const HeroAds = () => {
         const response = await heroAdsRequests.deleteHeroAdRequest(adId);
         if (response.success) {
           toast.success('Hero ad deleted successfully');
-          fetchHeroAds(currentPage, searchTerm);
+          setTimeout(() => {
+            fetchHeroAds(currentPage, searchTerm);
+            toast.dismiss();
+          }, 2000);
         } else {
           throw new Error(response.message);
         }
@@ -128,6 +131,7 @@ const HeroAds = () => {
         ...ad,
         isActive: !ad.isActive,
       });
+
       if (response.success) {
         toast.success(
           `Hero ad ${!ad.isActive ? 'activated' : 'deactivated'} successfully`
@@ -386,7 +390,7 @@ const HeroAds = () => {
                             {getStatusBadge(ad.isActive || false)}
                             <button
                               onClick={() => handleToggleStatus(ad)}
-                              className={`text-xs font-medium px-2 py-1 rounded border transition-colors ${
+                              className={`cursor-pointer text-xs font-medium px-2 py-1 rounded border transition-colors ${
                                 ad.isActive
                                   ? 'text-red-600 border-red-200 hover:bg-red-50'
                                   : 'text-green-600 border-green-200 hover:bg-green-50'
