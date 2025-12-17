@@ -53,14 +53,6 @@ const AdminHeader = () => {
                 </li>
                 <li>
                   <Link
-                    to="/a/settings"
-                    className="block px-4 py-2 hover:bg-[#e67e22]/10 transition text-gray-800"
-                  >
-                    Settings
-                  </Link>
-                </li>
-                <li>
-                  <Link
                     to="/a/logout"
                     className="block px-4 py-2 text-red-600 hover:bg-red-50 transition flex items-center gap-2"
                   >
