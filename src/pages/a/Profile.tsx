@@ -15,7 +15,6 @@ const Profile = () => {
       if (response.success) {
         setProfile(response.data.user);
         setEditedProfile(response.data.user);
-        toast.success('Profile loaded successfully');
       } else {
         throw new Error(response);
       }
