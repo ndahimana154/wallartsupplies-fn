@@ -38,9 +38,30 @@ const resetPasswordRequest = async (data: ResetPasswordData) => {
     }
 }
 
+const getProfileRequest = async () => {
+    try {
+        const response = await axiosInstance.get("/api/user/profile");
+        return response.data
+    }
+    catch (error) {
+        return handleError(error)
+    }
+}
+
+const updateprofileRequest = async (data: any) => {
+    try {
+        const response = await axiosInstance.put("/api/user/update-profile", data);
+        return response.data
+    } catch (error) {
+        return handleError(error)
+    }
+}
+
 export default {
     loginRequest,
     forgotPasswordRequest,
     verifyForgotPasswordToken,
-    resetPasswordRequest
+    resetPasswordRequest,
+    getProfileRequest,
+    updateprofileRequest
 }

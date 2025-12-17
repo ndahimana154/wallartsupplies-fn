@@ -106,11 +106,15 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
         Number(ad?.id),
         finalData
       );
+      console.log('Hero Ad update response:', response);
 
       toast.dismiss();
       if (response.success) {
         toast.success('✅ Hero Ad updated successfully!');
-        onClose();
+        setTimeout(() => {
+          toast.dismiss();
+          onClose();
+        }, 2000);
       } else {
         toast.error(response.message || 'Failed to add Hero Ad');
       }

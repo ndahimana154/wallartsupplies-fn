@@ -23,6 +23,8 @@ import ContactUs from './pages/ContactUs';
 import Inquiries from './pages/a/Inquiries';
 import Logout from './pages/a/Logout';
 import Chatbot from './components/Chatbot';
+import BestCategories from './pages/Categories';
+import Profile from './pages/a/Profile';
 
 const AppRouter = () => {
   return (
@@ -31,6 +33,7 @@ const AppRouter = () => {
         <Route path="/" element={<Homepage />} />
         <Route path="/product-detail/:slug" element={<ProductDetail />} />
         <Route path="/categories/:slug" element={<CategoriesProducts />} />
+        <Route path="/categories" element={<BestCategories />} />
         <Route path="/search" element={<Search />} />
         <Route path="/products" element={<Search />} />
         <Route path="/about-us" element={<AboutUs />} />
@@ -59,6 +62,7 @@ const AppRouter = () => {
         <Route path="categories" element={<Categories />} />
         <Route path="hero-ads" element={<HeroAds />} />
         <Route path="inquiries" element={<Inquiries />} />
+        <Route path="profile" element={<Profile />} />
         <Route path="logout" element={<Logout />} />
         <Route path="*" element={<ANotFound />} />
       </Route>

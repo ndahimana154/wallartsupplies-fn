@@ -1,9 +1,14 @@
 import {
   FaWhatsapp,
-  FaArrowLeft,
   FaShare,
   FaHeart,
-  FaWeightHanging,
+  FaExpand,
+  FaTruck,
+  FaShieldAlt,
+  FaPalette,
+  FaCheckCircle,
+  FaTag,
+  FaStar,
 } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -24,7 +29,9 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
 
+  console.log(product);
   const fetchProductDetail = async () => {
     if (!slug) return;
 
@@ -156,102 +163,62 @@ I'd like to know more about customization options and shipping.`;
         }}
         canonicalUrl={`${frontendUrl}/product-detail/${product.slug}`}
       />
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-7xl mx-auto px-6 py-6"
-      >
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors font-light"
-        >
-          <FaArrowLeft />
-          Back to Collection
-        </button>
-      </motion.div>
 
-      <div className="relative overflow-hidden py-12 md:py-16 text-center">
-        <img
-          src={String(product.images[0])}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-5 blur-sm"
-          loading="lazy"
-        />
-        <div className="relative z-10">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-light text-gray-900 mb-4"
-          >
-            {product.name}
-          </motion.h1>
-          <motion.p
-            className="text-gray-600 max-w-2xl mx-auto font-light text-lg"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            {product.customAttr?.[0]?.value || 'Premium Quality'} • Crafted with
-            Care
-          </motion.p>
-        </div>
-      </div>
+      <div className="relative overflow-hidden py-12 md:py-16 text-center"></div>
 
       <div className="max-w-7xl mx-auto px-6 pb-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
           >
-            <motion.div
-              className="rounded-3xl overflow-hidden bg-gray-50 cursor-zoom-in"
-              whileHover={{ scale: 1.02 }}
-              onClick={() => setIsZoomed(true)}
-            >
-              <motion.img
-                key={selectedImage}
-                src={String(product.images[selectedImage])}
-                alt={product.name}
-                className="w-full h-96 object-cover"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.div>
-
-            <AnimatePresence>
-              {isZoomed && (
-                <motion.div
-                  className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-8 cursor-zoom-out"
-                  onClick={() => setIsZoomed(false)}
+            <div className="relative">
+              <motion.div
+                className="relative rounded-2xl overflow-hidden bg-gray-100 cursor-zoom-in aspect-square"
+                whileHover={{ scale: 1.01 }}
+                onClick={() => setIsZoomed(true)}
+              >
+                <motion.img
+                  key={selectedImage}
+                  src={String(product.images[selectedImage])}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsZoomed(true);
+                  }}
+                  className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors shadow-lg"
                 >
-                  <motion.img
-                    src={String(product.images[selectedImage])}
-                    alt={product.name}
-                    className="max-w-full max-h-full object-contain rounded-xl"
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  <FaExpand className="text-gray-700" />
+                </button>
+                {product.customAttr?.find(
+                  (attr) =>
+                    attr.key.toLowerCase().includes('sale') ||
+                    attr.key.toLowerCase().includes('discount')
+                ) && (
+                  <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    Sale
+                  </div>
+                )}
+              </motion.div>
+            </div>
 
             {product.images.length > 1 && (
-              <div className="flex gap-4 overflow-x-auto pb-4">
+              <div className="flex gap-3 overflow-x-auto pb-2">
                 {product.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`flex-shrink-0 rounded-2xl overflow-hidden transition-all duration-300 ${
+                    className={`flex-shrink-0 rounded-xl overflow-hidden transition-all duration-300 border-2 ${
                       selectedImage === index
-                        ? 'ring-2 ring-[#F04E23] scale-105'
-                        : 'opacity-70 hover:opacity-100 hover:ring-1 hover:ring-gray-300'
+                        ? 'border-[#F04E23] scale-105'
+                        : 'border-transparent hover:border-gray-300'
                     }`}
                   >
                     <img
@@ -264,106 +231,186 @@ I'd like to know more about customization options and shipping.`;
                 ))}
               </div>
             )}
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
+              <div className="bg-gray-50 rounded-xl p-4 text-center">
+                <FaTruck className="text-[#F04E23] text-xl mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900">
+                  Better Shipping
+                </p>
+                <p className="text-xs text-gray-500">Around world</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 text-center">
+                <FaShieldAlt className="text-[#F04E23] text-xl mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900">
+                  1 Year Warranty
+                </p>
+                <p className="text-xs text-gray-500">Quality Assured</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 text-center">
+                <FaPalette className="text-[#F04E23] text-xl mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900">
+                  Customizable
+                </p>
+                <p className="text-xs text-gray-500">Design & Size</p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4 text-center">
+                <FaCheckCircle className="text-[#F04E23] text-xl mx-auto mb-2" />
+                <p className="text-sm font-medium text-gray-900">
+                  MOQ {product.moq}
+                </p>
+                <p className="text-xs text-gray-500">Minimum Order</p>
+              </div>
+            </div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-col justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-6"
           >
-            <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                <FaTag className="text-xs" />
+                {product.category.name}
+              </span>
+              <div className="flex items-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar key={star} className="text-yellow-400" />
+                ))}
+                <span className="ml-2 text-sm text-gray-600">(24 reviews)</span>
+              </div>
+            </div>
+
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+              {product.name}
+            </h1>
+
+            <div className="flex items-baseline gap-4">
               <div>
-                <p className="text-4xl font-light text-[#F04E23] mb-2">
+                <p className="text-4xl font-bold text-[#F04E23]">
                   ${product.price}
                 </p>
-                <p className="text-gray-500 font-light">
+                <p className="text-gray-500 mt-1">per unit</p>
+              </div>
+              <div className="h-8 w-px bg-gray-300"></div>
+              <div>
+                <p className="text-lg font-semibold text-gray-900">
                   MOQ: {product.moq} units
                 </p>
+                <p className="text-sm text-gray-500">Minimum order quantity</p>
               </div>
+            </div>
 
-              {product.customAttr && product.customAttr.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+            {product.customAttr && product.customAttr.length > 0 && (
+              <div className="bg-gray-50 rounded-2xl p-6">
+                <h3 className="font-semibold text-gray-900 mb-4">
+                  Key Specifications
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {product.customAttr.slice(0, 4).map((attr, index) => (
                     <div key={index} className="flex items-center gap-3">
-                      {index === 0 && (
-                        <FaWeightHanging className="text-[#F04E23] flex-shrink-0" />
-                      )}
-                      <span className="font-light">
-                        {attr.key}:{' '}
-                        <span className="font-medium">{attr.value}</span>
-                      </span>
+                      <div className="w-2 h-2 bg-[#F04E23] rounded-full flex-shrink-0"></div>
+                      <div>
+                        <p className="text-sm text-gray-600">{attr.key}</p>
+                        <p className="font-medium text-gray-900">
+                          {attr.value}
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
-              )}
+              </div>
+            )}
 
-              <div className="flex items-center justify-between p-6 bg-gray-50 rounded-2xl">
-                <div className="flex items-center gap-4">
-                  <span className="text-gray-700 font-light text-lg">
-                    Quantity:
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() =>
-                        setQuantity(Math.max(product.moq, quantity - 1))
-                      }
-                      className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors font-light text-lg"
-                    >
-                      -
-                    </button>
-                    <span className="w-12 text-center font-light text-lg">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors font-light text-lg"
-                    >
-                      +
-                    </button>
+            <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                <div className="flex-1">
+                  <p className="font-medium text-gray-900 mb-3">
+                    Select Quantity
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center border border-gray-300 rounded-xl overflow-hidden">
+                      <button
+                        onClick={() =>
+                          setQuantity(Math.max(product.moq, quantity - 1))
+                        }
+                        className="w-12 h-12 flex items-center justify-center hover:bg-gray-100 transition-colors text-xl font-light"
+                      >
+                        −
+                      </button>
+                      <span className="w-16 text-center text-xl font-semibold">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={() => setQuantity(quantity + 1)}
+                        className="w-12 h-12 flex items-center justify-center hover:bg-gray-100 transition-colors text-xl font-light"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">
+                        MOQ: {product.moq} units
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Minimum order required
+                      </p>
+                    </div>
                   </div>
                 </div>
+
                 <div className="text-right">
-                  <p className="text-gray-600 font-light">Total:</p>
-                  <p className="text-2xl font-light text-[#F04E23]">
+                  <p className="text-sm text-gray-600 mb-1">Total Price</p>
+                  <p className="text-3xl font-bold text-[#F04E23]">
                     ${(product.price * quantity).toFixed(2)}
                   </p>
                 </div>
               </div>
+            </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+            <div className="space-y-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleWhatsAppClick}
+                className="w-full cursor-pointer bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white py-4 px-8 rounded-xl flex items-center justify-center gap-3 font-semibold hover:shadow-lg transition-all text-lg"
+              >
+                <FaWhatsapp className="text-2xl" />
+                Inquire on WhatsApp
+                <span className="ml-auto text-sm opacity-90">→</span>
+              </motion.button>
+
+              <div className="flex gap-3">
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleWhatsAppClick}
-                  className="flex-1 bg-[#25D366] text-white py-4 px-8 rounded-full flex items-center justify-center gap-3 font-light hover:bg-[#128C7E] transition-all text-lg shadow-lg"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleShare}
+                  className="flex-1 border-2 border-gray-300 rounded-xl py-3 flex items-center justify-center gap-2 font-medium hover:border-gray-400 transition-all bg-white"
                 >
-                  <FaWhatsapp className="text-xl" />
-                  Inquire on WhatsApp
+                  <FaShare />
+                  Share
                 </motion.button>
 
-                <div className="flex gap-3">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleShare}
-                    className="w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:border-gray-400 transition-all bg-white"
-                  >
-                    <FaShare className="text-gray-600" />
-                  </motion.button>
-
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:border-gray-400 transition-all bg-white"
-                  >
-                    <FaHeart className="text-gray-600" />
-                  </motion.button>
-                </div>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsFavorite(!isFavorite)}
+                  className={`flex-1 border-2 rounded-xl py-3 flex items-center justify-center gap-2 font-medium transition-all ${
+                    isFavorite
+                      ? 'border-red-500 text-red-500 bg-red-50'
+                      : 'border-gray-300 text-gray-700 bg-white hover:border-gray-400'
+                  }`}
+                >
+                  <FaHeart className={isFavorite ? 'fill-red-500' : ''} />
+                  {isFavorite ? 'Saved' : 'Save'}
+                </motion.button>
               </div>
             </div>
           </motion.div>
         </div>
+
         <div className="max-w-7xl mx-auto mt-20 border-t border-gray-100 pt-12">
           <AnimatePresence mode="wait">
             <motion.div
@@ -371,74 +418,97 @@ I'd like to know more about customization options and shipping.`;
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="max-w-3xl mx-auto"
+              className="max-w-4xl mx-auto space-y-12"
             >
-              <div className="text-gray-700 space-y-4">
-                <p
-                  className="text-lg leading-relaxed font-light"
+              <div>
+                <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6">
+                  Product Description
+                </h2>
+                <div
+                  className="text-gray-700 leading-relaxed font-light text-lg space-y-4"
                   dangerouslySetInnerHTML={{
                     __html: product.description || '',
                   }}
-                ></p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-gray-900">
-                      Premium Features
-                    </h4>
-                    <ul className="space-y-2">
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                        Handcrafted quality
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                        Premium materials
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                        Custom sizing available
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="space-y-3">
-                    <h4 className="font-medium text-gray-900">
-                      Quality Assurance
-                    </h4>
-                    <ul className="space-y-2">
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                        1-year warranty
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                        Quality inspection
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-[#F04E23] rounded-full"></div>
-                        Professional packaging
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {product.customAttr.map((attr, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center py-3 border-b border-gray-100"
-                    >
-                      <span className="text-gray-600 font-light">
-                        {attr.key}
-                      </span>
-                      <span className="text-gray-900 font-medium">
-                        {attr.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                />
               </div>
 
+              {product.customAttr && product.customAttr.length > 0 && (
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6">
+                    Specifications
+                  </h2>
+                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gray-50/80 border-b border-gray-200">
+                            <th className="text-left py-4 px-6 font-light text-gray-600 text-sm uppercase tracking-wider">
+                              #
+                            </th>
+                            <th className="text-left py-4 px-6 font-light text-gray-600 text-sm uppercase tracking-wider">
+                              Attribute
+                            </th>
+                            <th className="text-left py-4 px-6 font-light text-gray-600 text-sm uppercase tracking-wider">
+                              Value
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {product.customAttr.map((attr, index) => (
+                            <tr
+                              key={index}
+                              className="hover:bg-gray-50/50 transition-colors duration-200"
+                            >
+                              <td className="py-4 px-6 font-light text-gray-500">
+                                {index + 1}
+                              </td>
+                              <td className="py-4 px-6">
+                                <span className="font-light text-gray-700">
+                                  {attr.key}
+                                </span>
+                              </td>
+                              <td className="py-4 px-6">
+                                <span className="font-medium text-gray-900">
+                                  {attr.value}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Alternative Grid Layout (Optional) */}
+              {product.customAttr && product.customAttr.length > 0 && (
+                <div className="hidden">
+                  {' '}
+                  {/* Hidden by default, can be shown if preferred */}
+                  <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6">
+                    Technical Details
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {product.customAttr.map((attr, index) => (
+                      <div
+                        key={index}
+                        className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow duration-200"
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-2 h-2 bg-[#F04E23] rounded-full flex-shrink-0"></div>
+                          <span className="font-light text-gray-600 text-sm uppercase tracking-wide">
+                            {attr.key}
+                          </span>
+                        </div>
+                        <p className="text-lg font-medium text-gray-900">
+                          {attr.value}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <ShippingTab
                 product={product}
                 quantity={quantity}
@@ -447,11 +517,40 @@ I'd like to know more about customization options and shipping.`;
             </motion.div>
           </AnimatePresence>
         </div>
+
         <RelatedProducts
           relatedProducts={product.relatedProducts}
           currentProductSlug={product.slug}
         />
       </div>
+
+      <AnimatePresence>
+        {isZoomed && (
+          <motion.div
+            className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4"
+            onClick={() => setIsZoomed(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.img
+              src={String(product.images[selectedImage])}
+              alt={product.name}
+              className="max-w-full max-h-full object-contain"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setIsZoomed(false)}
+              className="absolute top-4 right-4 text-white text-2xl p-2 hover:bg-white/20 rounded-full transition-colors"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

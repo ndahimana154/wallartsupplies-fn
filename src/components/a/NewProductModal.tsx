@@ -221,11 +221,10 @@ const NewProductModal = ({
                 </label>
                 <RichTextEditor
                   value={values.description}
-                  onChange={(description: string) =>
-                    setFieldValue('description', description)
-                  }
+                  onChange={(v: string) => setFieldValue('description', v)}
                   placeholder="Enter product description"
                 />
+
                 {errors.description && touched.description && (
                   <p className="text-red-500 text-sm mt-1">
                     {errors.description}
@@ -352,7 +351,7 @@ const NewProductModal = ({
                 <button
                   type="submit"
                   disabled={uploading || !isValid || !dirty}
-                  className={`px-5 py-2 rounded-lg text-white font-medium transition ${
+                  className={`px-5 py-2 rounded-lg text-white font-medium cursor-pointer transition ${
                     uploading || !isValid || !dirty
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-[#e67e22] hover:bg-[#cf711f]'
