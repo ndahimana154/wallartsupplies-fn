@@ -15,7 +15,7 @@ function Chatbot() {
   const BRAND = {
     color: '#e67e22',
     lightBg: '#fff6ef',
-    name: 'Wall Art Supplies',
+    name: 'Jinhua Hanji Company LTD',
   };
 
   useEffect(() => {

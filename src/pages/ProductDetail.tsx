@@ -153,7 +153,7 @@ I'd like to know more about customization options and shipping.`;
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white">
       <SeoSetup
         mainData={{
-          title: `${product.name} — Wall Art Supplies`,
+          title: `${product.name} — Jinhua Hanji Company LTD`,
           description: String(product.description)
             .replace(/<[^>]+>/g, '')
             .slice(0, 160),

@@ -16,7 +16,7 @@ const AdminHeader = () => {
         >
           <motion.img
             src="/main-logo.svg"
-            alt="Wall Art Supplies"
+            alt="Jinhua Hanji Company LTD"
             className="h-9 drop-shadow-md"
             whileHover={{ scale: 1.05 }}
           />

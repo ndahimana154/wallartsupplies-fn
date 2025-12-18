@@ -6,7 +6,7 @@ const PrivacyPolicy = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SeoSetup
         mainData={{
-          title: 'Privacy Policy - Wall Art Supplies',
+          title: 'Privacy Policy - Jinhua Hanji Company LTD',
           description: 'How we collect, use and protect your information.',
         }}
       />

@@ -63,7 +63,7 @@ const Layout = () => {
           </ul>
 
           <div className="mt-auto p-4 text-xs text-gray-400 border-t border-gray-100">
-            {isSidebarOpen && <p>© 2025 Wall Art Supplies</p>}
+            {isSidebarOpen && <p>© 2025 Jinhua Hanji Company LTD</p>}
           </div>
         </aside>
 

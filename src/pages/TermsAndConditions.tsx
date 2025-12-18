@@ -6,9 +6,9 @@ const TermsAndConditions = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SeoSetup
         mainData={{
-          title: 'Terms & Conditions - Wall Art Supplies',
+          title: 'Terms & Conditions - Jinhua Hanji Company LTD',
           description:
-            'Terms of use for Wall Art Supplies website and services.',
+            'Terms of use for Jinhua Hanji Company LTD website and services.',
         }}
       />
 
@@ -24,8 +24,8 @@ const TermsAndConditions = () => {
               Terms & Conditions
             </h1>
             <p className="text-gray-600 mb-6">
-              These terms govern your use of the Wall Art Supplies website and
-              services. By using our site, you agree to these terms.
+              These terms govern your use of the Jinhua Hanji Company LTD
+              website and services. By using our site, you agree to these terms.
             </p>
 
             <div className="space-y-6 text-gray-700">
