@@ -57,7 +57,7 @@ const Footer = () => {
             >
               <img
                 src="/main-logo.svg"
-                alt="Wall Art Supplies"
+                alt="Jinhua Hanji Company LTD"
                 className="w-40 mb-3"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
@@ -68,7 +68,7 @@ const Footer = () => {
                 loading="lazy"
               />
               <h1 className="text-2xl font-semibold text-[#F04E23] mb-3 hidden">
-                Wall Art Supplies
+                Jinhua Hanji Company LTD
               </h1>
             </Link>
             <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
@@ -230,7 +230,8 @@ const Footer = () => {
             </Link>
           </div>
           <p className="text-center md:text-right">
-            © {new Date().getFullYear()} Wall Art Supplies. All rights reserved.
+            © {new Date().getFullYear()} Jinhua Hanji Company LTD. All rights
+            reserved.
           </p>
         </div>
       </div>

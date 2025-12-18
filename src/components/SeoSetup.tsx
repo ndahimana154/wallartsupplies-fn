@@ -38,7 +38,7 @@ const SeoSetup = ({
     title,
     description = 'We create premium wall décor, picture frames, and art supplies with a passion for quality and integrity. Trusted by customers worldwide for craftsmanship, fair pricing, and reliable service.',
     image = '/main-logo.svg',
-    author = 'Wall Art Supplies',
+    author = 'Jinhua Hanji Company LTD',
     publishedAt = new Date().toISOString(),
     type = 'website',
   } = mainData as MainSEOData & { type?: string };
@@ -58,7 +58,7 @@ const SeoSetup = ({
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Wall Art Supplies',
+      name: 'Jinhua Hanji Company LTD',
       logo: {
         '@type': 'ImageObject',
         url: `${mainUrl}/main-logo.png`,
@@ -70,7 +70,7 @@ const SeoSetup = ({
 
   return (
     <Helmet>
-      <title>{title} | Wall Art Supplies</title>
+      <title>{title} | Jinhua Hanji Company LTD</title>
       <meta name="description" content={description} />
       <meta name="author" content={author} />
       <meta
@@ -88,7 +88,7 @@ const SeoSetup = ({
       <meta property="og:image:height" content="630" />
       <meta property="og:url" content={currentUrl} />
       <meta property="og:type" content={(mainData as any).type ?? 'website'} />
-      <meta property="og:site_name" content="Wall Art Supplies" />
+      <meta property="og:site_name" content="Jinhua Hanji Company LTD" />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />

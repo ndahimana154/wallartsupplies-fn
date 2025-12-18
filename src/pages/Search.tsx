@@ -206,7 +206,7 @@ const Search = () => {
         }`
       : `Recent Collection ${currentPage > 1 ? `- Page ${currentPage}` : ''}`;
 
-    document.title = `${pageTitle} | Wall Art Supplies`;
+    document.title = `${pageTitle} | Jinhua Hanji Company LTD`;
   }, [searchText, currentPage]);
 
   return (

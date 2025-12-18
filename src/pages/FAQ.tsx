@@ -28,7 +28,7 @@ const FAQ = () => {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       <SeoSetup
         mainData={{
-          title: 'FAQ - Wall Art Supplies',
+          title: 'FAQ - Jinhua Hanji Company LTD',
           description:
             'Frequently asked questions about orders, shipping, and materials.',
         }}
