@@ -9,10 +9,10 @@ const axiosInstance = axios.create({
     }
 })
 
-export const adminPhone = import.meta.env.VITE_ADMIN_PHONE_NUMBER
-export const frontendUrl = import.meta.env.VITE_FRONTEND_URL
-export const adminEmail = import.meta.env.VITE_ADMIN_EMAIL_ADDRESS
-export const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS
+export const adminPhone = "+8613255793008"
+export const frontendUrl = "https://www.hanjji.com"
+export const adminEmail = "sales@hanjji.com"
+export const companyAddress = "Jindong District, Jinhua City, Zhejiang Province, china"
 axiosInstance.interceptors.request.use((config) => {
     try {
         const auth = getAuth();

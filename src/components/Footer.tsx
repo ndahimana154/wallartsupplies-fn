@@ -10,7 +10,7 @@ import {
 import productRequests from '../utils/requests/productRequests';
 import { useEffect, useState } from 'react';
 import type { CategoryData } from '../types/product';
-import { adminEmail, adminPhone } from '../utils/axiosInstance';
+import { adminEmail, adminPhone, companyAddress } from '../utils/axiosInstance';
 
 const Footer = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
@@ -166,7 +166,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>Zhejiang, China</span>
+                <span>{companyAddress}</span>
               </div>
 
               <div className="flex gap-4 mt-4">
