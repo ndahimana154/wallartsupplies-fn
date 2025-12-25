@@ -56,9 +56,9 @@ const Footer = () => {
               className="flex flex-col items-center md:items-start"
             >
               <img
-                src="/main-logo.svg"
+                src="/main-logo.jpg"
                 alt="Jinhua Hanji Company LTD"
-                className="w-40 mb-3"
+                className="w-20 mb-3"
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   e.currentTarget.nextElementSibling?.classList.remove(

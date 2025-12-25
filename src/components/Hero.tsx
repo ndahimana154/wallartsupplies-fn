@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import heroAdsRequests from '../utils/requests/heroAdsRequests';
 import { useNavigate } from 'react-router-dom';

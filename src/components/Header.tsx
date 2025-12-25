@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Search, Menu, X } from 'lucide-react';
 import { BsWhatsapp } from 'react-icons/bs';
@@ -20,7 +20,7 @@ const Header = () => {
   const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
-  const moreMenuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const moreMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const fetchBestCategories = useCallback(async () => {
@@ -49,7 +49,6 @@ const Header = () => {
     fetchBestCategories();
   }, [fetchBestCategories]);
 
-  // Clear timeout on unmount
   useEffect(() => {
     return () => {
       if (moreMenuTimeoutRef.current) {
@@ -58,13 +57,11 @@ const Header = () => {
     };
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMenuOpen(false);
     setShowMoreMenu(false);
   }, [location.pathname]);
 
-  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -84,7 +81,6 @@ const Header = () => {
     };
   }, []);
 
-  // Close menu on escape key
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -99,7 +95,6 @@ const Header = () => {
     };
   }, []);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (menuOpen) {
       document.body.style.overflow = 'hidden';
@@ -181,7 +176,7 @@ const Header = () => {
             Our collections
           </Link>
 
-          {categories?.slice(0, 4).map((cat) => (
+          {categories?.slice(0, 3).map((cat) => (
             <Link
               key={cat.id}
               to={`/categories/${cat.slug}`}
@@ -191,7 +186,7 @@ const Header = () => {
             </Link>
           ))}
 
-          {categories.length > 4 && (
+          {categories.length > 3 && (
             <div
               className="relative"
               ref={moreMenuRef}
@@ -220,7 +215,7 @@ const Header = () => {
                     transition={{ duration: 0.2 }}
                     className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
                   >
-                    {categories.slice(4).map((cat) => (
+                    {categories.slice(3).map((cat) => (
                       <Link
                         key={cat.id}
                         to={`/categories/${cat.slug}`}
@@ -242,12 +237,10 @@ const Header = () => {
           )}
         </nav>
 
-        {/* Rest of your component remains the same... */}
-        {/* Logo - Centered */}
         <div className="flex-1 flex justify-center lg:justify-center">
           <Link to="/" className="flex-shrink-0">
             <img
-              src="/text-logo.svg"
+              src="/main-logo.jpg"
               alt="Logo"
               className="h-12 w-auto hover:opacity-90 transition-opacity duration-200"
               loading="lazy"
