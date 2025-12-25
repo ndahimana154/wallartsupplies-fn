@@ -20,7 +20,10 @@ const Header = () => {
   const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  // FIXED: Changed NodeJS.Timeout to ReturnType<typeof setTimeout>
   const moreMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const fetchBestCategories = useCallback(async () => {
