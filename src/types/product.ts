@@ -81,5 +81,5 @@ export interface CategoriesFilters {
 }
 
 export interface ProductsFilters {
-    name?: string
+    search?: string
 }

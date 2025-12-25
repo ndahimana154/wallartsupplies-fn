@@ -42,7 +42,7 @@ const Search = () => {
         setError('');
 
         const response = await productRequests.getRecentFrames(
-          { name: searchText },
+          { search: searchText },
           { page, limit: pagination.limit }
         );
 

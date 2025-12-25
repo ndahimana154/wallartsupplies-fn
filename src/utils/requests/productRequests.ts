@@ -25,14 +25,15 @@ const getRecentFrames = async (filters: ProductsFilters, queries: QueryOptions) 
     try {
         const params: any = {}
 
-        if (filters.name) params.name = filters.name
+        if (filters.search) params.search = filters.search
 
         if (queries.page) params.page = queries.page;
         if (queries.limit) params.limit = queries.limit;
         if (queries.sortBy) params.sortBy = queries.sortBy;
         if (queries.order) params.order = queries.order;
-
+        console.log("Params:", params);
         const response = await axiosInstance.get("/api/product/customer-get-recent-collections", { params });
+        console.log("Response:", response);
         return response.data
     } catch (error) {
         return handleError(error);

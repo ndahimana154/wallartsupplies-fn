@@ -46,7 +46,7 @@ const AboutUs = () => {
         mainData={{
           title: 'About Our Company',
           description:
-            'Founded in a small studio in 2015, Wall Art Supllies began   with a simple mission: to provide artists, photographers, andart lovers with framing solutions that truly honor their work.  ',
+            'Founded in a small studio in 2015, Jinhua Hanji Co. began   with a simple mission: to provide artists, photographers, andart lovers with framing solutions that truly honor their work.  ',
         }}
       />{' '}
       <section className="relative py-20 md:py-32 overflow-hidden">
@@ -62,7 +62,7 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6">
-              About <span className="text-[#e67e22]">Wall Art Supllies</span>
+              About <span className="text-[#e67e22]">Jinhua Hanji Co.</span>
             </h1>
             <p className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
               Preserving memories, enhancing art, and telling stories through
@@ -80,7 +80,7 @@ const AboutUs = () => {
             <div className="aspect-w-16 aspect-h-9 bg-gray-200">
               <img
                 src="/hero1.jpg"
-                alt="Wall Art Supllies Workshop - Master framers at work"
+                alt="Jinhua Hanji Co. Workshop - Master framers at work"
                 className="w-full h-96 object-cover"
                 loading="lazy"
               />
@@ -102,9 +102,9 @@ const AboutUs = () => {
               </h2>
               <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
                 <p>
-                  Founded in a small studio in 2015, Wall Art Supllies began
-                  with a simple mission: to provide artists, photographers, and
-                  art lovers with framing solutions that truly honor their work.
+                  Founded in a small studio in 2015, Jinhua Hanji Co. began with
+                  a simple mission: to provide artists, photographers, and art
+                  lovers with framing solutions that truly honor their work.
                 </p>
                 <p>
                   What started as a passion project between two art school
@@ -130,7 +130,7 @@ const AboutUs = () => {
                 <div className="rounded-2xl overflow-hidden shadow-lg">
                   <img
                     src="/about/manufacturing1.JPG"
-                    alt="Wall Art Supllies workshop interior"
+                    alt="Jinhua Hanji Co. workshop interior"
                     className="w-full h-64 object-cover"
                     loading="lazy"
                   />
