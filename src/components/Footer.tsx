@@ -222,12 +222,6 @@ const Footer = () => {
             >
               Our Company
             </Link>
-            <Link
-              to="/a/login"
-              className="hover:text-[#e67e22] transition-colors duration-200"
-            >
-              Admin
-            </Link>
           </div>
           <p className="text-center md:text-right">
             © {new Date().getFullYear()} Jinhua Hanji Company LTD. All rights

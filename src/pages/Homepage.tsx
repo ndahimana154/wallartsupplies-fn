@@ -12,7 +12,7 @@ const Homepage = () => {
           title: 'Jinhua Hanji Company LTD - Premium frames & wall décor',
           description:
             'Shop premium wall art, custom frames and quality art supplies. Fast shipping, custom sizes, and expert framing services for homes and businesses.',
-          image: '/main-logo.png',
+          image: '/main-logo.jpg',
           type: 'website',
         }}
       />

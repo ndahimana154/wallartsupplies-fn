@@ -54,12 +54,14 @@ const Login = () => {
       >
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative z-10 flex flex-col justify-center h-full px-8 md:px-20 text-white">
-          <img
-            src="/text-logo.svg"
-            className="w-40 mb-8"
-            alt="Logo"
-            loading="lazy"
-          />
+          <Link to={'/'}>
+            <img
+              src="/main-logo.jpg"
+              className="w-40 mb-8"
+              alt="Logo"
+              loading="lazy"
+            />
+          </Link>
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Welcome back, Boss!
           </h2>

@@ -152,24 +152,24 @@ const FramesGallery = () => {
               </div>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-14">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-14 px-2 md:px-0">
               {framesData.map((frame: ProductData, index) => (
                 <motion.div
                   key={frame.id}
-                  className="group rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-700 cursor-pointer"
+                  className="group rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-700 cursor-pointer"
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.08, duration: 0.6 }}
                   whileHover={{ y: -5 }}
                 >
                   <div
-                    className="relative overflow-hidden rounded-t-3xl bg-gray-50"
+                    className="relative overflow-hidden rounded-t-2xl md:rounded-t-3xl bg-gray-50"
                     onClick={() => handleProductClick(frame)}
                   >
                     <motion.img
                       src={String(frame.images[0])}
                       alt={frame.name}
-                      className="w-full h-80 object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-40 sm:h-48 md:h-80 object-cover transition-transform duration-700 group-hover:scale-105"
                       onError={(e) => {
                         e.currentTarget.src = '/api/placeholder/400/320';
                         e.currentTarget.alt = 'Image not available';
@@ -178,33 +178,20 @@ const FramesGallery = () => {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                   </div>
 
-                  <div className="p-8 text-center">
+                  <div className="p-3 md:p-8">
                     <h3
-                      className="text-2xl font-light text-gray-900 mb-3 cursor-pointer hover:text-gray-700 transition-colors"
+                      className="text-sm md:text-2xl font-light text-gray-900 mb-1 md:mb-3 cursor-pointer hover:text-gray-700 transition-colors line-clamp-5 md:line-clamp-none text-center"
                       onClick={() => handleProductClick(frame)}
                     >
                       {frame.name}
                     </h3>
 
-                    {frame.customAttr &&
-                      frame.customAttr.length > 0 &&
-                      frame.customAttr.slice(0, 2).map((attr, attrIndex) => (
-                        <div
-                          key={attrIndex}
-                          className="flex justify-center items-center gap-3 mb-6 text-sm text-gray-500"
-                        >
-                          <span>{attr.key}</span>
-                          <span>•</span>
-                          <span>{attr.value}</span>
-                        </div>
-                      ))}
-
-                    <div className="flex items-center justify-between border-t border-gray-100 pt-6">
+                    <div className="flex flex-col items-center gap-2 border-t border-gray-100 pt-2 md:pt-6">
                       <div
-                        className="text-left cursor-pointer"
+                        className="text-center cursor-pointer"
                         onClick={() => handleProductClick(frame)}
                       >
-                        <p className="text-2xl font-light text-gray-900">
+                        <p className="text-base md:text-2xl font-light text-gray-900">
                           ${frame.price}
                         </p>
                         <p className="text-xs text-gray-500">
@@ -215,14 +202,14 @@ const FramesGallery = () => {
                       <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
-                        className="bg-[#25D366] text-white px-6 py-3 rounded-full flex items-center gap-2 font-light hover:bg-[#128C7E] transition-all"
+                        className="bg-[#25D366] text-white px-3 py-1.5 md:px-6 md:py-3 rounded-full flex items-center justify-center gap-1 md:gap-2 font-light hover:bg-[#128C7E] transition-all text-xs md:text-base w-full"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleWhatsAppClick(frame);
                         }}
                       >
-                        <FaWhatsapp />
-                        Inquire
+                        <FaWhatsapp className="text-sm md:text-lg" />
+                        <span>Inquire</span>
                       </motion.button>
                     </div>
                   </div>

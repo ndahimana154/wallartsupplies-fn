@@ -33,7 +33,7 @@ const HeaderError = ({
           <div className="flex-1 flex justify-center lg:justify-center">
             <Link to="/">
               <img
-                src="/text-logo.svg"
+                src="/main-logo.jpg"
                 alt="Logo"
                 className="h-12 w-auto hover:opacity-90 transition"
                 loading="lazy"

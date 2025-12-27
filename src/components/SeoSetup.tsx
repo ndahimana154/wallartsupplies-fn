@@ -61,7 +61,7 @@ const SeoSetup = ({
       name: 'Jinhua Hanji Company LTD',
       logo: {
         '@type': 'ImageObject',
-        url: `${mainUrl}/main-logo.png`,
+        url: `${mainUrl}/main-logo.jpg`,
       },
     },
     mainEntityOfPage: currentUrl,

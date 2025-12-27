@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import chatbotRequests from '../utils/requests/chatbotRequests';
 import ReactMarkdown from 'react-markdown';
-import { FiX, FiSend } from 'react-icons/fi';
+import { FiX, FiSend, FiMaximize2, FiMinimize2 } from 'react-icons/fi';
 import { BsRobot } from 'react-icons/bs';
 
 function Chatbot() {
@@ -11,13 +11,22 @@ function Chatbot() {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const BRAND = {
     color: '#e67e22',
     lightBg: '#fff6ef',
-    name: 'Jinhua Hanji Company LTD',
+    name: 'Hanji',
   };
 
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading, open]);
+
+  // Auto-open welcome message
   useEffect(() => {
     if (open && messages.length === 0) {
       setMessages([
@@ -29,8 +38,12 @@ function Chatbot() {
     }
   }, [open]);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const sendMessage = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || loading) return;
 
     const userMsg = { sender: 'user', text: input };
     setMessages((prev) => [...prev, userMsg]);
@@ -68,6 +81,15 @@ function Chatbot() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const clearChat = () => {
+    setMessages([
+      {
+        sender: 'bot',
+        text: `Hi! 👋 I'm ${BRAND.name}'s assistant — how can I help with frames, orders, or sizing today?`,
+      },
+    ]);
   };
 
   const LoadingDots = () => (
@@ -132,7 +154,10 @@ function Chatbot() {
           whileTap={{ scale: 0.88 }}
           className="relative p-4 cursor-pointer rounded-full shadow-2xl transition-all hover:shadow-2xl"
           style={{ background: BRAND.color, color: '#fff' }}
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => {
+            setOpen((v) => !v);
+            if (!open) setExpanded(false);
+          }}
           aria-label="Open chat assistant"
         >
           <motion.div
@@ -151,13 +176,7 @@ function Chatbot() {
             <BsRobot className="w-8 h-8 text-white" />
           </motion.div>
 
-          <motion.div
-            className="absolute inset-0 rounded-full flex items-center justify-center"
-            animate={open ? { rotate: 90 } : { rotate: 0 }}
-            transition={{ duration: 0.3 }}
-          />
-
-          {!open && messages.length > 0 && (
+          {!open && messages.length > 1 && (
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -166,7 +185,7 @@ function Chatbot() {
                 animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
               }}
             >
-              {Math.min(messages.length, 9)}
+              {Math.min(messages.length - 1, 9)}
             </motion.div>
           )}
         </motion.button>
@@ -179,9 +198,15 @@ function Chatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-20 right-6 w-80 bg-white shadow-2xl rounded-2xl overflow-hidden z-[999999] flex flex-col"
+            className={`fixed ${
+              expanded
+                ? 'bottom-20 right-6 w-96 h-[calc(100vh-160px)] max-h-[600px]'
+                : 'bottom-20 right-6 w-80 h-[400px]'
+            } bg-white shadow-2xl rounded-2xl overflow-hidden z-[999999] flex flex-col`}
+            ref={chatContainerRef}
           >
-            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b bg-gradient-to-r from-white to-gray-50">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-white to-gray-50 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div
                   className="w-10 h-10 rounded-full flex-shrink-0"
@@ -193,7 +218,7 @@ function Chatbot() {
                   }}
                 >
                   <img
-                    src="/text-logo.svg"
+                    src="/main-logo.jpg"
                     className="w-8 h-8"
                     alt="logo"
                     loading="lazy"
@@ -204,83 +229,146 @@ function Chatbot() {
                     {BRAND.name} Assistant
                   </div>
                   <div className="text-xs text-gray-500">
-                    Here to help — ask me anything
+                    {expanded ? 'Expanded view' : 'Here to help'}
                   </div>
                 </div>
               </div>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setOpen(false)}
-                className="p-1 hover:bg-gray-100 rounded-full transition cursor-pointer"
-                aria-label="Close chat"
-              >
-                <FiX size={20} className="text-gray-500" />
-              </motion.button>
+
+              <div className="flex items-center gap-1">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setExpanded(!expanded)}
+                  className="p-1 hover:bg-gray-100 rounded-full transition cursor-pointer"
+                  aria-label={expanded ? 'Minimize chat' : 'Expand chat'}
+                >
+                  {expanded ? (
+                    <FiMinimize2 size={18} className="text-gray-500" />
+                  ) : (
+                    <FiMaximize2 size={18} className="text-gray-500" />
+                  )}
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setOpen(false)}
+                  className="p-1 hover:bg-gray-100 rounded-full transition cursor-pointer"
+                  aria-label="Close chat"
+                >
+                  <FiX size={20} className="text-gray-500" />
+                </motion.button>
+              </div>
             </div>
 
-            <div className="flex-1 h-64 overflow-y-auto p-4 space-y-3 bg-gradient-to-b from-gray-50 to-white">
-              <AnimatePresence>
-                {messages.map((msg, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className={`flex ${
-                      msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                    }`}
-                  >
-                    <div
-                      className={`${
-                        msg.sender === 'user'
-                          ? 'bg-gradient-to-r from-[#e67e22] to-[#f04e23] text-white rounded-2xl rounded-tr-sm'
-                          : 'bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm'
-                      } px-4 py-2.5 max-w-xs shadow-sm`}
+            {/* Messages Container - Scrollable Area */}
+            <div
+              className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white"
+              style={{
+                maxHeight: 'calc(100% - 120px)',
+                scrollBehavior: 'smooth',
+              }}
+            >
+              <div className="p-4 space-y-3 min-h-full">
+                <AnimatePresence>
+                  {messages.map((msg, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`flex ${
+                        msg.sender === 'user' ? 'justify-end' : 'justify-start'
+                      }`}
                     >
-                      <div className="text-sm leading-relaxed">
-                        <ReactMarkdown>{msg.text}</ReactMarkdown>
+                      <div
+                        className={`${
+                          msg.sender === 'user'
+                            ? 'bg-gradient-to-r from-[#e67e22] to-[#f04e23] text-white rounded-2xl rounded-tr-sm'
+                            : 'bg-white border border-gray-200 text-gray-900 rounded-2xl rounded-tl-sm'
+                        } px-4 py-2.5 ${
+                          expanded ? 'max-w-[85%]' : 'max-w-xs'
+                        } shadow-sm`}
+                      >
+                        <div className="text-sm leading-relaxed break-words">
+                          <ReactMarkdown>{msg.text}</ReactMarkdown>
+                        </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
-                {loading && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="flex justify-start"
-                  >
-                    <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm">
-                      <LoadingDots />
-                    </div>
-                  </motion.div>
+                    </motion.div>
+                  ))}
+
+                  {loading && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="flex justify-start"
+                    >
+                      <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-tl-sm">
+                        <LoadingDots />
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Invisible div for auto-scrolling */}
+                  <div ref={messagesEndRef} />
+                </AnimatePresence>
+
+                {/* Empty state */}
+                {messages.length <= 1 && (
+                  <div className="text-center py-8 px-4">
+                    <div className="text-gray-400 mb-2">💬</div>
+                    <p className="text-sm text-gray-500">
+                      Ask me about our frames, pricing, shipping, or
+                      customization options!
+                    </p>
+                  </div>
                 )}
-              </AnimatePresence>
+              </div>
             </div>
 
-            <div className="px-4 py-3 border-t bg-white flex gap-2 items-center">
-              <input
-                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#e67e22] transition"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask something..."
-                onKeyDown={(e) =>
-                  e.key === 'Enter' && !loading && sendMessage()
-                }
-                disabled={loading}
-              />
-              <motion.button
-                whileHover={!loading ? { scale: 1.05 } : {}}
-                whileTap={!loading ? { scale: 0.95 } : {}}
-                onClick={sendMessage}
-                disabled={loading}
-                className="p-2 rounded-lg text-white transition disabled:opacity-50 cursor-pointer"
-                style={{ background: BRAND.color }}
-                aria-label="Send message"
-              >
-                <FiSend size={18} />
-              </motion.button>
+            {/* Input Area */}
+            <div className="px-4 py-3 border-t bg-white flex-shrink-0">
+              <div className="flex gap-2 items-center">
+                <input
+                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#e67e22] transition"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Type your question..."
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' && !loading && sendMessage()
+                  }
+                  disabled={loading}
+                  autoFocus={open}
+                />
+                <motion.button
+                  whileHover={!loading ? { scale: 1.05 } : {}}
+                  whileTap={!loading ? { scale: 0.95 } : {}}
+                  onClick={sendMessage}
+                  disabled={loading || !input.trim()}
+                  className={`p-2.5 rounded-lg text-white transition ${
+                    loading || !input.trim()
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer hover:shadow-md'
+                  }`}
+                  style={{ background: BRAND.color }}
+                  aria-label="Send message"
+                >
+                  <FiSend size={18} />
+                </motion.button>
+              </div>
+
+              {/* Clear chat button (optional) */}
+              {messages.length > 1 && (
+                <div className="mt-2 text-center">
+                  <button
+                    onClick={clearChat}
+                    className="text-xs text-gray-500 hover:text-gray-700 transition"
+                  >
+                    Clear conversation
+                  </button>
+                </div>
+              )}
             </div>
           </motion.div>
         )}

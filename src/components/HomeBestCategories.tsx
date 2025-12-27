@@ -59,16 +59,16 @@ const HomeBestCategories = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
               className="relative overflow-hidden rounded-2xl shadow-lg bg-gray-200 animate-pulse"
             >
-              <div className="w-full h-64 bg-gray-300"></div>
-              <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-start px-6">
-                <div className="h-6 bg-gray-400 rounded w-3/4 mb-3"></div>
-                <div className="h-10 bg-gray-400 rounded-full w-32"></div>
+              <div className="w-full h-56 md:h-64 bg-gray-300"></div>
+              <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-start px-4 md:px-6">
+                <div className="h-5 md:h-6 bg-gray-400 rounded w-3/4 mb-2 md:mb-3"></div>
+                <div className="h-8 md:h-10 bg-gray-400 rounded-full w-24 md:w-32"></div>
               </div>
             </div>
           ))}
@@ -179,7 +179,7 @@ const HomeBestCategories = () => {
         </motion.p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {categories.length > 0 &&
           categories.map((cat, i) => (
             <motion.div
@@ -193,16 +193,16 @@ const HomeBestCategories = () => {
               <img
                 src={cat.image}
                 alt={cat.name}
-                className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-56 md:h-64 object-cover transition-transform duration-500 group-hover:scale-110"
                 onError={(e) => {
                   e.currentTarget.src =
                     'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjI0MCIgdmlld0JveD0iMCAwIDMyMCAyNDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iMjQwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0xNjAgMTIwTDE2MCAxMjBNMTIwIDE2MEgxMjBNMjAwIDE2MEgyMDAiIHN0cm9rZT0iIzhDOTNBQSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+Cg==';
                 }}
               />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end items-start p-6">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end items-start p-4 md:p-6">
                 <motion.h2
-                  className="text-2xl font-semibold text-white mb-3"
+                  className="text-lg md:text-2xl font-semibold text-white mb-2 md:mb-3 line-clamp-2"
                   initial={{ y: 20, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.4 }}
@@ -211,10 +211,10 @@ const HomeBestCategories = () => {
                 </motion.h2>
 
                 <Link
-                  to={`/categories/${cat.slug || cat.id}`} // Added proper link
-                  className="inline-flex items-center gap-2 bg-[#F04E23] hover:bg-[#e67e22] text-white px-5 py-2 rounded-full font-medium transition-colors duration-300"
+                  to={`/categories/${cat.slug || cat.id}`}
+                  className="inline-flex items-center gap-1 md:gap-2 bg-[#F04E23] hover:bg-[#e67e22] text-white px-3 md:px-5 py-1.5 md:py-2 rounded-full font-medium transition-colors duration-300 text-sm md:text-base"
                 >
-                  Explore <ArrowRight className="w-4 h-4" />
+                  Explore <ArrowRight className="w-3 h-3 md:w-4 md:h-4" />
                 </Link>
               </div>
             </motion.div>

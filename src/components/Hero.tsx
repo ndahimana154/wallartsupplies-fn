@@ -52,7 +52,6 @@ const Hero = () => {
     return () => clearInterval(id);
   }, [slides.length, visible]);
 
-  /* ------------------ PRELOAD NEXT IMAGE ------------------ */
   useEffect(() => {
     if (!visible || !slides[current]) return;
 
@@ -66,7 +65,7 @@ const Hero = () => {
   return (
     <div
       ref={heroRef}
-      className="relative h-[90vh] w-full overflow-hidden bg-black"
+      className="relative h-[60vh] md:h-[90vh] w-full overflow-hidden bg-black"
     >
       {slide && visible && (
         <>
@@ -98,7 +97,7 @@ const Hero = () => {
 
             {slide.link && (
               <button
-                onClick={() => navigate(slide.link)}
+                onClick={() => (window.location.href = slide.link)}
                 className="mt-8 w-[220px] h-[56px] flex items-center justify-center bg-[#F04E23] rounded-full text-lg font-semibold hover:scale-105 transition-transform duration-300"
               >
                 {slide.buttonText || 'Learn More'}
