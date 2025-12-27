@@ -24,7 +24,6 @@ const Header = () => {
   const moreMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
 
-  // State for rotating mobile headers
   const [currentMobileHeaderIndex, setCurrentMobileHeaderIndex] = useState(0);
   const mobileHeaders = [
     {
@@ -116,13 +115,12 @@ const Header = () => {
     };
   }, [menuOpen]);
 
-  // Effect to rotate mobile headers
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMobileHeaderIndex((prevIndex) =>
         prevIndex === mobileHeaders.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000); // Change every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
@@ -222,7 +220,6 @@ const Header = () => {
                 </motion.div>
               </AnimatePresence>
 
-              {/* Optional: Add dots to indicate current position */}
               <div className="flex justify-center mt-1 space-x-1">
                 {mobileHeaders.map((_, index) => (
                   <div
@@ -439,7 +436,6 @@ const Header = () => {
                   </div>
                 </form>
 
-                {/* Navigation Links */}
                 <nav className="space-y-1">
                   <Link
                     to="/"
