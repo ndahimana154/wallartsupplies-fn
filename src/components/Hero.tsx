@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import heroAdsRequests from '../utils/requests/heroAdsRequests';
-import { useNavigate } from 'react-router-dom';
 import type { iHeroAds } from '../types/heroAd';
 
 const optimize = (url: string, width: number) => {
@@ -17,7 +16,6 @@ const Hero = () => {
   const [current, setCurrent] = useState(0);
   const [visible, setVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   /* ------------------ FETCH DATA ------------------ */
   useEffect(() => {
