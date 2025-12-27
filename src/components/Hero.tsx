@@ -17,7 +17,6 @@ const Hero = () => {
   const [visible, setVisible] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
-  /* ------------------ FETCH DATA ------------------ */
   useEffect(() => {
     heroAdsRequests
       .getCustomersHeroAdsRequest({ isActive: true }, { page: 1, limit: 6 })
@@ -25,7 +24,6 @@ const Hero = () => {
       .catch(console.error);
   }, []);
 
-  /* ------------------ INTERSECTION OBSERVER ------------------ */
   useEffect(() => {
     if (!heroRef.current) return;
 
@@ -38,7 +36,6 @@ const Hero = () => {
     return () => observer.disconnect();
   }, []);
 
-  /* ------------------ AUTO SLIDE ------------------ */
   useEffect(() => {
     if (!visible || slides.length <= 1) return;
 
