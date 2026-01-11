@@ -62,8 +62,6 @@ const ContactUs = () => {
     setIsSubmitting(true);
 
     try {
-      console.log('Form data:', formData);
-
       let uploadedUrls: string[] = [];
       if (formData.referenceImages && formData.referenceImages.length > 0) {
         const uploadPromises = formData.referenceImages.map((file) =>
@@ -82,7 +80,7 @@ const ContactUs = () => {
       };
 
       const response = await inquiriesRequests.newCustomInquiry(payload);
-      console.log('API response:', response);
+
       if (response.success == true) {
         toast.success(
           'Your custom order request has been submitted. We will contact you within 24 hours.'
@@ -174,9 +172,8 @@ const ContactUs = () => {
                     <FaMapMarkerAlt className="text-[#e67e22] text-lg" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900">Studio</h3>
+                    <h3 className="font-semibold text-gray-900">Location</h3>
                     <p className="text-gray-600">{companyAddress}</p>
-                    <p className="text-sm text-gray-500">By appointment only</p>
                   </div>
                 </div>
               </div>

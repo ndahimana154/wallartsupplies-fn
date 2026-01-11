@@ -35,7 +35,6 @@ const getAllInquiries = async (filters: InquiriesFilters, queries: QueryOptions)
 
 const toggleResolvedStatus = async (inquiryId: number, status: String) => {
     try {
-        console.log("Toggling status for inquiry ID:", inquiryId, "to status:", status);
         const response = await axiosInstance.put(`/api/inquiries/toggle-resolved/${inquiryId}`, { status });
         return response.data;
     }

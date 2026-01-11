@@ -507,10 +507,8 @@ const Inquiries = () => {
                             title="More details"
                             className="px-3 py-1 cursor-pointer bg-gray-50 text-gray-700 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors inline-flex items-center gap-2"
                             onClick={() => {
-                              console.log('Selected Inquiry:', item);
                               setSelectedInquiry(item);
                               setDetailOpen(true);
-                              console.log('Detail Opened:', detailOpen);
                             }}
                           >
                             <Eye className="w-4 h-4 text-gray-600" />

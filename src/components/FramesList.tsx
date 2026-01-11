@@ -1,10 +1,10 @@
-import { FaWhatsapp, FaExclamationTriangle } from 'react-icons/fa';
+import { FaExclamationTriangle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import productRequests from '../utils/requests/productRequests';
 import type { ProductData } from '../types/product';
 import { useNavigate } from 'react-router-dom';
-import { adminPhone, frontendUrl } from '../utils/axiosInstance';
+import Product from './Product';
 
 const FramesGallery = () => {
   const [framesData, setFramesData] = useState<ProductData[]>([]);
@@ -34,19 +34,6 @@ const FramesGallery = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleWhatsAppClick = (frame: ProductData) => {
-    const productLink = `${frontendUrl}/product-detail/${frame.slug}`;
-    const message = `Hello, I want to know more information about ${frame.name}. Product link: ${productLink}`;
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
-
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleProductClick = (frame: ProductData) => {
-    navigate(`/product-detail/${frame.slug}`);
   };
 
   const handleRetry = () => {
@@ -153,67 +140,8 @@ const FramesGallery = () => {
             </motion.div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-14 px-2 md:px-0">
-              {framesData.map((frame: ProductData, index) => (
-                <motion.div
-                  key={frame.id}
-                  className="group rounded-2xl md:rounded-3xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-700 cursor-pointer"
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.08, duration: 0.6 }}
-                  whileHover={{ y: -5 }}
-                >
-                  <div
-                    className="relative overflow-hidden rounded-t-2xl md:rounded-t-3xl bg-gray-50"
-                    onClick={() => handleProductClick(frame)}
-                  >
-                    <motion.img
-                      src={String(frame.images[0])}
-                      alt={frame.name}
-                      className="w-full h-40 sm:h-48 md:h-80 object-cover transition-transform duration-700 group-hover:scale-105"
-                      onError={(e) => {
-                        e.currentTarget.src = '/api/placeholder/400/320';
-                        e.currentTarget.alt = 'Image not available';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                  </div>
-
-                  <div className="p-3 md:p-8">
-                    <h3
-                      className="text-sm md:text-2xl font-light text-gray-900 mb-1 md:mb-3 cursor-pointer hover:text-gray-700 transition-colors line-clamp-5 md:line-clamp-none text-center"
-                      onClick={() => handleProductClick(frame)}
-                    >
-                      {frame.name}
-                    </h3>
-
-                    <div className="flex flex-col items-center gap-2 border-t border-gray-100 pt-2 md:pt-6">
-                      <div
-                        className="text-center cursor-pointer"
-                        onClick={() => handleProductClick(frame)}
-                      >
-                        <p className="text-base md:text-2xl font-light text-gray-900">
-                          ${frame.price}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          MOQ: {frame.moq}
-                        </p>
-                      </div>
-
-                      <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="bg-[#25D366] text-white px-3 py-1.5 md:px-6 md:py-3 rounded-full flex items-center justify-center gap-1 md:gap-2 font-light hover:bg-[#128C7E] transition-all text-xs md:text-base w-full"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleWhatsAppClick(frame);
-                        }}
-                      >
-                        <FaWhatsapp className="text-sm md:text-lg" />
-                        <span>Inquire</span>
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.div>
+              {framesData.map((product: ProductData, index) => (
+                <Product product={product} index={index} />
               ))}
             </div>
           )}

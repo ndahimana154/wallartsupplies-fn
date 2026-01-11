@@ -69,8 +69,6 @@ const Dashboard = () => {
       setLoading(true);
       const response = await productRequests.getDashoardData();
 
-      console.log('Dashboard Response:', response);
-
       if (response.success === true) {
         const dashboardData = response.data.dashboard || response.data;
 

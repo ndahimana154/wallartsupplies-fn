@@ -7,10 +7,11 @@ import type { CategoryData } from '../types/product';
 import productRequests from '../utils/requests/productRequests';
 import HeaderLoading from './header/HeaderLoading';
 import HeaderError from './header/HeaderError';
-import { whatsAppClick } from '../helpers/product';
 import Chatbot from './Chatbot';
+import { useNavigation } from '../helpers/product';
 
 const Header = () => {
+  const { whatsAppClick } = useNavigation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [error, setError] = useState('');

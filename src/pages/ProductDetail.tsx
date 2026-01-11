@@ -3,10 +3,6 @@ import {
   FaShare,
   FaHeart,
   FaExpand,
-  FaTruck,
-  FaShieldAlt,
-  FaPalette,
-  FaCheckCircle,
   FaTag,
   FaStar,
 } from 'react-icons/fa';
@@ -31,7 +27,6 @@ const ProductDetail = () => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  console.log(product);
   const fetchProductDetail = async () => {
     if (!slug) return;
 
@@ -231,37 +226,6 @@ I'd like to know more about customization options and shipping.`;
                 ))}
               </div>
             )}
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-4">
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
-                <FaTruck className="text-[#F04E23] text-xl mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">
-                  Better Shipping
-                </p>
-                <p className="text-xs text-gray-500">Around world</p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
-                <FaShieldAlt className="text-[#F04E23] text-xl mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">
-                  1 Year Warranty
-                </p>
-                <p className="text-xs text-gray-500">Quality Assured</p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
-                <FaPalette className="text-[#F04E23] text-xl mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">
-                  Customizable
-                </p>
-                <p className="text-xs text-gray-500">Design & Size</p>
-              </div>
-              <div className="bg-gray-50 rounded-xl p-4 text-center">
-                <FaCheckCircle className="text-[#F04E23] text-xl mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">
-                  MOQ {product.moq}
-                </p>
-                <p className="text-xs text-gray-500">Minimum Order</p>
-              </div>
-            </div>
           </motion.div>
 
           <motion.div
@@ -481,11 +445,9 @@ I'd like to know more about customization options and shipping.`;
                 </div>
               )}
 
-              {/* Alternative Grid Layout (Optional) */}
               {product.customAttr && product.customAttr.length > 0 && (
                 <div className="hidden">
                   {' '}
-                  {/* Hidden by default, can be shown if preferred */}
                   <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6">
                     Technical Details
                   </h2>

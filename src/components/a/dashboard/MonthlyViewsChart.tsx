@@ -183,10 +183,6 @@ const MonthlyViewsChart = ({
     }
   };
 
-  console.log('MonthlyViewsChart Data:', data);
-  console.log('Formatted Data:', formattedData);
-  console.log('Chart Type:', type);
-
   return (
     <div className="w-full bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6">

@@ -106,7 +106,6 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
         Number(ad?.id),
         finalData
       );
-      console.log('Hero Ad update response:', response);
 
       toast.dismiss();
       if (response.success) {

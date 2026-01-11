@@ -1,19 +1,25 @@
-import { motion } from 'framer-motion';
-import type { ProductData } from '../../types/product';
 import { FaWhatsapp, FaGift } from 'react-icons/fa';
-import { useNavigation } from '../../helpers/product';
+import { motion } from 'framer-motion';
+import { useNavigation } from '../helpers/product';
+import { adminPhone, frontendUrl } from '../utils/axiosInstance';
+import type { ProductData } from '../types/product';
 
-interface ProductItemRelatedSectionProps {
-  product: ProductData;
-  index: number;
-}
-
-const ProductItemRelatedSection = ({
+const Product = ({
   product,
   index,
-}: ProductItemRelatedSectionProps) => {
-  const { handleWhatsAppClick, handleProductClick } = useNavigation();
+}: {
+  product: ProductData;
+  index: number;
+}) => {
+  const { handleProductClick } = useNavigation();
+  const handleWhatsAppClick = (frame: ProductData) => {
+    const productLink = `${frontendUrl}/product-detail/${frame.slug}`;
+    const message = `Hello, I want to know more information about ${frame.name}. Product link: ${productLink}`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
 
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
   return (
     <motion.div
       key={product.id}
@@ -103,4 +109,4 @@ const ProductItemRelatedSection = ({
   );
 };
 
-export default ProductItemRelatedSection;
+export default Product;

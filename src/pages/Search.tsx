@@ -9,8 +9,8 @@ import { useEffect, useState, useCallback } from 'react';
 import productRequests from '../utils/requests/productRequests';
 import type { ProductData } from '../types/product';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import FrameData from '../components/FrameData';
 import SeoSetup from '../components/SeoSetup';
+import Product from '../components/Product';
 
 interface PaginationData {
   total: number;
@@ -376,7 +376,7 @@ const Search = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 mb-12">
                 <AnimatePresence>
                   {framesData.map((frame: ProductData, index) => (
-                    <FrameData frame={frame} key={frame.id} index={index} />
+                    <Product product={frame} index={index} />
                   ))}
                 </AnimatePresence>
               </div>
