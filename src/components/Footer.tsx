@@ -47,27 +47,28 @@ const Footer = () => {
   const displayCategories = Array.isArray(categories) ? categories : [];
 
   return (
-    <footer className="bg-gradient-to-b from-[#0b0b0b] to-[#1a1a1a] text-white pt-12 pb-6 px-6 md:px-20">
+    <footer className="bg-gradient-to-b from-[#0b0b0b] to-[#1a1a1a] text-white pt-12 pb-6 px-4 sm:px-6 md:px-8 lg:px-20">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 border-b border-gray-700 pb-10">
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 border-b border-gray-700 pb-10">
+          <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
             <Link
               to={'/'}
-              className="flex flex-col items-center md:items-start"
+              className="inline-flex flex-col items-center sm:items-start mb-4"
+              aria-label="Go to home"
             >
               <img
                 src="/main-logo.jpg"
-                alt="Jinhua Hanji Company LTD"
-                className="w-20 mb-3"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling?.classList.remove(
-                    'hidden'
-                  );
-                }}
+                alt="Jinhua Hanji Company LTD Logo"
+                className="w-16 sm:w-20 h-auto object-contain"
                 loading="lazy"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = 'none';
+                  const next = (e.currentTarget as HTMLImageElement)
+                    .nextElementSibling;
+                  if (next) next.classList.remove('hidden');
+                }}
               />
-              <h1 className="text-2xl font-semibold text-[#F04E23] mb-3 hidden">
+              <h1 className="text-xl sm:text-2xl font-semibold text-[#F04E23] hidden">
                 Jinhua Hanji Company LTD
               </h1>
             </Link>
@@ -77,7 +78,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div className="flex flex-col items-center md:items-start">
+          <div className="flex flex-col items-center sm:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Explore
             </h2>
@@ -105,6 +106,7 @@ const Footer = () => {
                     key={category.id}
                     to={`/categories/${category.slug}`}
                     className="hover:text-[#F04E23] transition-colors duration-200"
+                    title={category.name}
                   >
                     {category.name}
                   </Link>
@@ -119,7 +121,7 @@ const Footer = () => {
             </nav>
           </div>
 
-          <div className="flex flex-col items-center md:items-start">
+          <div className="flex flex-col items-center sm:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Company
             </h2>
@@ -151,29 +153,43 @@ const Footer = () => {
             </nav>
           </div>
 
-          <div className="flex flex-col items-center md:items-start">
+          <div className="flex flex-col items-center sm:items-start">
             <h2 className="text-lg font-semibold text-[#e67e22] mb-4">
               Contact Us
             </h2>
             <div className="flex flex-col gap-3 text-sm text-gray-300">
-              <div className="flex items-center gap-3">
-                <Mail size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>{adminEmail}</span>
+              <div className="flex items-center gap-3 justify-center sm:justify-start">
+                <Mail size={18} className="text-[#F04E23] flex-shrink-0" />
+                <a
+                  href={`mailto:${adminEmail}`}
+                  className="hover:text-[#F04E23] transition-colors break-all"
+                >
+                  {adminEmail}
+                </a>
               </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>{adminPhone}</span>
+              <div className="flex items-center gap-3 justify-center sm:justify-start">
+                <Phone size={18} className="text-[#F04E23] flex-shrink-0" />
+                <a
+                  href={`tel:${adminPhone}`}
+                  className="hover:text-[#F04E23] transition-colors"
+                >
+                  {adminPhone}
+                </a>
               </div>
-              <div className="flex items-center gap-3">
-                <MapPin size={16} className="text-[#F04E23] flex-shrink-0" />
-                <span>{companyAddress}</span>
+              <div className="flex items-start gap-3 justify-center sm:justify-start">
+                <MapPin
+                  size={18}
+                  className="text-[#F04E23] flex-shrink-0 mt-0.5"
+                />
+                <span className="break-words">{companyAddress}</span>
               </div>
 
-              <div className="flex gap-4 mt-4">
+              <div className="flex gap-4 mt-4 justify-center sm:justify-start">
                 <a
                   href="#"
                   className="hover:scale-110 transition-transform duration-300"
                   aria-label="Facebook"
+                  title="Facebook"
                 >
                   <Facebook size={20} className="text-[#F04E23]" />
                 </a>
@@ -181,6 +197,7 @@ const Footer = () => {
                   href="#"
                   className="hover:scale-110 transition-transform duration-300"
                   aria-label="Instagram"
+                  title="Instagram"
                 >
                   <Instagram size={20} className="text-[#F04E23]" />
                 </a>
@@ -188,6 +205,7 @@ const Footer = () => {
                   href="#"
                   className="hover:scale-110 transition-transform duration-300"
                   aria-label="Twitter"
+                  title="Twitter"
                 >
                   <Twitter size={20} className="text-[#F04E23]" />
                 </a>
@@ -196,36 +214,29 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm mt-6 gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-center text-gray-400 text-xs sm:text-sm mt-6 gap-4 py-6">
           <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             <Link
               to="/privacy"
-              className="hover:text-[#e67e22] transition-colors duration-200"
+              className="hover:text-[#F04E23] transition-colors duration-200"
             >
               Privacy Policy
             </Link>
             <Link
               to="/terms"
-              className="hover:text-[#e67e22] transition-colors duration-200"
+              className="hover:text-[#F04E23] transition-colors duration-200"
             >
               Terms & Conditions
             </Link>
             <Link
-              to="/faq"
-              className="hover:text-[#e67e22] transition-colors duration-200"
+              to="/contact-us"
+              className="hover:text-[#F04E23] transition-colors duration-200"
             >
-              FAQ
-            </Link>
-            <Link
-              to="/about"
-              className="hover:text-[#e67e22] transition-colors duration-200"
-            >
-              Our Company
+              Contact Us
             </Link>
           </div>
           <p className="text-center md:text-right">
-            © {new Date().getFullYear()} Jinhua Hanji Company LTD. All rights
-            reserved.
+            &copy; 2024 Jinhua Hanji Company LTD. All rights reserved.
           </p>
         </div>
       </div>

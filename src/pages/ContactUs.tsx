@@ -1,104 +1,90 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  FaUpload,
-  FaTrash,
-  FaPhone,
-  FaEnvelope,
-  FaMapMarkerAlt,
-} from 'react-icons/fa';
+import { useState, useRef, useEffect } from 'react';
+import { FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import { Search } from 'lucide-react';
 import { adminEmail, adminPhone, companyAddress } from '../utils/axiosInstance';
 import { uploadImageToCloudinary } from '../helpers/cloudinay';
 import toast, { Toaster } from 'react-hot-toast';
 import inquiriesRequests from '../utils/requests/inquiriesRequests';
 import SeoSetup from '../components/SeoSetup';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import {
+  contactUsValidationSchema,
+  COUNTRY_CODES,
+} from '../utils/formValidation';
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    description: '',
-    referenceImages: [] as any[],
-  });
+  const [countrySearch, setCountrySearch] = useState('');
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const countryDropdownRef = useRef<HTMLDivElement>(null);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    'idle' | 'success' | 'error'
-  >('idle');
+  const filteredCountries = COUNTRY_CODES.filter(
+    (country) =>
+      country.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
+      country.code.toLowerCase().includes(countrySearch.toLowerCase()) ||
+      country.dial.includes(countrySearch)
+  );
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        countryDropdownRef.current &&
+        !countryDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowCountryDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+  const handleSubmit = async (
+    values: any,
+    { setSubmitting, resetForm }: any
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newFiles = Array.from(files);
-      setFormData((prev) => ({
-        ...prev,
-        referenceImages: [...prev.referenceImages, ...newFiles].slice(0, 5), // Limit to 5 files
-      }));
-    }
-  };
-
-  const removeImage = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      referenceImages: prev.referenceImages.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
     try {
       let uploadedUrls: string[] = [];
-      if (formData.referenceImages && formData.referenceImages.length > 0) {
-        const uploadPromises = formData.referenceImages.map((file) =>
+
+      const fileInput = document.querySelector(
+        'input[type="file"]'
+      ) as HTMLInputElement;
+      if (fileInput?.files && fileInput.files.length > 0) {
+        const uploadPromises = Array.from(fileInput.files).map((file) =>
           uploadImageToCloudinary(file)
         );
         const results = await Promise.all(uploadPromises);
         uploadedUrls = results.map((r) => r.url);
       }
 
+      const selectedCountry = COUNTRY_CODES.find(
+        (c) => c.code === values.countryCode
+      );
+      const formattedPhone = `${selectedCountry?.dial} ${values.phone}`;
+
       const payload = {
-        fullNames: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        projectDescription: formData.description,
+        fullNames: values.name,
+        email: values.email,
+        phone: formattedPhone,
+        projectDescription: values.description,
         images: uploadedUrls,
       };
 
       const response = await inquiriesRequests.newCustomInquiry(payload);
 
-      if (response.success == true) {
+      if (response.success === true) {
         toast.success(
           'Your custom order request has been submitted. We will contact you within 24 hours.'
         );
-        setSubmitStatus('success');
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          description: '',
-          referenceImages: [],
-        });
+        resetForm();
+      } else {
+        throw new Error(response.message || 'Failed to submit request');
       }
     } catch (error) {
       console.error('Submit error:', error);
-      setSubmitStatus('error');
+      toast.error(
+        'There was an error submitting your request. Please try again.'
+      );
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
@@ -114,66 +100,68 @@ const ContactUs = () => {
           type: 'website',
         }}
       />
-      <div className="py-16  md:py-20"></div>{' '}
+      <div className="py-12 md:py-16"></div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16 px-4"
         >
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6">
             Custom Order <span className="text-[#e67e22]">Inquiry</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
             Tell us about your custom framing project. Our master craftsmen will
             review your request and provide a personalized quote within 24
             hours.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="lg:col-span-1"
           >
-            <div className="bg-white rounded-2xl shadow-lg p-8 sticky top-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-8 sticky top-8">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
                 Get in Touch
               </h2>
 
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-[#e67e22]/10 rounded-xl">
+                  <div className="p-3 bg-[#e67e22]/10 rounded-xl flex-shrink-0">
                     <FaPhone className="text-[#e67e22] text-lg" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-semibold text-gray-900">Phone</h3>
-                    <p className="text-gray-600">{adminPhone}</p>
+                    <p className="text-gray-600 break-all">{adminPhone}</p>
                     <p className="text-sm text-gray-500">Mon-Sun, 24H/7</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-[#e67e22]/10 rounded-xl">
+                  <div className="p-3 bg-[#e67e22]/10 rounded-xl flex-shrink-0">
                     <FaEnvelope className="text-[#e67e22] text-lg" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-semibold text-gray-900">Email</h3>
-                    <p className="text-gray-600">{adminEmail}</p>
+                    <p className="text-gray-600 break-all">{adminEmail}</p>
                     <p className="text-sm text-gray-500">Response within 24h</p>
                   </div>
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-[#e67e22]/10 rounded-xl">
+                  <div className="p-3 bg-[#e67e22]/10 rounded-xl flex-shrink-0">
                     <FaMapMarkerAlt className="text-[#e67e22] text-lg" />
                   </div>
-                  <div>
+                  <div className="min-w-0">
                     <h3 className="font-semibold text-gray-900">Location</h3>
-                    <p className="text-gray-600">{companyAddress}</p>
+                    <p className="text-gray-600 break-words">
+                      {companyAddress}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -199,180 +187,255 @@ const ContactUs = () => {
             transition={{ duration: 0.6, delay: 0.4 }}
             className="lg:col-span-2"
           >
-            <form
+            <Formik
+              initialValues={{
+                name: '',
+                email: '',
+                countryCode: 'US',
+                phone: '',
+                description: '',
+              }}
+              validationSchema={contactUsValidationSchema}
               onSubmit={handleSubmit}
-              className="bg-white rounded-2xl shadow-lg p-8"
             >
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Personal Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
-                      placeholder="John Smith"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
-                      placeholder="+1 (555) 123-4567"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                  Project Details
-                </h2>
-              </div>
-
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Project Description *
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  required
-                  rows={6}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
-                  placeholder="Please describe your project in detail. Include information about the artwork, any special requirements, mounting preferences, glass type, and the overall look you're trying to achieve..."
-                />
-              </div>
-
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-gray-700 mb-4">
-                  Reference Images (Optional)
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center">
-                  <FaUpload className="mx-auto text-3xl text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-4">
-                    Upload photos of your artwork, inspiration images, or
-                    similar frames you like
-                  </p>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label
-                    htmlFor="file-upload"
-                    className="inline-flex items-center px-6 py-3 bg-[#e67e22] text-white rounded-xl cursor-pointer hover:bg-[#d35400] transition-colors"
-                  >
-                    <FaUpload className="mr-2" />
-                    Choose Files
-                  </label>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Maximum 5 files • PNG, JPG, JPEG up to 10MB each
-                  </p>
-                </div>
-
-                {formData.referenceImages.length > 0 && (
-                  <div className="mt-6">
-                    <h4 className="text-sm font-medium text-gray-700 mb-3">
-                      Uploaded Images ({formData.referenceImages.length}/5)
-                    </h4>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                      {formData.referenceImages.map((file, index) => (
-                        <div key={index} className="relative group">
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={`Reference ${index + 1}`}
-                            className="w-full h-32 object-cover rounded-lg"
-                            loading="lazy"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+              {({
+                errors,
+                touched,
+                isSubmitting: formSubmitting,
+                values,
+                setFieldValue,
+              }) => (
+                <Form className="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+                  <div className="mb-8">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
+                      Personal Information
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Full Name <span className="text-red-500">*</span>
+                        </label>
+                        <Field
+                          type="text"
+                          name="name"
+                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all ${
+                            touched.name && errors.name
+                              ? 'border-red-500'
+                              : 'border-gray-300'
+                          }`}
+                          placeholder="John Smith"
+                          autoComplete="name"
+                        />
+                        <ErrorMessage
+                          name="name"
+                          className="mt-1 text-sm text-red-500"
+                          component="div"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address <span className="text-red-500">*</span>
+                        </label>
+                        <Field
+                          type="email"
+                          name="email"
+                          className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all ${
+                            touched.email && errors.email
+                              ? 'border-red-500'
+                              : 'border-gray-300'
+                          }`}
+                          placeholder="john@example.com"
+                          autoComplete="email"
+                        />
+                        <ErrorMessage
+                          name="email"
+                          className="mt-1 text-sm text-red-500"
+                          component="div"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number <span className="text-red-500">*</span>
+                        </label>
+                        <div className="flex gap-3">
+                          <div
+                            className="w-40 flex-shrink-0 relative"
+                            ref={countryDropdownRef}
                           >
-                            <FaTrash className="text-xs" />
-                          </button>
-                          <p className="text-xs text-gray-600 mt-1 truncate">
-                            {file.name}
-                          </p>
+                            <div
+                              onClick={() =>
+                                setShowCountryDropdown(!showCountryDropdown)
+                              }
+                              className={`w-full h-12 px-3 py-2 border rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all text-sm cursor-pointer flex items-center justify-between bg-white ${
+                                touched.countryCode && errors.countryCode
+                                  ? 'border-red-500'
+                                  : 'border-gray-300'
+                              }`}
+                            >
+                              <span className="text-gray-700">
+                                {(() => {
+                                  const selected = COUNTRY_CODES.find(
+                                    (c) => c.code === values.countryCode
+                                  );
+                                  return selected
+                                    ? `${selected.dial} ${selected.code}`
+                                    : 'Select...';
+                                })()}
+                              </span>
+                              <span
+                                className={`transition-transform duration-200 ${
+                                  showCountryDropdown ? 'rotate-180' : ''
+                                }`}
+                              >
+                                ▼
+                              </span>
+                            </div>
+
+                            {showCountryDropdown && (
+                              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-xl shadow-lg z-50 max-h-64 overflow-hidden flex flex-col">
+                                <div className="p-2 border-b border-gray-200 sticky top-0 bg-white">
+                                  <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <input
+                                      type="text"
+                                      placeholder="Search country..."
+                                      value={countrySearch}
+                                      onChange={(e) =>
+                                        setCountrySearch(e.target.value)
+                                      }
+                                      autoFocus
+                                      className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#e67e22]"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div className="overflow-y-auto">
+                                  {filteredCountries.length > 0 ? (
+                                    filteredCountries.map((country) => (
+                                      <button
+                                        key={country.code}
+                                        type="button"
+                                        onClick={() => {
+                                          setFieldValue(
+                                            'countryCode',
+                                            country.code
+                                          );
+                                          setShowCountryDropdown(false);
+                                          setCountrySearch('');
+                                        }}
+                                        className={`w-full px-3 py-2.5 text-left text-sm transition-colors ${
+                                          values.countryCode === country.code
+                                            ? 'bg-[#e67e22]/10 text-[#e67e22] font-semibold'
+                                            : 'text-gray-700 hover:bg-gray-50'
+                                        }`}
+                                      >
+                                        <div className="flex items-center justify-between">
+                                          <span>{country.name}</span>
+                                          <span className="text-xs text-gray-500 font-mono">
+                                            {country.dial}
+                                          </span>
+                                        </div>
+                                      </button>
+                                    ))
+                                  ) : (
+                                    <div className="px-3 py-4 text-center text-sm text-gray-500">
+                                      No countries found
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex-1">
+                            <Field
+                              type="tel"
+                              name="phone"
+                              className={`w-full h-12 px-4 py-2 border rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all ${
+                                touched.phone && errors.phone
+                                  ? 'border-red-500'
+                                  : 'border-gray-300'
+                              }`}
+                              placeholder="555 123 4567"
+                              autoComplete="tel"
+                            />
+                          </div>
                         </div>
-                      ))}
+                        <div className="mt-2 flex justify-between items-start gap-4">
+                          {errors.countryCode || errors.phone ? (
+                            <div className="text-sm text-red-500">
+                              {errors.countryCode && (
+                                <p>{errors.countryCode}</p>
+                              )}
+                              {errors.phone && <p>{errors.phone}</p>}
+                            </div>
+                          ) : null}
+                          <div className="text-xs text-gray-500 ml-auto flex-shrink-0">
+                            {(() => {
+                              const selected = COUNTRY_CODES.find(
+                                (c) => c.code === values.countryCode
+                              );
+                              return selected ? `${selected.name}` : '';
+                            })()}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
 
-              <motion.button
-                type="submit"
-                disabled={isSubmitting}
-                whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
-                whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
-                className="w-full bg-[#e67e22] text-white py-4 px-8 rounded-xl font-bold text-lg hover:bg-[#d35400] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center">
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Processing...
+                  <div className="mb-8">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">
+                      Project Details
+                    </h2>
                   </div>
-                ) : (
-                  'Submit Custom Order Request'
-                )}
-              </motion.button>
 
-              {submitStatus === 'success' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-center"
-                >
-                  Thank you! Your custom order request has been submitted. We'll
-                  contact you within 24 hours.
-                </motion.div>
-              )}
+                  <div className="mb-8">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Project Description{' '}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <Field
+                      as="textarea"
+                      name="description"
+                      rows={6}
+                      className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all resize-none ${
+                        touched.description && errors.description
+                          ? 'border-red-500'
+                          : 'border-gray-300'
+                      }`}
+                      placeholder="Please describe your project in detail. Include information about the artwork, any special requirements, mounting preferences, glass type, and the overall look you're trying to achieve..."
+                    />
+                    <div className="mt-1 flex justify-between">
+                      <ErrorMessage
+                        name="description"
+                        className="text-sm text-red-500"
+                        component="div"
+                      />
+                      <span className="text-xs text-gray-500">
+                        {values.description.length}/2000
+                      </span>
+                    </div>
+                  </div>
 
-              {submitStatus === 'error' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-center"
-                >
-                  There was an error submitting your request. Please try again
-                  or contact us directly.
-                </motion.div>
+                  <motion.button
+                    type="submit"
+                    disabled={formSubmitting}
+                    whileHover={{ scale: formSubmitting ? 1 : 1.02 }}
+                    whileTap={{ scale: formSubmitting ? 1 : 0.98 }}
+                    className="w-full bg-[#e67e22] text-white py-3 sm:py-4 px-6 sm:px-8 rounded-xl font-bold text-base sm:text-lg hover:bg-[#d35400] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    {formSubmitting ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Processing...
+                      </div>
+                    ) : (
+                      'Submit Custom Order Request'
+                    )}
+                  </motion.button>
+                </Form>
               )}
-            </form>
+            </Formik>
           </motion.div>
         </div>
       </div>
