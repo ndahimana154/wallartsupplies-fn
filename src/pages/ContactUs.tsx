@@ -96,7 +96,7 @@ const ContactUs = () => {
           title: 'Contact Us - Jinhua Hanji Company LTD',
           description:
             "Get in touch for custom framing quotes, orders, and general inquiries. We're happy to help with product info, shipping and custom projects.",
-          image: '/main-logo.jpg',
+          image: '/main-logo1.jpg',
           type: 'website',
         }}
       />

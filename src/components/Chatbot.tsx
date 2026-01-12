@@ -218,7 +218,7 @@ function Chatbot() {
                   }}
                 >
                   <img
-                    src="/main-logo.jpg"
+                    src="/main-logo1.jpg"
                     className="w-8 h-8"
                     alt="logo"
                     loading="lazy"

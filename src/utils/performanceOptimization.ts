@@ -136,7 +136,7 @@ export const preloadCriticalResources = () => {
     if (typeof document === 'undefined') return;
 
     const criticalAssets = [
-        '/main-logo.jpg',
+        '/main-logo1.jpg',
         '/assets/critical-image.webp',
     ];
 
@@ -199,7 +199,7 @@ export const seoOptimizations = {
         '@type': 'Organization',
         name: 'Jinhua Hanji Trading Co. LTD',
         url: 'https://www.wallartsupplies.com',
-        logo: '/main-logo.jpg',
+        logo: '/main-logo1.jpg',
     },
 
     // Meta tags

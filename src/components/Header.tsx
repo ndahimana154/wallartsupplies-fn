@@ -256,7 +256,7 @@ const Header = () => {
                 aria-label="Go to home"
               >
                 <img
-                  src="/main-logo.jpg"
+                  src="/main-logo1.jpg"
                   alt="Jinhua Hanji Company Logo"
                   className="h-10 sm:h-12 w-auto object-contain"
                   loading="lazy"
@@ -283,7 +283,7 @@ const Header = () => {
                 Collections
               </Link>
 
-              {categories?.slice(0, 3).map((cat) => (
+              {categories?.slice(0, 1).map((cat) => (
                 <Link
                   key={cat.id}
                   to={`/categories/${cat.slug}`}
@@ -294,7 +294,7 @@ const Header = () => {
                 </Link>
               ))}
 
-              {categories.length > 3 && (
+              {categories.length > 1 && (
                 <div
                   className="relative"
                   ref={moreMenuRef}
@@ -326,7 +326,7 @@ const Header = () => {
                         className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
                         role="menu"
                       >
-                        {categories.slice(3).map((cat) => (
+                        {categories.slice(2).map((cat) => (
                           <Link
                             key={cat.id}
                             to={`/categories/${cat.slug}`}
@@ -365,7 +365,7 @@ const Header = () => {
                 aria-label="Go to home"
               >
                 <img
-                  src="/main-logo.jpg"
+                  src="/main-logo1.jpg"
                   alt="Jinhua Hanji Company Logo"
                   className="h-16 xl:h-20 w-auto object-contain"
                   loading="lazy"

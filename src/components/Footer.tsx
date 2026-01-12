@@ -57,7 +57,7 @@ const Footer = () => {
               aria-label="Go to home"
             >
               <img
-                src="/main-logo.jpg"
+                src="/main-logo1.jpg"
                 alt="Jinhua Hanji Company LTD Logo"
                 className="w-16 sm:w-20 h-auto object-contain"
                 loading="lazy"

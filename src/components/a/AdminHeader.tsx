@@ -15,7 +15,7 @@ const AdminHeader = () => {
           className="flex items-center gap-3 group transition-all"
         >
           <motion.img
-            src="/main-logo.jpg"
+            src="/main-logo1.jpg"
             alt="Jinhua Hanji Company LTD"
             className="h-9 drop-shadow-md"
             whileHover={{ scale: 1.05 }}

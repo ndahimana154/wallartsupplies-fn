@@ -54,7 +54,7 @@ export const generateMetaTags = (config: {
         og: {
             title: config.title,
             description: config.description,
-            image: config.image || '/main-logo.jpg',
+            image: config.image || '/main-logo1.jpg',
             type: config.type || 'website',
             url: config.url || window.location.href,
         },
@@ -62,7 +62,7 @@ export const generateMetaTags = (config: {
             card: 'summary_large_image',
             title: config.title,
             description: config.description,
-            image: config.image || '/main-logo.jpg',
+            image: config.image || '/main-logo1.jpg',
         },
     };
 };
@@ -197,7 +197,7 @@ export const structuredData = {
         '@type': 'Organization',
         name: 'Jinhua Hanji Company LTD',
         url: 'https://wallartsupplies.com',
-        logo: 'https://wallartsupplies.com/main-logo.jpg',
+        logo: 'https://wallartsupplies.com/main-logo1.jpg',
         description:
             'Creative wall art supplies and custom framing solutions',
         contactPoint: {

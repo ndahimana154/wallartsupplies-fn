@@ -59,7 +59,7 @@ const Login = () => {
         <div className="relative z-10 flex flex-col justify-center h-full px-8 lg:px-20 text-white">
           <Link to={'/'} className="mb-8 inline-flex">
             <img
-              src="/main-logo.jpg"
+              src="/main-logo1.jpg"
               className="w-32 lg:w-40 h-auto object-contain"
               alt="Jinhua Hanji Company Logo"
               loading="lazy"
@@ -99,7 +99,7 @@ const Login = () => {
               <div className="md:hidden mb-8 text-center">
                 <Link to={'/'} className="inline-flex">
                   <img
-                    src="/main-logo.jpg"
+                    src="/main-logo1.jpg"
                     className="w-24 h-auto object-contain"
                     alt="Jinhua Hanji Company Logo"
                     loading="lazy"

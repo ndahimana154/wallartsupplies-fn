@@ -118,7 +118,7 @@ I'd like to know more about customization options and shipping.`;
           mainData={{
             title: '404 Product not found',
             description: 'The product you requested could not be found.',
-            image: '/main-logo.jpg',
+            image: '/main-logo1.jpg',
             type: 'website',
           }}
         />
@@ -152,7 +152,7 @@ I'd like to know more about customization options and shipping.`;
           description: String(product.description)
             .replace(/<[^>]+>/g, '')
             .slice(0, 160),
-          image: String(product.images?.[0] ?? '/main-logo.jpg'),
+          image: String(product.images?.[0] ?? '/main-logo1.jpg'),
           type: 'product',
           publishedAt: (product as any).createdAt ?? undefined,
         }}
