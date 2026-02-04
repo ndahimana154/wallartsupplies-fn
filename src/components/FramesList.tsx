@@ -5,11 +5,14 @@ import productRequests from '../utils/requests/productRequests';
 import type { ProductData } from '../types/product';
 import { useNavigate } from 'react-router-dom';
 import Product from './Product';
+import ProductSkeleton from './ProductSkeleton';
+import { useAppSelector } from '../store/hooks';
 
 const FramesGallery = () => {
   const [framesData, setFramesData] = useState<ProductData[]>([]);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const globalError = useAppSelector((s) => s.app.globalError);
   const navigate = useNavigate();
 
   const fetchRecentFrames = async () => {
@@ -18,7 +21,7 @@ const FramesGallery = () => {
       setError('');
       const response = await productRequests.getRecentFrames(
         {},
-        { page: 1, limit: 12 }
+        { page: 1, limit: 12 },
       );
       if (response.success === true) {
         setFramesData(response.data.data);
@@ -29,7 +32,7 @@ const FramesGallery = () => {
       console.error('Error fetching frames:', error);
       setError(
         error.message ||
-          'An error occurred while loading products. Please try again later.'
+          'An error occurred while loading products. Please try again later.',
       );
     } finally {
       setLoading(false);
@@ -43,6 +46,9 @@ const FramesGallery = () => {
   useEffect(() => {
     fetchRecentFrames();
   }, []);
+
+  // Show error from global state or local error
+  const displayError = globalError || error;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-24 px-6">
@@ -66,16 +72,13 @@ const FramesGallery = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="max-w-7xl mx-auto text-center"
+          className="max-w-7xl mx-auto"
         >
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-12 h-12 border-4 border-[#F04E23] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600 font-light">Loading products...</p>
-          </div>
+          <ProductSkeleton count={6} />
         </motion.div>
       )}
 
-      {error && !loading && (
+      {displayError && !loading && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,7 +93,7 @@ const FramesGallery = () => {
             <h3 className="text-xl font-semibold text-red-800 mb-2">
               Unable to Load Products
             </h3>
-            <p className="text-red-600 mb-6">{error}</p>
+            <p className="text-red-600 mb-6">{displayError}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -113,7 +116,7 @@ const FramesGallery = () => {
         </motion.div>
       )}
 
-      {!loading && !error && (
+      {!loading && !displayError && (
         <div className="max-w-7xl mx-auto">
           {framesData.length === 0 ? (
             <motion.div
@@ -139,11 +142,37 @@ const FramesGallery = () => {
               </div>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-14 px-2 md:px-0">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-14 px-2 md:px-0"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0,
+                  },
+                },
+              }}
+            >
               {framesData.map((product: ProductData, index) => (
-                <Product product={product} index={index} />
+                <motion.div
+                  key={product.id || index}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.5, ease: 'easeOut' },
+                    },
+                  }}
+                >
+                  <Product product={product} index={index} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       )}
