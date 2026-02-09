@@ -13,20 +13,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DO_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
+      # ✅ Correct SSH setup (handles ed25519 properly)
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
 
       - name: Deploy to server
         run: |
-          ssh ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << 'EOF'
-            cd ${{ secrets.APP_PATH }}
+          ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << 'EOF'
+            cd /var/www/react-source
             git pull origin develop
             npm install --legacy-peer-deps
             npm run build
-            # Build static files, then reload Nginx to serve the updated build
-            sudo systemctl reload nginx || sudo service nginx reload || nginx -s reload
+
+            rm -rf /var/www/react-app/build
+            cp -r build /var/www/react-app/
+
+            sudo systemctl reload nginx
           EOF
