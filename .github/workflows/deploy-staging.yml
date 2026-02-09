@@ -24,8 +24,9 @@ jobs:
         run: |
           ssh ${{ secrets.DO_USER }}@${{ secrets.DO_HOST }} << 'EOF'
             cd ${{ secrets.APP_PATH }}
-            git pull origin staging
-            npm install
+            git pull origin develop
+            npm install --legacy-peer-deps
             npm run build
-            pm2 restart all
+            # Build static files, then reload Nginx to serve the updated build
+            sudo systemctl reload nginx || sudo service nginx reload || nginx -s reload
           EOF
