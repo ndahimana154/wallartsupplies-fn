@@ -6,8 +6,6 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 
 import userRequests from '../utils/requests/userRequests';
 import SeoSetup from '../components/SeoSetup';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useGlobalLoading } from '../hooks/useGlobalLoading';
 
 const validationSchema = Yup.object().shape({
   password: Yup.string().required('New password is required'),
@@ -28,7 +26,7 @@ const VerifyResetLink = () => {
   const navigate = useNavigate();
 
   const [isValid, setIsValid] = useState(false);
-  const { isLoading } = useGlobalLoading();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     verifyForgotPasswordToken();
@@ -44,6 +42,8 @@ const VerifyResetLink = () => {
       setIsValid(response.success === true);
     } catch (error) {
       setIsValid(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,10 +78,10 @@ const VerifyResetLink = () => {
     }
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner text="Verifying link..." />
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Verifying link...
       </div>
     );
   }
@@ -156,8 +156,8 @@ const VerifyResetLink = () => {
                         errors.password && touched.password
                           ? 'border-red-500 focus:ring-2 focus:ring-red-400'
                           : touched.password && !errors.password
-                            ? 'border-green-500 focus:ring-2 focus:ring-green-400'
-                            : 'border-gray-300 focus:ring-2 focus:ring-[#e67e22]'
+                          ? 'border-green-500 focus:ring-2 focus:ring-green-400'
+                          : 'border-gray-300 focus:ring-2 focus:ring-[#e67e22]'
                       }`}
                     />
                     <ErrorMessage
@@ -178,8 +178,8 @@ const VerifyResetLink = () => {
                         errors.retype && touched.retype
                           ? 'border-red-500 focus:ring-2 focus:ring-red-400'
                           : touched.retype && !errors.retype
-                            ? 'border-green-500 focus:ring-2 focus:ring-green-400'
-                            : 'border-gray-300 focus:ring-2 focus:ring-[#e67e22]'
+                          ? 'border-green-500 focus:ring-2 focus:ring-green-400'
+                          : 'border-gray-300 focus:ring-2 focus:ring-[#e67e22]'
                       }`}
                     />
                     <ErrorMessage

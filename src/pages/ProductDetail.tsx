@@ -15,17 +15,13 @@ import { adminPhone, frontendUrl } from '../utils/axiosInstance';
 import ShippingTab from '../components/ShippingTab';
 import RelatedProducts from '../components/RelatedProducts';
 import SeoSetup from '../components/SeoSetup';
-import LoadingSpinner from '../components/LoadingSpinner';
-import { useGlobalLoading } from '../hooks/useGlobalLoading';
-import { useAppSelector } from '../store/hooks';
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [product, setProduct] = useState<ProductData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { isLoading } = useGlobalLoading();
-  const globalError = useAppSelector((s) => s.app.globalError);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -35,6 +31,7 @@ const ProductDetail = () => {
     if (!slug) return;
 
     try {
+      setLoading(true);
       const response = await productRequests.getProductBySlug(slug);
 
       if (response.success === true) {
@@ -45,6 +42,8 @@ const ProductDetail = () => {
       }
     } catch (error: any) {
       setError(error.message || 'Failed to load product');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -97,15 +96,22 @@ I'd like to know more about customization options and shipping.`;
     }
   }, [slug]);
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
-        <LoadingSpinner text="Loading product details..." />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <div className="w-16 h-16 border-4 border-[#F04E23] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-light">Loading product details...</p>
+        </motion.div>
       </div>
     );
   }
 
-  if (globalError || error || !product) {
+  if (error || !product) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
         <SeoSetup
@@ -189,7 +195,7 @@ I'd like to know more about customization options and shipping.`;
                 {product.customAttr?.find(
                   (attr) =>
                     attr.key.toLowerCase().includes('sale') ||
-                    attr.key.toLowerCase().includes('discount'),
+                    attr.key.toLowerCase().includes('discount')
                 ) && (
                   <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                     Sale

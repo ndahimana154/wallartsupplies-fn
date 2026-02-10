@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { openModal, closeModal } from '../../store/slices/uiSlice';
 import NewCategoryModal from '../../components/a/NewCategoryModal';
 import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
@@ -18,11 +16,7 @@ import EditCategoryModal from '../../components/a/EditCategoryModal';
 import type { QueryOptions } from '../../types/heroAd';
 
 const Categories = () => {
-  // Modal state moved to global UI slice
-  const dispatch = useAppDispatch();
-  const isNewModalOpen = useAppSelector(
-    (s) => !!s.ui.modals['newCategory']?.open,
-  );
+  const [isNewModalOpen, setIsNewModalOpen] = useState(false);
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [catToEdit, setCatToEdit] = useState<CategoryData>();
@@ -123,7 +117,7 @@ const Categories = () => {
             </p>
           </div>
           <button
-            onClick={() => dispatch(openModal({ name: 'newCategory' }))}
+            onClick={() => setIsNewModalOpen(true)}
             className="flex items-center gap-2 bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
           >
             <Plus className="w-5 h-5" />
@@ -160,6 +154,56 @@ const Categories = () => {
             )}
           </form>
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-800">
+                  Total Categories
+                </p>
+                <p className="text-2xl font-bold text-orange-900 mt-1">
+                  {totalCount}
+                </p>
+              </div>
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <ImageIcon className="w-6 h-6 text-orange-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-800">
+                  Active Categories
+                </p>
+                <p className="text-2xl font-bold text-blue-900 mt-1">
+                  {categories.length}
+                </p>
+              </div>
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Edit className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-800">
+                  Current Page
+                </p>
+                <p className="text-sm font-bold text-green-900 mt-1">
+                  {currentPage} of {totalPages}
+                </p>
+              </div>
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -182,7 +226,7 @@ const Categories = () => {
             </p>
             {!searchTerm && (
               <button
-                onClick={() => dispatch(openModal({ name: 'newCategory' }))}
+                onClick={() => setIsNewModalOpen(true)}
                 className="bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-2 rounded-lg font-medium transition-colors"
               >
                 Create Category
@@ -346,7 +390,7 @@ const Categories = () => {
         <NewCategoryModal
           onClose={() => {
             fetchCategories(currentPage, searchTerm);
-            dispatch(closeModal({ name: 'newCategory' }));
+            setIsNewModalOpen(false);
           }}
         />
       )}
