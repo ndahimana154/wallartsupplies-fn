@@ -4,7 +4,9 @@ import {
   Plus,
   Edit,
   Trash2,
+  Eye,
   Link as LinkIcon,
+  EyeOff,
   Search,
   ChevronLeft,
   ChevronRight,
@@ -45,7 +47,7 @@ const HeroAds = () => {
 
       const response = await heroAdsRequests.getAllHeroAdsRequest(
         filters,
-        queries,
+        queries
       );
 
       if (response.success === true) {
@@ -132,7 +134,7 @@ const HeroAds = () => {
 
       if (response.success) {
         toast.success(
-          `Hero ad ${!ad.isActive ? 'activated' : 'deactivated'} successfully`,
+          `Hero ad ${!ad.isActive ? 'activated' : 'deactivated'} successfully`
         );
         fetchHeroAds(currentPage, searchTerm);
       } else {
@@ -221,6 +223,56 @@ const HeroAds = () => {
                 </button>
               )}
             </form>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-orange-800">
+                    Total Hero Ads
+                  </p>
+                  <p className="text-2xl font-bold text-orange-900 mt-1">
+                    {totalCount}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <LinkIcon className="w-6 h-6 text-orange-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-green-800">
+                    Active Ads
+                  </p>
+                  <p className="text-2xl font-bold text-green-900 mt-1">
+                    {heroAds.filter((ad) => ad.isActive).length}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Eye className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-800">
+                    Inactive Ads
+                  </p>
+                  <p className="text-2xl font-bold text-blue-900 mt-1">
+                    {heroAds.filter((ad) => !ad.isActive).length}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <EyeOff className="w-6 h-6 text-blue-600" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

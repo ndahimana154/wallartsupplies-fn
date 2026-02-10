@@ -83,27 +83,27 @@ const Products = () => {
 
     setProducts((prevProducts) =>
       prevProducts.map((p) =>
-        p.id === product.id ? { ...p, status: newStatus } : p,
-      ),
+        p.id === product.id ? { ...p, status: newStatus } : p
+      )
     );
 
     try {
       const response = await productRequests.updateProductStatusRequest(
         product.id,
-        newStatus,
+        newStatus
       );
 
       if (response.success) {
         toast.success(
           `Product "${product.name}" status changed to ${
             newStatus ? 'Active' : 'Inactive'
-          }.`,
+          }.`
         );
       } else {
         setProducts((prevProducts) =>
           prevProducts.map((p) =>
-            p.id === product.id ? { ...p, status: currentStatus } : p,
-          ),
+            p.id === product.id ? { ...p, status: currentStatus } : p
+          )
         );
         throw new Error('Failed to update status on server.');
       }
@@ -169,6 +169,96 @@ const Products = () => {
               <Plus />
               Add Product
             </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-orange-800">
+                    Total Products
+                  </p>
+                  <p className="text-2xl font-bold text-orange-900 mt-1">
+                    {products.length}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-orange-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2M4 13h2m8-8V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v1m4 0h-4"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-800">
+                    Active Products
+                  </p>
+                  <p className="text-2xl font-bold text-blue-900 mt-1">
+                    {products.filter((p) => p.status).length}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-100 rounded-xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-purple-800">
+                    Avg. Price
+                  </p>
+                  <p className="text-2xl font-bold text-purple-900 mt-1">
+                    $
+                    {(
+                      products.reduce((acc, p) => acc + p.price, 0) /
+                      (products.length || 1)
+                    ).toFixed(2)}
+                  </p>
+                </div>
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-purple-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -237,7 +327,7 @@ const Products = () => {
                   <tbody className="divide-y divide-gray-100">
                     {products.map((product, index) => {
                       const currentImageIndex = getProductImageIndex(
-                        String(product.id) || index.toString(),
+                        String(product.id) || index.toString()
                       );
                       const productImages = product.images || [];
 
@@ -291,7 +381,7 @@ const Products = () => {
                                         setProductImageIndex(
                                           String(product.id) ||
                                             index.toString(),
-                                          newIndex,
+                                          newIndex
                                         );
                                       }}
                                       className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full shadow-sm flex items-center justify-center text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-[#e67e22] z-10"
@@ -309,7 +399,7 @@ const Products = () => {
                                         setProductImageIndex(
                                           String(product.id) ||
                                             index.toString(),
-                                          newIndex,
+                                          newIndex
                                         );
                                       }}
                                       className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border border-gray-300 rounded-full shadow-sm flex items-center justify-center text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:text-[#e67e22] z-10"
@@ -329,7 +419,7 @@ const Products = () => {
                                           setProductImageIndex(
                                             String(product.id) ||
                                               index.toString(),
-                                            idx,
+                                            idx
                                           );
                                         }}
                                         className={`w-1 h-1 rounded-full transition-all ${
@@ -390,7 +480,7 @@ const Products = () => {
                           <td className="p-4">
                             {getStatusBadge(
                               product as ProductStatusData,
-                              product.status || false,
+                              product.status || false
                             )}{' '}
                           </td>
                           <td className="p-4">

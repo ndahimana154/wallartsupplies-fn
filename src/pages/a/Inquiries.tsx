@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
 import type { CategoryData } from '../../types/product';
 import {
+  Edit,
   Image as ImageIcon,
   Search,
   ChevronLeft,
@@ -46,7 +47,7 @@ const Inquiries = () => {
   const fetchData = async (
     page: number = 1,
     search: string = '',
-    statusOverride?: 'ALL' | 'UNRESOLVED' | 'RESOLVED',
+    statusOverride?: 'ALL' | 'UNRESOLVED' | 'RESOLVED'
   ): Promise<boolean> => {
     try {
       setLoading(true);
@@ -73,7 +74,7 @@ const Inquiries = () => {
 
       const response = await inquiriesRequests.getAllInquiries(
         filters,
-        queries,
+        queries
       );
 
       if (response.success === true) {
@@ -93,7 +94,7 @@ const Inquiries = () => {
           unresolvedFilters.status = 'UNRESOLVED';
           const unresolvedResp = await inquiriesRequests.getAllInquiries(
             unresolvedFilters,
-            { page: 1, limit: 1, sortBy: 'updatedAt', order: 'DESC' },
+            { page: 1, limit: 1, sortBy: 'updatedAt', order: 'DESC' }
           );
           if (unresolvedResp && unresolvedResp.success === true) {
             setUnresolvedCount(unresolvedResp.data.pagination?.total || 0);
@@ -114,12 +115,12 @@ const Inquiries = () => {
 
   const toggleResolvedStatus = async (
     inquiryId: number,
-    newStatus: 'RESOLVED' | 'UNRESOLVED',
+    newStatus: 'RESOLVED' | 'UNRESOLVED'
   ) => {
     try {
       const promise = inquiriesRequests.toggleResolvedStatus(
         inquiryId,
-        newStatus,
+        newStatus
       );
       await toast.promise(promise, {
         loading: `Updating status to ${newStatus}...`,
@@ -272,6 +273,56 @@ const Inquiries = () => {
               )}
             </div>
           </form>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-orange-800">
+                  Total Inquiries
+                </p>
+                <p className="text-2xl font-bold text-orange-900 mt-1">
+                  {totalCount}
+                </p>
+              </div>
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <ImageIcon className="w-6 h-6 text-orange-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-800">
+                  Results On This Page
+                </p>
+                <p className="text-2xl font-bold text-blue-900 mt-1">
+                  {data.length}
+                </p>
+              </div>
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Edit className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-green-800">
+                  Current Page
+                </p>
+                <p className="text-sm font-bold text-green-900 mt-1">
+                  {currentPage} of {totalPages}
+                </p>
+              </div>
+              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -443,7 +494,7 @@ const Inquiries = () => {
                               if (!window.confirm(confirmMessage)) return;
                               await toggleResolvedStatus(
                                 item.id,
-                                newStatus as 'RESOLVED' | 'UNRESOLVED',
+                                newStatus as 'RESOLVED' | 'UNRESOLVED'
                               );
                             }}
                             className="px-3 py-1 bg-gray-50 text-gray-700 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors"

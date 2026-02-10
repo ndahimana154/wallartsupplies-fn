@@ -12,44 +12,20 @@ export default defineConfig({
     tailwindcss()
   ],
   build: {
-    // More aggressive code-splitting: group large libraries and allow automatic vendor splitting
+    // Code splitting for better caching and performance
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-              return 'vendor-react'
-            }
-            if (id.includes('recharts') || id.includes('d3')) {
-              return 'vendor-charts'
-            }
-            if (id.includes('framer-motion') || id.includes('react-icons') || id.includes('lucide-react')) {
-              return 'vendor-ui'
-            }
-            if (id.includes('formik') || id.includes('yup')) {
-              return 'vendor-form'
-            }
-            if (id.includes('axios') || id.includes('web-vitals')) {
-              return 'vendor-api'
-            }
-            if (id.includes('quill') || id.includes('react-quill') || id.includes('tiptap')) {
-              return 'vendor-editor'
-            }
-            return 'vendor-others'
-          }
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'ui-libs': ['framer-motion', 'react-icons', 'lucide-react'],
+          'form': ['formik', 'yup'],
+          'api': ['axios'],
         },
       },
     },
-    // Optimize chunk size threshold and minify with esbuild
-    chunkSizeWarningLimit: 600,
+    // Optimize chunk size
+    chunkSizeWarningLimit: 1000,
+    // Enable minification (default esbuild is faster)
     minify: 'esbuild',
-    // Enable brotli size reporting
-    reportCompressedSize: true,
-    // Faster build with parallel optimization
-    cssCodeSplit: true,
-    sourcemap: false,
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'react-redux', '@reduxjs/toolkit', 'recharts', 'framer-motion', 'react-icons', 'lucide-react', 'axios', 'react-hot-toast'],
   },
 })

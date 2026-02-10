@@ -3,16 +3,17 @@ import { X, Menu } from 'lucide-react';
 import { BsWhatsapp } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { toggleMobileMenu } from '../../store/slices/appSlice';
-
 interface HeaderErrorProps {
+  menuOpen: boolean;
+  setMenuOpen: (open: boolean) => void;
   fetchBestCategories: () => void;
 }
 
-const HeaderError = ({ fetchBestCategories }: HeaderErrorProps) => {
-  const dispatch = useAppDispatch();
-  const menuOpen = useAppSelector((s) => s.app.mobileMenuOpen);
+const HeaderError = ({
+  menuOpen,
+  setMenuOpen,
+  fetchBestCategories,
+}: HeaderErrorProps) => {
   return (
     <>
       <header className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-40">
@@ -58,7 +59,7 @@ const HeaderError = ({ fetchBestCategories }: HeaderErrorProps) => {
           </div>
 
           <button
-            onClick={() => dispatch(toggleMobileMenu())}
+            onClick={() => setMenuOpen(!menuOpen)}
             className="lg:hidden p-2 text-gray-700 hover:text-[#e67e22] transition"
           >
             {menuOpen ? (
