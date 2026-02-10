@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import productRequests from '../utils/requests/productRequests';
 import type { CategoryData, ProductData } from '../types/product';
 import SeoSetup from '../components/SeoSetup';
 import ProductItemRelatedSection from '../components/a/ProductItemRelatedSection';
+import LoadingSpinner from '../components/LoadingSpinner';
+import { useGlobalLoading } from '../hooks/useGlobalLoading';
+import { useAppSelector } from '../store/hooks';
 
 const CategoriesProducts = () => {
   const [products, setProducts] = useState<ProductData[]>([]);
   const [category, setCategory] = useState<CategoryData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { isLoading } = useGlobalLoading();
+  const globalError = useAppSelector((s) => s.app.globalError);
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
   const fetchCategoryProducts = async () => {
     try {
-      setLoading(true);
       setError('');
       const response = await productRequests.getCategoryProducts(String(slug));
 
@@ -27,14 +29,12 @@ const CategoriesProducts = () => {
         setCategory(response.data.category || null);
       } else {
         throw new Error(
-          response.message || 'Failed to fetch category products'
+          response.message || 'Failed to fetch category products',
         );
       }
     } catch (error: any) {
       console.error('Error fetching category products:', error);
       setError(error.message || 'Something went wrong while loading products');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -44,22 +44,15 @@ const CategoriesProducts = () => {
     }
   }, [slug]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center"
-        >
-          <Loader2 className="w-12 h-12 text-[#F04E23] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-light">Loading products...</p>
-        </motion.div>
+        <LoadingSpinner text="Loading products..." />
       </div>
     );
   }
 
-  if (error || !category) {
+  if (globalError || error || !category) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
         <SeoSetup mainData={{ title: 'Category Not Found' }} />
@@ -72,10 +65,14 @@ const CategoriesProducts = () => {
             <span className="text-2xl text-red-500">⚠️</span>
           </div>
           <h2 className="text-2xl font-light text-gray-900 mb-4">
-            {error ? 'Error Loading Category' : 'Category Not Found'}
+            {globalError || error
+              ? 'Error Loading Category'
+              : 'Category Not Found'}
           </h2>
           <p className="text-gray-600 mb-8">
-            {error || 'The category you are looking for does not exist.'}
+            {globalError ||
+              error ||
+              'The category you are looking for does not exist.'}
           </p>
           <div className="flex gap-4 justify-center">
             <button

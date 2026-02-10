@@ -11,6 +11,9 @@ import type { ProductData } from '../types/product';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SeoSetup from '../components/SeoSetup';
 import Product from '../components/Product';
+import ProductSkeleton from '../components/ProductSkeleton';
+import { useGlobalLoading } from '../hooks/useGlobalLoading';
+import { useAppSelector } from '../store/hooks';
 
 interface PaginationData {
   total: number;
@@ -22,7 +25,8 @@ interface PaginationData {
 const Search = () => {
   const [framesData, setFramesData] = useState<ProductData[]>([]);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(true);
+  const { isLoading } = useGlobalLoading();
+  const globalError = useAppSelector((s) => s.app.globalError);
   const [pagination, setPagination] = useState<PaginationData>({
     total: 0,
     page: 1,
@@ -38,12 +42,11 @@ const Search = () => {
   const fetchRecentFrames = useCallback(
     async (page: number = currentPage) => {
       try {
-        setLoading(true);
         setError('');
 
         const response = await productRequests.getRecentFrames(
           { search: searchText },
-          { page, limit: pagination.limit }
+          { page, limit: pagination.limit },
         );
 
         if (response.success === true) {
@@ -54,7 +57,7 @@ const Search = () => {
               page,
               limit: pagination.limit,
               totalPages: 1,
-            }
+            },
           );
         } else {
           throw new Error(response.message || 'Failed to load products');
@@ -63,13 +66,11 @@ const Search = () => {
         console.error('Error fetching frames:', error);
         setError(
           error.message ||
-            'An error occurred while loading products. Please try again later.'
+            'An error occurred while loading products. Please try again later.',
         );
-      } finally {
-        setLoading(false);
       }
     },
-    [searchText, pagination.limit, currentPage]
+    [searchText, pagination.limit, currentPage],
   );
 
   const handlePageChange = (newPage: number) => {
@@ -119,7 +120,7 @@ const Search = () => {
       >
         <FaChevronLeft className="text-sm mr-1" />
         Previous
-      </motion.button>
+      </motion.button>,
     );
 
     if (startPage > 1) {
@@ -130,13 +131,13 @@ const Search = () => {
           className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           1
-        </button>
+        </button>,
       );
       if (startPage > 2) {
         buttons.push(
           <span key="ellipsis1" className="px-2 py-2">
             ...
-          </span>
+          </span>,
         );
       }
     }
@@ -155,7 +156,7 @@ const Search = () => {
           }`}
         >
           {i}
-        </motion.button>
+        </motion.button>,
       );
     }
 
@@ -164,7 +165,7 @@ const Search = () => {
         buttons.push(
           <span key="ellipsis2" className="px-2 py-2">
             ...
-          </span>
+          </span>,
         );
       }
       buttons.push(
@@ -174,7 +175,7 @@ const Search = () => {
           className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           {totalPages}
-        </button>
+        </button>,
       );
     }
 
@@ -189,7 +190,7 @@ const Search = () => {
       >
         Next
         <FaChevronRight className="text-sm ml-1" />
-      </motion.button>
+      </motion.button>,
     );
 
     return buttons;
@@ -278,21 +279,16 @@ const Search = () => {
           </div>
         </div>
       </div>
-      {loading && (
+      {isLoading && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="max-w-7xl mx-auto text-center"
+          className="max-w-7xl mx-auto"
         >
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-12 h-12 border-4 border-[#F04E23] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600 font-light">
-              {searchText ? 'Searching products...' : 'Loading products...'}
-            </p>
-          </div>
+          <ProductSkeleton count={9} />
         </motion.div>
       )}
-      {error && !loading && (
+      {(globalError || error) && !isLoading && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -307,7 +303,7 @@ const Search = () => {
             <h3 className="text-xl font-semibold text-red-800 mb-2">
               Unable to Load Products
             </h3>
-            <p className="text-red-600 mb-6">{error}</p>
+            <p className="text-red-600 mb-6">{globalError || error}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -329,7 +325,7 @@ const Search = () => {
           </div>
         </motion.div>
       )}
-      {!loading && !error && (
+      {!isLoading && !(globalError || error) && (
         <div className="max-w-7xl mx-auto">
           {framesData.length === 0 ? (
             <motion.div
