@@ -3,7 +3,6 @@ import { AnimatePresence } from 'framer-motion';
 import toast, { Toaster } from 'react-hot-toast';
 import type { CategoryData } from '../../types/product';
 import {
-  Edit,
   Image as ImageIcon,
   Search,
   ChevronLeft,
@@ -47,7 +46,7 @@ const Inquiries = () => {
   const fetchData = async (
     page: number = 1,
     search: string = '',
-    statusOverride?: 'ALL' | 'UNRESOLVED' | 'RESOLVED'
+    statusOverride?: 'ALL' | 'UNRESOLVED' | 'RESOLVED',
   ): Promise<boolean> => {
     try {
       setLoading(true);
@@ -74,7 +73,7 @@ const Inquiries = () => {
 
       const response = await inquiriesRequests.getAllInquiries(
         filters,
-        queries
+        queries,
       );
 
       if (response.success === true) {
@@ -94,7 +93,7 @@ const Inquiries = () => {
           unresolvedFilters.status = 'UNRESOLVED';
           const unresolvedResp = await inquiriesRequests.getAllInquiries(
             unresolvedFilters,
-            { page: 1, limit: 1, sortBy: 'updatedAt', order: 'DESC' }
+            { page: 1, limit: 1, sortBy: 'updatedAt', order: 'DESC' },
           );
           if (unresolvedResp && unresolvedResp.success === true) {
             setUnresolvedCount(unresolvedResp.data.pagination?.total || 0);
@@ -115,12 +114,12 @@ const Inquiries = () => {
 
   const toggleResolvedStatus = async (
     inquiryId: number,
-    newStatus: 'RESOLVED' | 'UNRESOLVED'
+    newStatus: 'RESOLVED' | 'UNRESOLVED',
   ) => {
     try {
       const promise = inquiriesRequests.toggleResolvedStatus(
         inquiryId,
-        newStatus
+        newStatus,
       );
       await toast.promise(promise, {
         loading: `Updating status to ${newStatus}...`,
@@ -189,45 +188,45 @@ const Inquiries = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/30 p-6">
+    <div className="min-h-screen bg-gray-50/30 p-4 md:p-5">
       <SeoSetup mainData={{ title: 'Admin Inquiries list' }} />
       <Toaster position="top-right" />
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+      <div className="bg-white rounded-lg border border-gray-100 p-4 mb-4">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
           <div className="flex-1">
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-              Inquiries Management
+            <h1 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
+              Inquiries
             </h1>
-            <div className="flex items-center gap-3">
-              <p className="text-gray-600 mt-2">
+            <div className="flex items-center gap-2 flex-wrap mt-1">
+              <p className="text-gray-600 text-sm">
                 Manage your customers inquiries and custom orders
               </p>
-              <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-yellow-50 text-yellow-800 border border-yellow-100 text-sm font-medium">
+              <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-800 border border-yellow-100 text-xs font-medium">
                 Unresolved:{' '}
-                <span className="ml-2 font-semibold">{unresolvedCount}</span>
+                <span className="ml-1 font-semibold">{unresolvedCount}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-3">
           <form
             onSubmit={handleSearch}
-            className="flex flex-col sm:flex-row gap-3 items-stretch"
+            className="flex flex-col sm:flex-row gap-2 items-stretch"
           >
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
                 placeholder="Search by name, email or phone..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
+                className="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all text-sm"
               />
             </div>
 
-            <div className="w-full sm:w-56">
+            <div className="w-full sm:w-48">
               <label className="sr-only">Status</label>
               <select
                 value={statusFilter}
@@ -245,7 +244,7 @@ const Inquiries = () => {
                     toast.error('Failed to apply status filter');
                   }
                 }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
+                className="w-full px-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all text-sm"
               >
                 <option value="ALL">All Statuses</option>
                 <option value="UNRESOLVED">UNRESOLVED</option>
@@ -253,10 +252,10 @@ const Inquiries = () => {
               </select>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 type="submit"
-                className="bg-[#e67e22] cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:bg-[#d35400] transition-colors"
+                className="bg-[#e67e22] cursor-pointer text-white px-3 py-1.5 rounded-md font-medium text-sm hover:bg-[#d35400] transition-colors whitespace-nowrap"
               >
                 Search
               </button>
@@ -266,7 +265,7 @@ const Inquiries = () => {
                   onClick={() => {
                     clearSearch();
                   }}
-                  className="bg-gray-500 cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-600 transition-colors"
+                  className="bg-gray-500 cursor-pointer text-white px-3 py-1.5 rounded-md font-medium text-sm hover:bg-gray-600 transition-colors whitespace-nowrap"
                 >
                   Clear
                 </button>
@@ -274,59 +273,9 @@ const Inquiries = () => {
             </div>
           </form>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-          <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-orange-800">
-                  Total Inquiries
-                </p>
-                <p className="text-2xl font-bold text-orange-900 mt-1">
-                  {totalCount}
-                </p>
-              </div>
-              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <ImageIcon className="w-6 h-6 text-orange-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-blue-800">
-                  Results On This Page
-                </p>
-                <p className="text-2xl font-bold text-blue-900 mt-1">
-                  {data.length}
-                </p>
-              </div>
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Edit className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-green-800">
-                  Current Page
-                </p>
-                <p className="text-sm font-bold text-green-900 mt-1">
-                  {currentPage} of {totalPages}
-                </p>
-              </div>
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         {loading ? (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e67e22]"></div>
@@ -402,7 +351,7 @@ const Inquiries = () => {
                                       setGalleryIndex(idx);
                                       setGalleryOpen(true);
                                     }}
-                                    className="w-16 h-16 rounded-md overflow-hidden border border-gray-200 shadow-sm focus:outline-none"
+                                    className="w-16 h-16 rounded-md overflow-hidden border border-gray-200 focus:outline-none"
                                     aria-label={`Open image ${idx + 1}`}
                                   >
                                     <img
@@ -431,7 +380,7 @@ const Inquiries = () => {
                                     setGalleryIndex(2);
                                     setGalleryOpen(true);
                                   }}
-                                  className="w-16 h-16 rounded-md overflow-hidden border border-gray-200 shadow-sm bg-black bg-opacity-40 text-white flex items-center justify-center text-sm font-semibold"
+                                  className="w-16 h-16 rounded-md overflow-hidden border border-gray-200 bg-black bg-opacity-40 text-white flex items-center justify-center text-sm font-semibold"
                                 >
                                   +{item.images.length - 2}
                                 </button>
@@ -494,7 +443,7 @@ const Inquiries = () => {
                               if (!window.confirm(confirmMessage)) return;
                               await toggleResolvedStatus(
                                 item.id,
-                                newStatus as 'RESOLVED' | 'UNRESOLVED'
+                                newStatus as 'RESOLVED' | 'UNRESOLVED',
                               );
                             }}
                             className="px-3 py-1 bg-gray-50 text-gray-700 rounded-lg border border-gray-100 hover:bg-gray-100 transition-colors"

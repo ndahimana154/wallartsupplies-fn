@@ -37,7 +37,7 @@ const validationSchema = Yup.object({
       'fileSize',
       'File too large',
       (value) =>
-        !value || (value instanceof File && value.size <= 10 * 1024 * 1024)
+        !value || (value instanceof File && value.size <= 10 * 1024 * 1024),
     )
     .test(
       'fileType',
@@ -45,7 +45,7 @@ const validationSchema = Yup.object({
       (value) =>
         !value ||
         (value instanceof File &&
-          ['image/jpeg', 'image/png', 'image/webp'].includes(value.type))
+          ['image/jpeg', 'image/png', 'image/webp'].includes(value.type)),
     ),
 });
 const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
@@ -54,7 +54,7 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: any
+    setFieldValue: any,
   ) => {
     const file = event.target.files?.[0];
 
@@ -108,7 +108,7 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          'Something went wrong'
+          'Something went wrong',
       );
     } finally {
       setUploading(false);
@@ -127,7 +127,7 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
         }}
       />{' '}
       <SeoSetup mainData={{ title: 'New Hero Ad' }} />
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Add New Hero Ad
@@ -181,8 +181,8 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                     values.description.length > 200
                       ? 'border-red-300'
                       : values.description.length > 150
-                      ? 'border-yellow-300'
-                      : 'border-gray-300'
+                        ? 'border-yellow-300'
+                        : 'border-gray-300'
                   }`}
                 />
                 <div className="flex justify-between mt-1">
@@ -196,8 +196,8 @@ const NewHeroAdsModal = ({ onClose }: { onClose: () => void }) => {
                       values.description.length > 200
                         ? 'text-red-500 font-medium'
                         : values.description.length > 180
-                        ? 'text-yellow-500'
-                        : 'text-gray-400'
+                          ? 'text-yellow-500'
+                          : 'text-gray-400'
                     }`}
                   >
                     {200 - values.description.length >= 0 && (

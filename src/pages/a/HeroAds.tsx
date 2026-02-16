@@ -4,9 +4,7 @@ import {
   Plus,
   Edit,
   Trash2,
-  Eye,
   Link as LinkIcon,
-  EyeOff,
   Search,
   ChevronLeft,
   ChevronRight,
@@ -47,7 +45,7 @@ const HeroAds = () => {
 
       const response = await heroAdsRequests.getAllHeroAdsRequest(
         filters,
-        queries
+        queries,
       );
 
       if (response.success === true) {
@@ -134,7 +132,7 @@ const HeroAds = () => {
 
       if (response.success) {
         toast.success(
-          `Hero ad ${!ad.isActive ? 'activated' : 'deactivated'} successfully`
+          `Hero ad ${!ad.isActive ? 'activated' : 'deactivated'} successfully`,
         );
         fetchHeroAds(currentPage, searchTerm);
       } else {
@@ -164,7 +162,7 @@ const HeroAds = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50/30 p-6">
+    <div className="min-h-screen bg-gray-50/30 p-4 md:p-5">
       <SeoSetup mainData={{ title: 'Hero Ads Management' }} />
       <Toaster
         position="top-right"
@@ -176,40 +174,40 @@ const HeroAds = () => {
         }}
       />
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div className="bg-white rounded-lg border border-gray-100 p-4 mb-4">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
             <div className="flex-1">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-                Hero Ads Management
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
+                Hero Ads
               </h1>
-              <p className="text-gray-600 mt-2">
+              <p className="text-gray-600 text-sm mt-1">
                 Manage your hero banner advertisements and promotions
               </p>
             </div>
             <button
               onClick={() => setIsNewModalOpen(true)}
-              className="flex cursor-pointer  items-center gap-2 bg-[#e67e22] hover:bg-[#d35400] text-white px-6 py-3 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 active:scale-95"
+              className="flex cursor-pointer items-center gap-2 bg-[#e67e22] hover:bg-[#d35400] text-white px-3 py-1.5 rounded-md font-semibold text-sm transition-all duration-200 active:scale-95 whitespace-nowrap"
             >
-              <Plus className="w-5 h-5" />
-              New Hero Ad
+              <Plus className="w-4 h-4" />
+              New
             </button>
           </div>
 
-          <div className="mt-6">
-            <form onSubmit={handleSearch} className="flex gap-3">
+          <div className="mt-3">
+            <form onSubmit={handleSearch} className="flex gap-2">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="text"
                   placeholder="Search hero ads by title..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all"
+                  className="w-full pl-9 pr-3 py-1.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#e67e22] focus:border-transparent transition-all text-sm"
                 />
               </div>
               <button
                 type="submit"
-                className="bg-[#e67e22] cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:bg-[#d35400] transition-colors"
+                className="bg-[#e67e22] cursor-pointer text-white px-3 py-1.5 rounded-md font-medium text-sm hover:bg-[#d35400] transition-colors whitespace-nowrap"
               >
                 Search
               </button>
@@ -217,66 +215,16 @@ const HeroAds = () => {
                 <button
                   type="button"
                   onClick={clearSearch}
-                  className="bg-gray-500 cursor-pointer text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-600 transition-colors"
+                  className="bg-gray-500 cursor-pointer text-white px-3 py-1.5 rounded-md font-medium text-sm hover:bg-gray-600 transition-colors whitespace-nowrap"
                 >
                   Clear
                 </button>
               )}
             </form>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-orange-800">
-                    Total Hero Ads
-                  </p>
-                  <p className="text-2xl font-bold text-orange-900 mt-1">
-                    {totalCount}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <LinkIcon className="w-6 h-6 text-orange-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-100 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-800">
-                    Active Ads
-                  </p>
-                  <p className="text-2xl font-bold text-green-900 mt-1">
-                    {heroAds.filter((ad) => ad.isActive).length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Eye className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-100 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-800">
-                    Inactive Ads
-                  </p>
-                  <p className="text-2xl font-bold text-blue-900 mt-1">
-                    {heroAds.filter((ad) => !ad.isActive).length}
-                  </p>
-                </div>
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <EyeOff className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-lg border border-gray-100 overflow-hidden">
           {loading ? (
             <div className="flex justify-center items-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e67e22]"></div>

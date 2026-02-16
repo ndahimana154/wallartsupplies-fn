@@ -54,7 +54,7 @@ const Header = () => {
     } catch (error: any) {
       console.error('Error fetching categories:', error);
       setError(
-        error.message || 'Something went wrong while loading categories'
+        error.message || 'Something went wrong while loading categories',
       );
     } finally {
       setLoading(false);
@@ -119,7 +119,7 @@ const Header = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMobileHeaderIndex((prevIndex) =>
-        prevIndex === mobileHeaders.length - 1 ? 0 : prevIndex + 1
+        prevIndex === mobileHeaders.length - 1 ? 0 : prevIndex + 1,
       );
     }, 3000);
 
@@ -237,19 +237,19 @@ const Header = () => {
       <header className="sticky top-0 left-0 w-full bg-white/95 backdrop-blur-lg shadow-sm z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Toggle menu"
-            >
-              {menuOpen ? (
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
-              ) : (
-                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? (
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                ) : (
+                  <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+                )}
+              </button>
 
-            <div className="lg:hidden absolute left-1/2 -translate-x-1/2">
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
@@ -258,7 +258,7 @@ const Header = () => {
                 <img
                   src="/main-logo1.jpg"
                   alt="Jinhua Hanji Company Logo"
-                  className="h-10 sm:h-12 w-auto object-contain"
+                  className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
                   loading="lazy"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display =
@@ -266,35 +266,33 @@ const Header = () => {
                   }}
                 />
               </Link>
-            </div>
 
-            <nav className="hidden lg:flex items-center gap-1 xl:gap-2 text-gray-700 font-medium flex-1 ml-8">
-              <Link
-                to="/"
-                className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 text-sm"
-              >
-                Home
-              </Link>
-
-              <Link
-                to="/search"
-                className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 text-sm"
-              >
-                Collections
-              </Link>
-
-              {categories?.slice(0, 1).map((cat) => (
+              <nav className="hidden md:flex items-center gap-1 xl:gap-2 text-gray-700 font-medium ml-4">
                 <Link
-                  key={cat.id}
-                  to={`/categories/${cat.slug}`}
-                  className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 whitespace-nowrap text-sm"
-                  title={cat.name}
+                  to="/"
+                  className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 text-sm"
                 >
-                  {cat.name}
+                  Home
                 </Link>
-              ))}
 
-              {categories.length > 1 && (
+                <Link
+                  to="/search"
+                  className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 text-sm"
+                >
+                  Collections
+                </Link>
+
+                {categories?.slice(0, 4).map((cat) => (
+                  <Link
+                    key={cat.id}
+                    to={`/categories/${cat.slug}`}
+                    className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 whitespace-nowrap text-sm"
+                    title={cat.name}
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+
                 <div
                   className="relative"
                   ref={moreMenuRef}
@@ -305,7 +303,7 @@ const Header = () => {
                     onClick={toggleMoreMenu}
                     className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 flex items-center gap-1 text-sm"
                     aria-expanded={showMoreMenu}
-                    aria-label="More categories"
+                    aria-label="More categories and pages"
                   >
                     More
                     <span
@@ -326,7 +324,7 @@ const Header = () => {
                         className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
                         role="menu"
                       >
-                        {categories.slice(2).map((cat) => (
+                        {categories.slice(4).map((cat) => (
                           <Link
                             key={cat.id}
                             to={`/categories/${cat.slug}`}
@@ -337,55 +335,45 @@ const Header = () => {
                             {cat.name}
                           </Link>
                         ))}
+
+                        <div className="border-t border-gray-100">
+                          <Link
+                            to="/about-us"
+                            className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F04E23] transition-colors border-b border-gray-100 last:border-b-0"
+                            onClick={() => setShowMoreMenu(false)}
+                            role="menuitem"
+                          >
+                            About Us
+                          </Link>
+
+                          <Link
+                            to="/contact-us"
+                            className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F04E23] transition-colors last:border-b-0"
+                            onClick={() => setShowMoreMenu(false)}
+                            role="menuitem"
+                          >
+                            Contact Us
+                          </Link>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
-              )}
-
-              <Link
-                to="/about-us"
-                className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 text-sm"
-              >
-                About Us
-              </Link>
-
-              <Link
-                to="/contact-us"
-                className="hover:text-[#F04E23] transition-colors duration-200 py-2 px-3 relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-[#F04E23] after:w-0 hover:after:w-full after:transition-all after:duration-300 text-sm"
-              >
-                Contact Us
-              </Link>
-            </nav>
-
-            <div className="hidden lg:flex items-center justify-center">
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
-                aria-label="Go to home"
-              >
-                <img
-                  src="/main-logo1.jpg"
-                  alt="Jinhua Hanji Company Logo"
-                  className="h-16 xl:h-20 w-auto object-contain"
-                  loading="lazy"
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display =
-                      'none';
-                  }}
-                />
-              </Link>
+              </nav>
             </div>
 
-            <div className="hidden lg:flex items-center gap-4 ml-8">
-              <form onSubmit={handleSearch} className="flex items-center">
+            <div className="flex items-center gap-4">
+              <form
+                onSubmit={handleSearch}
+                className="hidden md:flex items-center"
+              >
                 <div className="flex items-center border border-gray-300 rounded-full overflow-hidden transition-all duration-300 focus-within:border-[#F04E23] focus-within:ring-2 focus-within:ring-[#F04E23]/20 hover:border-gray-400 bg-gray-50">
                   <input
                     type="text"
                     placeholder="Search products..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="bg-transparent px-4 py-2 focus:outline-none text-sm"
+                    className="bg-transparent px-4 py-2 focus:outline-none text-sm w-56 md:w-64 lg:w-72"
                     aria-label="Search products"
                   />
                   <button
@@ -398,35 +386,37 @@ const Header = () => {
                 </div>
               </form>
 
-              <button
-                onClick={handleWhatsAppClick}
-                className="flex items-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-full hover:bg-[#1faa50] transition-colors font-medium text-sm"
-                aria-label="Chat on WhatsApp"
-              >
-                <BsWhatsapp className="w-5 h-5" />
-                Chat
-              </button>
-            </div>
+              <div className="hidden md:flex items-center gap-4">
+                <button
+                  onClick={handleWhatsAppClick}
+                  className="flex items-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-full hover:bg-[#1faa50] transition-colors font-medium text-sm"
+                  aria-label="Chat on WhatsApp"
+                >
+                  <BsWhatsapp className="w-5 h-5" />
+                  <span className="hidden lg:inline">Chat</span>
+                </button>
+              </div>
 
-            <div className="lg:hidden flex items-center gap-2">
-              <button
-                onClick={() => {
-                  setSearchQuery('');
-                  navigate('/search');
-                }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                aria-label="Go to search"
-              >
-                <Search className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
+              <div className="md:hidden flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    navigate('/search');
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  aria-label="Go to search"
+                >
+                  <Search className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
 
-              <button
-                onClick={handleWhatsAppClick}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-[#25D366]"
-                aria-label="Chat on WhatsApp"
-              >
-                <BsWhatsapp className="w-5 h-5 sm:w-6 sm:h-6" />
-              </button>
+                <button
+                  onClick={handleWhatsAppClick}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-[#25D366]"
+                  aria-label="Chat on WhatsApp"
+                >
+                  <BsWhatsapp className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
+              </div>
             </div>
           </div>
 

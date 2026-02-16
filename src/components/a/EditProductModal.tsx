@@ -54,7 +54,7 @@ const validationSchema = Yup.object({
           return ['image/jpeg', 'image/png', 'image/webp'].includes(value.type);
         }
         return false;
-      })
+      }),
     )
     .min(1, 'Upload at least one image')
     .required('Upload at least one image'),
@@ -94,7 +94,7 @@ const EditProductModal = ({
           newImageFiles.map(async (img: File) => {
             const { url } = await uploadImageToCloudinary(img);
             return url;
-          })
+          }),
         );
       }
 
@@ -106,7 +106,7 @@ const EditProductModal = ({
       const cleanedCustomAttr = values.customAttr
         .filter(
           (attr: CustomAttribute) =>
-            attr.key.trim() !== '' && attr.value.trim() !== ''
+            attr.key.trim() !== '' && attr.value.trim() !== '',
         )
         .map((attr: CustomAttribute) => ({
           key: attr.key.trim(),
@@ -125,7 +125,7 @@ const EditProductModal = ({
 
       const response = await productRequests.updateProductRequest(
         product.id,
-        finalData
+        finalData,
       );
 
       toast.dismiss();
@@ -141,7 +141,7 @@ const EditProductModal = ({
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          'Something went wrong'
+          'Something went wrong',
       );
     } finally {
       setUploading(false);
@@ -166,7 +166,7 @@ const EditProductModal = ({
           zIndex: 9999,
         }}
       />{' '}
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl pt-6 px-6 pb-4 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl w-full max-w-2xl pt-6 px-6 pb-4 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Edit Product: {product.name}
@@ -326,7 +326,7 @@ const EditProductModal = ({
                               type="button"
                               onClick={() => {
                                 const filteredImages = values.images.filter(
-                                  (_, i) => i !== index
+                                  (_, i) => i !== index,
                                 );
                                 setFieldValue('images', filteredImages);
                               }}
@@ -335,7 +335,7 @@ const EditProductModal = ({
                               ×
                             </button>
                           </div>
-                        )
+                        ),
                       )}
                     </div>
                   </div>

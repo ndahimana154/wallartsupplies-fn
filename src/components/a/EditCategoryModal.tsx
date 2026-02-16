@@ -67,7 +67,7 @@ const EditCategoryModal = ({ onClose, category }: Props) => {
 
       const response = await productRequests.updateCategoryRequest(
         categoryId,
-        finalValues
+        finalValues,
       );
 
       toast.dismiss();
@@ -83,7 +83,7 @@ const EditCategoryModal = ({ onClose, category }: Props) => {
       console.error('Error updating category:', error);
       toast.error(
         error?.response?.data?.message ||
-          'Something went wrong. Please try again.'
+          'Something went wrong. Please try again.',
       );
     } finally {
       setUploading(false);
@@ -92,7 +92,7 @@ const EditCategoryModal = ({ onClose, category }: Props) => {
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: any
+    setFieldValue: any,
   ) => {
     const file = event.target.files?.[0];
 
@@ -124,7 +124,7 @@ const EditCategoryModal = ({ onClose, category }: Props) => {
           zIndex: 9999,
         }}
       />{' '}
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl w-full max-w-md p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Edit Category
@@ -215,7 +215,7 @@ const EditCategoryModal = ({ onClose, category }: Props) => {
                         type="button"
                         onClick={() => {
                           const fileInput = document.getElementById(
-                            'image-upload'
+                            'image-upload',
                           ) as HTMLInputElement;
                           if (fileInput) {
                             fileInput.click();

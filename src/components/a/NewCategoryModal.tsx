@@ -23,7 +23,7 @@ const NewCategoryModal = ({ onClose }: Props) => {
 
   const handleSubmit = async (
     values: NewCategoryValues,
-    { resetForm }: any
+    { resetForm }: any,
   ) => {
     try {
       setUploading(true);
@@ -59,7 +59,7 @@ const NewCategoryModal = ({ onClose }: Props) => {
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: any
+    setFieldValue: any,
   ) => {
     const file = event.target.files?.[0];
 
@@ -92,7 +92,7 @@ const NewCategoryModal = ({ onClose }: Props) => {
           zIndex: 9999,
         }}
       />{' '}
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl w-full max-w-md p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Add New Category

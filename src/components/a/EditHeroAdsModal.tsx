@@ -60,7 +60,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
 
   const handleImageChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: any
+    setFieldValue: any,
   ) => {
     const file = event.target.files?.[0];
 
@@ -104,7 +104,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
 
       const response = await heroAdsRequests.updateHeroAdRequest(
         Number(ad?.id),
-        finalData
+        finalData,
       );
 
       toast.dismiss();
@@ -123,7 +123,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          'Something went wrong'
+          'Something went wrong',
       );
     } finally {
       setUploading(false);
@@ -142,7 +142,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
         }}
       />{' '}
       <SeoSetup mainData={{ title: 'New Hero Ad' }} />
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Edit Ad "{ad?.title}"
@@ -197,8 +197,8 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                     values.description.length > 200
                       ? 'border-red-300'
                       : values.description.length > 150
-                      ? 'border-yellow-300'
-                      : 'border-gray-300'
+                        ? 'border-yellow-300'
+                        : 'border-gray-300'
                   }`}
                 />
                 <div className="flex justify-between mt-1">
@@ -212,8 +212,8 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                       values.description.length > 200
                         ? 'text-red-500 font-medium'
                         : values.description.length > 180
-                        ? 'text-yellow-500'
-                        : 'text-gray-400'
+                          ? 'text-yellow-500'
+                          : 'text-gray-400'
                     }`}
                   >
                     {200 - values.description.length} characters remaining
@@ -267,7 +267,7 @@ const EditHeroAdsModal = ({ onClose, ad }: EditHeroAdsProps) => {
                         type="button"
                         onClick={() => {
                           const fileInput = document.getElementById(
-                            'image-upload'
+                            'image-upload',
                           ) as HTMLInputElement;
                           if (fileInput) {
                             fileInput.click();

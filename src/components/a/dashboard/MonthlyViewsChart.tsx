@@ -26,7 +26,7 @@ const MonthlyViewsChart = ({
 }: MonthlyViewsChartProps) => {
   if (!data || data.length === 0) {
     return (
-      <div className="w-full h-80 bg-white rounded-2xl p-6 shadow-lg border border-gray-100 flex items-center justify-center">
+      <div className="w-full h-80 bg-white rounded-2xl p-6 border border-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="text-gray-400 mb-2">No data available</div>
           <div className="text-sm text-gray-500">
@@ -65,8 +65,8 @@ const MonthlyViewsChart = ({
     data.length > 1 && data[data.length - 2].views > 0
       ? ((latestChange / data[data.length - 2].views) * 100).toFixed(1)
       : data.length === 1
-      ? '100'
-      : '0';
+        ? '100'
+        : '0';
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -184,7 +184,7 @@ const MonthlyViewsChart = ({
   };
 
   return (
-    <div className="w-full bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+    <div className="w-full bg-white rounded-2xl p-6 border border-gray-100">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6">
         <div>
           <h2 className="text-xl font-bold text-gray-800">{title}</h2>

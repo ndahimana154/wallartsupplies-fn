@@ -18,7 +18,7 @@ const InquiryDetails = ({
           onClick={onClose}
         >
           <motion.div
-            className="relative max-w-3xl w-full mx-4 bg-white rounded-xl shadow-lg overflow-hidden"
+            className="relative max-w-3xl w-full mx-4 bg-white rounded-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
             initial={{ scale: 0.98, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}

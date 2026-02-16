@@ -144,7 +144,7 @@ const Dashboard = () => {
         timestamp: new Date().toISOString(),
       },
       null,
-      2
+      2,
     );
 
     const dataUri =
@@ -183,8 +183,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchData();
-    fetchCategories();
+    // fetch dashboard data and categories in parallel to reduce wait time
+    const load = async () => {
+      setLoading(true);
+      await Promise.all([fetchData(), fetchCategories()]);
+      setLoading(false);
+    };
+    load();
   }, []);
 
   const statCards = [
@@ -239,152 +244,198 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e67e22]"></div>
+      <div className="min-h-screen p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="bg-gradient-to-r from-[#e67e22] to-[#d35400] rounded-2xl p-6 text-white relative overflow-hidden">
+            <div className="h-32 w-full">
+              <div className="animate-pulse bg-white/20 h-8 w-1/3 rounded mb-2" />
+              <div className="animate-pulse bg-white/20 h-4 w-1/2 rounded" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-100">
+              <div className="h-12 w-full animate-pulse bg-gray-200 rounded" />
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-100">
+              <div className="h-12 w-full animate-pulse bg-gray-200 rounded" />
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-100">
+              <div className="h-12 w-full animate-pulse bg-gray-200 rounded" />
+            </div>
+            <div className="bg-white p-6 rounded-2xl border border-gray-100">
+              <div className="h-12 w-full animate-pulse bg-gray-200 rounded" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-white p-6 rounded-2xl">
+              <div className="h-48 animate-pulse bg-gray-200 rounded" />
+            </div>
+            <div className="bg-white p-6 rounded-2xl">
+              <div className="h-48 animate-pulse bg-gray-200 rounded" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-2xl">
+              <div className="h-20 animate-pulse bg-gray-200 rounded" />
+            </div>
+            <div className="bg-white p-6 rounded-2xl">
+              <div className="h-20 animate-pulse bg-gray-200 rounded" />
+            </div>
+            <div className="bg-white p-6 rounded-2xl">
+              <div className="h-20 animate-pulse bg-gray-200 rounded" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn p-6">
+    <div className="space-y-4 animate-fadeIn">
       <Toaster position="top-right" />
       <SeoSetup mainData={{ title: 'Dashboard' }} />
 
-      <div className="bg-gradient-to-r from-[#e67e22] to-[#d35400] rounded-2xl shadow-lg p-6 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+      <div className="bg-gradient-to-r from-[#e67e22] to-[#d35400] rounded-xl p-4 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Welcome Back! 👋</h2>
-            <p className="text-orange-100 text-sm sm:text-base">
+            <h2 className="text-xl font-bold mb-1">Welcome Back! 👋</h2>
+            <p className="text-orange-100 text-xs sm:text-sm">
               Manage your {stats.totalProducts} products and{' '}
-              {stats.totalCategories} categories — all in one beautiful
-              dashboard.
+              {stats.totalCategories} categories.
             </p>
           </div>
-          <div className="flex gap-2 mt-4 sm:mt-0">
+          <div className="flex gap-2">
             <button
               onClick={handleRefresh}
               disabled={isRefreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300 disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-all text-sm disabled:opacity-50 font-medium"
             >
               <FiRefreshCw
-                className={`${isRefreshing ? 'animate-spin' : ''}`}
+                className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`}
               />
-              {isRefreshing ? 'Refreshing...' : 'Refresh'}
+              <span className="hidden sm:inline">
+                {isRefreshing ? 'Refreshing' : 'Refresh'}
+              </span>
             </button>
             <button
               onClick={handleExportData}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all duration-300"
+              className="flex items-center gap-1 px-3 py-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-all text-sm font-medium"
             >
-              <FiDownload />
-              Export
+              <FiDownload className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Export</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {statCards.map((stat, index) => (
           <div
             key={stat.name}
-            className="group bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 cursor-pointer"
+            className="group bg-white p-4 rounded-lg border border-gray-100 hover:scale-[1.01] transition-all"
             style={{ animationDelay: `${index * 0.1}s` }}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <div>
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-xs font-medium text-gray-600">
                   {stat.label}
                 </p>
-                <h3 className="text-4xl font-bold text-gray-800 mt-2">
+                <h3 className="text-lg font-bold text-gray-800 mt-1">
                   {typeof stat.value === 'number'
                     ? stat.value.toLocaleString()
                     : stat.value}
                 </h3>
               </div>
               <div
-                className={`p-4 rounded-full ${stat.bgColor} ${stat.textColor} text-3xl group-hover:scale-110 transition-transform`}
+                className={`p-2.5 rounded-lg ${stat.bgColor} ${stat.textColor} text-lg group-hover:scale-105 transition-transform`}
               >
                 {stat.icon}
               </div>
             </div>
             <div
-              className={`mt-4 h-1 bg-gradient-to-r ${stat.color} rounded-full`}
+              className={`mt-2 h-0.5 bg-gradient-to-r ${stat.color} rounded-full`}
             ></div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <MonthlyViewsChart
             data={stats.last12MonthsAnalytics || []}
             type={chartType}
             title="Monthly Views Analytics"
           />
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2 mt-2">
             <button
               onClick={() => setChartType('line')}
-              className={`px-4 py-2 rounded-lg transition-all cursor-pointer  ${
+              className={`px-3 py-1.5 rounded-md text-sm transition-all cursor-pointer ${
                 chartType === 'line'
-                  ? 'bg-orange-100  text-[#e67e22] border border-purple-200'
+                  ? 'bg-orange-100 text-[#e67e22] border border-orange-200'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              Line Chart
+              Line
             </button>
             <button
               onClick={() => setChartType('bar')}
-              className={`px-4 py-2 rounded-lg transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md text-sm transition-all cursor-pointer ${
                 chartType === 'bar'
-                  ? 'bg-orange-100  text-[#e67e22] border border-purple-200'
+                  ? 'bg-orange-100 text-[#e67e22] border border-orange-200'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              Bar Chart
+              Bar
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">Quick Stats</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100  rounded-lg">
-                  <FaEye className=" text-[#e67e22]" />
+        <div className="bg-white rounded-lg border border-gray-100 p-4">
+          <h3 className="text-base font-bold text-gray-800 mb-3">
+            Quick Stats
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-orange-100 rounded-lg">
+                  <FaEye className="text-[#e67e22] w-3 h-3" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Avg. Daily Views</p>
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-xs text-gray-600">Avg. Daily Views</p>
+                  <p className="font-semibold text-gray-800 text-sm">
                     {avgDailyViews.toLocaleString()}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <FaBox className=" text-[#e67e22]" />
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-orange-100 rounded-lg">
+                  <FaBox className="text-[#e67e22] w-3 h-3" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Products/Category</p>
-                  <p className="font-semibold  text-[#e67e22]">
+                  <p className="text-xs text-gray-600">Products/Categ</p>
+                  <p className="font-semibold text-[#e67e22] text-sm">
                     {productsPerCategory}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <FiTrendingUp className=" text-[#e67e22]" />
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-orange-100 rounded-lg">
+                  <FiTrendingUp className="text-[#e67e22] w-3 h-3" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Monthly Growth</p>
+                  <p className="text-xs text-gray-600">Growth</p>
                   <p
-                    className={`font-semibold ${
+                    className={`font-semibold text-sm ${
                       growthRate >= 0 ? 'text-[#e67e22]' : 'text-red-600'
                     }`}
                   >
@@ -396,13 +447,13 @@ const Dashboard = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <FaEye className="text-orange-600" />
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-orange-100 rounded-lg">
+                  <FaEye className="text-orange-600 w-3 h-3" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Views per Product</p>
-                  <p className="font-semibold text-gray-800">
+                  <p className="text-xs text-gray-600">Per Product</p>
+                  <p className="font-semibold text-gray-800 text-sm">
                     {viewsPerProduct.toLocaleString()}
                   </p>
                 </div>
@@ -412,96 +463,84 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="bg-white rounded-lg border border-gray-100 overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-100">
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-semibold text-gray-800">
+              <h3 className="text-base font-semibold text-gray-800">
                 Recent Products
               </h3>
               <Link
                 to="/a/products"
-                className="text-[#e67e22] hover:text-[#d35400] font-medium text-sm flex items-center gap-1"
+                className="text-[#e67e22] hover:text-[#d35400] font-medium text-xs flex items-center gap-1"
               >
                 View All
                 <FaEye className="text-xs" />
               </Link>
             </div>
-            <p className="text-gray-600 text-sm mt-1">
-              Latest {recentProducts.length} products in your inventory
+            <p className="text-gray-600 text-xs mt-1">
+              Latest {recentProducts.length} products
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     Category
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     Price
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100">
                 {recentProducts.length > 0 ? (
-                  recentProducts.map((product) => (
+                  recentProducts.slice(0, 5).map((product) => (
                     <tr
                       key={product.id}
                       className="hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                             {product.images && product.images[0] ? (
                               <img
-                                className="h-10 w-10 object-cover"
+                                className="h-8 w-8 object-cover"
                                 src={product.images[0]}
                                 alt={product.name}
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="h-10 w-10 bg-gray-300 flex items-center justify-center">
-                                <FaBox className="text-gray-500" />
+                              <div className="h-8 w-8 bg-gray-300 flex items-center justify-center">
+                                <FaBox className="text-gray-500 text-xs" />
                               </div>
                             )}
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {product.name}
-                            </div>
+                          <div className="text-xs font-medium text-gray-900 truncate">
+                            {product.name}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                          {product.category?.name || 'Uncategorized'}
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-orange-100 text-orange-800">
+                          {product.category?.name || 'N/A'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-900">
                         ${product.price?.toFixed(2) || '0.00'}
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={3} className="px-6 py-12 text-center">
+                    <td colSpan={3} className="px-3 py-4 text-center">
                       <div className="text-gray-500">
-                        <FaBox className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                        <p className="text-lg font-medium">No products found</p>
-                        <p className="text-sm mt-1">
-                          Get started by adding your first product
-                        </p>
-                        <button
-                          onClick={() => setIsNewModalOpen(true)}
-                          className="bg-[#e67e22] mt-3 cursor-pointer hover:bg-[#d35400] text-white px-6 py-2 rounded-lg font-medium transition-colors"
-                        >
-                          <span>Add Product</span>
-                        </button>
+                        <p className="text-xs">No products yet</p>
                       </div>
                     </td>
                   </tr>
@@ -511,66 +550,64 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h3 className="text-xl font-semibold text-gray-800">
-              Top Products (Last 30 Days)
+        <div className="bg-white rounded-lg border border-gray-100 overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-100">
+            <h3 className="text-base font-semibold text-gray-800">
+              Top Products (30 Days)
             </h3>
-            <p className="text-gray-600 text-sm mt-1">
-              Most viewed products by customer engagement
+            <p className="text-gray-600 text-xs mt-1">
+              Most viewed by customers
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     Product
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     Price
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                     Views
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100">
                 {topProductsByViews.length > 0 ? (
-                  topProductsByViews.map((item) => (
+                  topProductsByViews.slice(0, 5).map((item) => (
                     <tr
                       key={item.productId}
                       className="hover:bg-gray-50 transition-colors"
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-10 w-10 flex-shrink-0 bg-gray-200 rounded-lg overflow-hidden">
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 flex-shrink-0 bg-gray-200 rounded overflow-hidden">
                             {item.product?.images && item.product.images[0] ? (
                               <img
-                                className="h-10 w-10 object-cover"
+                                className="h-8 w-8 object-cover"
                                 src={item.product.images[0]}
                                 alt={item.product.name}
                                 loading="lazy"
                               />
                             ) : (
-                              <div className="h-10 w-10 bg-gray-300 flex items-center justify-center">
-                                <FaBox className="text-gray-500" />
+                              <div className="h-8 w-8 bg-gray-300 flex items-center justify-center">
+                                <FaBox className="text-gray-500 text-xs" />
                               </div>
                             )}
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">
-                              {item.product?.name || 'Unknown Product'}
-                            </div>
+                          <div className="text-xs font-medium text-gray-900 truncate">
+                            {item.product?.name || 'Unknown'}
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-3 py-2 whitespace-nowrap text-xs text-gray-900">
                         ${item.product?.price?.toFixed(2) || '0.00'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold bg-orange-100 text-orange-800">
+                      <td className="px-3 py-2 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold bg-orange-100 text-orange-800">
                           <FaEye className="text-xs" />
                           {item.views.toLocaleString()}
                         </span>
@@ -579,13 +616,9 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={3} className="px-6 py-12 text-center">
+                    <td colSpan={3} className="px-3 py-4 text-center">
                       <div className="text-gray-500">
-                        <FaEye className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                        <p className="text-lg font-medium">No views data yet</p>
-                        <p className="text-sm mt-1">
-                          Views will appear as customers browse products
-                        </p>
+                        <p className="text-xs">No views data yet</p>
                       </div>
                     </td>
                   </tr>
@@ -596,52 +629,50 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <Link
           to="/a/products"
-          className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer"
+          className="bg-white p-4 rounded-lg border border-gray-100 hover:scale-[1.01] transition-all group cursor-pointer"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-orange-500/10 rounded-full text-orange-600 text-2xl group-hover:bg-blue-500/20 transition">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-orange-500/10 rounded-lg text-orange-600 text-lg group-hover:bg-blue-500/20 transition">
               <FaBox />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">Manage Products</h3>
-              <p className="text-sm text-gray-600">
-                View and edit all products
-              </p>
+              <h3 className="font-semibold text-gray-800 text-sm">Products</h3>
+              <p className="text-xs text-gray-600">View & edit products</p>
             </div>
           </div>
         </Link>
 
         <Link
           to="/a/categories"
-          className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer"
+          className="bg-white p-4 rounded-lg border border-gray-100 hover:scale-[1.01] transition-all group cursor-pointer"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-orange-500/10 rounded-full text-orange-600 text-2xl group-hover:bg-green-500/20 transition">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-orange-500/10 rounded-lg text-orange-600 text-lg group-hover:bg-green-500/20 transition">
               <FaTags />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">Categories</h3>
-              <p className="text-sm text-gray-600">Manage product categories</p>
+              <h3 className="font-semibold text-gray-800 text-sm">
+                Categories
+              </h3>
+              <p className="text-xs text-gray-600">Manage categories</p>
             </div>
           </div>
         </Link>
 
         <Link
           to="/a/hero-ads"
-          className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group cursor-pointer"
+          className="bg-white p-4 rounded-lg border border-gray-100 hover:scale-[1.01] transition-all group cursor-pointer"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-orange-500/10 rounded-full text-orange-600 text-2xl group-hover:bg-purple-500/20 transition">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-orange-500/10 rounded-lg text-orange-600 text-lg group-hover:bg-purple-500/20 transition">
               <MdAdsClick />
             </div>
             <div>
-              <h3 className="font-semibold text-gray-800">Hero ads</h3>
-              <p className="text-sm text-gray-600">
-                View ads and home customizations
-              </p>
+              <h3 className="font-semibold text-gray-800 text-sm">Hero Ads</h3>
+              <p className="text-xs text-gray-600">Manage ads</p>
             </div>
           </div>
         </Link>

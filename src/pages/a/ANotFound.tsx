@@ -33,7 +33,7 @@ const ANotFound = () => {
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
           <Link
             to="/a/dashboard"
-            className="inline-flex items-center gap-3 bg-[#F04E23] hover:bg-[#e67e22] text-white px-8 py-4 rounded-xl shadow-md transition-all font-medium"
+            className="inline-flex items-center gap-3 bg-[#F04E23] hover:bg-[#e67e22] text-white px-8 py-4 rounded-xl transition-all font-medium"
           >
             <FaHome size={18} />
             Back to Home

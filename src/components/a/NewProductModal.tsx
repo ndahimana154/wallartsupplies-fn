@@ -67,7 +67,7 @@ const NewProductModal = ({
         values.images.map(async (img: File) => {
           const { url } = await uploadImageToCloudinary(img);
           return url;
-        })
+        }),
       );
 
       toast.dismiss();
@@ -76,7 +76,7 @@ const NewProductModal = ({
       const cleanedCustomAttr = values.customAttr
         .filter(
           (attr: CustomAttribute) =>
-            attr.key.trim() !== '' && attr.value.trim() !== ''
+            attr.key.trim() !== '' && attr.value.trim() !== '',
         )
         .map((attr: CustomAttribute) => ({
           key: attr.key.trim(),
@@ -108,7 +108,7 @@ const NewProductModal = ({
       toast.error(
         error?.response?.data?.message ||
           error?.message ||
-          'Something went wrong'
+          'Something went wrong',
       );
     } finally {
       setUploading(false);
@@ -126,7 +126,7 @@ const NewProductModal = ({
           zIndex: 9999,
         }}
       />{' '}
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl pt-6 px-6 pb-4 overflow-y-auto max-h-[90vh] animate-fadeIn">
+      <div className="bg-white rounded-2xl w-full max-w-2xl pt-6 px-6 pb-4 overflow-y-auto max-h-[90vh] animate-fadeIn">
         <div className="flex justify-between items-center border-b pb-3 mb-4">
           <h2 className="text-2xl font-semibold text-[#e67e22]">
             Add New Product
@@ -280,7 +280,7 @@ const NewProductModal = ({
                             type="button"
                             onClick={() => {
                               const filteredImages = values.images.filter(
-                                (_, i) => i !== index
+                                (_, i) => i !== index,
                               );
                               setFieldValue('images', filteredImages);
                             }}

@@ -33,7 +33,7 @@ const Logout = () => {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="w-full max-w-md p-6 bg-white rounded-2xl shadow-lg border border-gray-100"
+        className="w-full max-w-md p-6 bg-white rounded-2xl border border-gray-100"
       >
         <div className="flex flex-col items-center gap-4">
           <motion.div
@@ -52,7 +52,7 @@ const Logout = () => {
           <div className="flex gap-3 mt-4">
             <Link
               to="/a/login"
-              className="px-4 py-2 bg-[#e67e22] hover:bg-[#f04e23] text-white rounded-lg shadow-sm"
+              className="px-4 py-2 bg-[#e67e22] hover:bg-[#f04e23] text-white rounded-lg"
             >
               Go to Login
             </Link>

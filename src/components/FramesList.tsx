@@ -5,6 +5,7 @@ import productRequests from '../utils/requests/productRequests';
 import type { ProductData } from '../types/product';
 import { useNavigate } from 'react-router-dom';
 import Product from './Product';
+import ProductsSkeleton from './skeletons/ProductsSkeleton';
 
 const FramesGallery = () => {
   const [framesData, setFramesData] = useState<ProductData[]>([]);
@@ -18,7 +19,7 @@ const FramesGallery = () => {
       setError('');
       const response = await productRequests.getRecentFrames(
         {},
-        { page: 1, limit: 12 }
+        { page: 1, limit: 12 },
       );
       if (response.success === true) {
         setFramesData(response.data.data);
@@ -29,7 +30,7 @@ const FramesGallery = () => {
       console.error('Error fetching frames:', error);
       setError(
         error.message ||
-          'An error occurred while loading products. Please try again later.'
+          'An error occurred while loading products. Please try again later.',
       );
     } finally {
       setLoading(false);
@@ -62,18 +63,7 @@ const FramesGallery = () => {
         <div className="w-24 h-[2px] bg-gray-300 mx-auto mt-8"></div>
       </motion.div>
 
-      {loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="max-w-7xl mx-auto text-center"
-        >
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="w-12 h-12 border-4 border-[#F04E23] border-t-transparent rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-600 font-light">Loading products...</p>
-          </div>
-        </motion.div>
-      )}
+      {loading && <ProductsSkeleton />}
 
       {error && !loading && (
         <motion.div

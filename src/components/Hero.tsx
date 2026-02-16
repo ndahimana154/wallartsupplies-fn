@@ -2,12 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import heroAdsRequests from '../utils/requests/heroAdsRequests';
 import type { iHeroAds } from '../types/heroAd';
+import HeroSkeleton from './skeletons/HeroSkeleton';
 
 const optimize = (url: string, width: number) => {
   if (!url.includes('cloudinary.com')) return url;
   const [base, rest] = url.split('/upload/');
   return `${base}/upload/w_${width},h_${Math.round(
-    width * 0.56
+    width * 0.56,
   )},c_fill,q_auto,f_auto/${rest}`;
 };
 
@@ -15,13 +16,24 @@ const Hero = () => {
   const [slides, setSlides] = useState<iHeroAds[]>([]);
   const [current, setCurrent] = useState(0);
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
     heroAdsRequests
       .getCustomersHeroAdsRequest({ isActive: true }, { page: 1, limit: 6 })
-      .then((res: any) => setSlides(res?.data?.data || []))
-      .catch(console.error);
+      .then((res: any) => {
+        setSlides(res?.data?.data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Error loading hero ads:', err);
+        setError('Failed to load hero section');
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -29,7 +41,7 @@ const Hero = () => {
 
     const observer = new IntersectionObserver(
       ([entry]) => entry.isIntersecting && setVisible(true),
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
 
     observer.observe(heroRef.current);
@@ -41,7 +53,7 @@ const Hero = () => {
 
     const id = setInterval(
       () => setCurrent((c) => (c + 1) % slides.length),
-      6000
+      6000,
     );
 
     return () => clearInterval(id);
@@ -56,6 +68,23 @@ const Hero = () => {
   }, [current, slides, visible]);
 
   const slide = slides[current];
+
+  if (loading) {
+    return <HeroSkeleton />;
+  }
+
+  if (error || slides.length === 0) {
+    return (
+      <div className="relative h-[60vh] md:h-[90vh] w-full overflow-hidden bg-black">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-white">
+          <p className="text-xl md:text-2xl font-light text-gray-300">
+            {error || 'No hero section available'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
