@@ -5,8 +5,15 @@ import type { iHeroAds } from '../types/heroAd';
 import HeroSkeleton from './skeletons/HeroSkeleton';
 
 const optimize = (url: string, width: number) => {
+  // Handle empty or invalid URLs
+  if (!url || typeof url !== 'string') return '';
+
   if (!url.includes('cloudinary.com')) return url;
+
+  // Split and rebuild with optimization parameters
   const [base, rest] = url.split('/upload/');
+  if (!base || !rest) return url; // Return original if split fails
+
   return `${base}/upload/w_${width},h_${Math.round(
     width * 0.56,
   )},c_fill,q_auto,f_auto/${rest}`;
@@ -15,7 +22,7 @@ const optimize = (url: string, width: number) => {
 const Hero = () => {
   const [slides, setSlides] = useState<iHeroAds[]>([]);
   const [current, setCurrent] = useState(0);
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true); // Initialize as true for initial display
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -26,7 +33,15 @@ const Hero = () => {
     heroAdsRequests
       .getCustomersHeroAdsRequest({ isActive: true }, { page: 1, limit: 6 })
       .then((res: any) => {
-        setSlides(res?.data?.data || []);
+        // Handle different response structures
+        const data = res?.data?.data || res?.data || res || [];
+        const slidesArray = Array.isArray(data) ? data : [];
+
+        if (slidesArray.length === 0) {
+          setError('No hero ads available');
+        } else {
+          setSlides(slidesArray);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -91,7 +106,7 @@ const Hero = () => {
       ref={heroRef}
       className="relative h-[60vh] md:h-[90vh] w-full overflow-hidden bg-black"
     >
-      {slide && visible && (
+      {slide && (
         <>
           <img
             key={slide.id}
@@ -102,22 +117,28 @@ const Hero = () => {
               ${optimize(slide.image, 1920)} 1920w
             `}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-            alt={slide.title}
+            alt={slide.title || 'Hero slide'}
             loading="eager"
             fetchPriority="high"
             className="absolute inset-0 w-full h-full object-cover hero-fade"
+            onError={(e) => {
+              console.error('Image failed to load:', e);
+              (e.target as HTMLImageElement).src = '/placeholder-hero.jpg';
+            }}
           />
 
           <div className="absolute inset-0 bg-black/50" />
 
           <div className="relative z-10 h-full flex flex-col justify-center px-6 sm:px-12 lg:px-24 text-white max-w-6xl">
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold">
-              {slide.title}
+              {slide.title || 'Welcome'}
             </h1>
 
-            <p className="mt-6 text-lg sm:text-xl max-w-3xl">
-              {slide.description}
-            </p>
+            {slide.description && (
+              <p className="mt-6 text-lg sm:text-xl max-w-3xl">
+                {slide.description}
+              </p>
+            )}
 
             {slide.link && (
               <button
