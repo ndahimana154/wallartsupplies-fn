@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import productRequests from '../utils/requests/productRequests';
 import type { CategoryData, ProductData } from '../types/product';
 import SeoSetup from '../components/SeoSetup';
 import ProductItemRelatedSection from '../components/a/ProductItemRelatedSection';
+import ProductsSkeleton from '../components/skeletons/ProductsSkeleton';
 
 const CategoriesProducts = () => {
   const [products, setProducts] = useState<ProductData[]>([]);
@@ -27,7 +27,7 @@ const CategoriesProducts = () => {
         setCategory(response.data.category || null);
       } else {
         throw new Error(
-          response.message || 'Failed to fetch category products'
+          response.message || 'Failed to fetch category products',
         );
       }
     } catch (error: any) {
@@ -46,16 +46,10 @@ const CategoriesProducts = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center"
-        >
-          <Loader2 className="w-12 h-12 text-[#F04E23] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-light">Loading products...</p>
-        </motion.div>
-      </div>
+      <>
+        <SeoSetup mainData={{ title: 'Loading Products...' }} />
+        <ProductsSkeleton />
+      </>
     );
   }
 

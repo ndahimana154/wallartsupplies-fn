@@ -9,9 +9,16 @@ import HeaderLoading from './header/HeaderLoading';
 import HeaderError from './header/HeaderError';
 import Chatbot from './Chatbot';
 import { useNavigation } from '../helpers/product';
+import { useAppDispatch } from '../redux/hooks';
+import {
+  setHeaderLoading,
+  setErrorMessage,
+} from '../redux/slices/loadingSlice';
 
 const Header = () => {
   const { whatsAppClick } = useNavigation();
+  const dispatch = useAppDispatch();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [categories, setCategories] = useState<CategoryData[]>([]);
   const [error, setError] = useState('');
@@ -43,6 +50,8 @@ const Header = () => {
 
   const fetchBestCategories = useCallback(async () => {
     try {
+      dispatch(setHeaderLoading(true));
+      dispatch(setErrorMessage(null));
       setLoading(true);
       setError('');
       const response = await productRequests.getBestCategories();
@@ -53,13 +62,15 @@ const Header = () => {
       }
     } catch (error: any) {
       console.error('Error fetching categories:', error);
-      setError(
-        error.message || 'Something went wrong while loading categories',
-      );
+      const errorMsg =
+        error.message || 'Something went wrong while loading categories';
+      setError(errorMsg);
+      dispatch(setErrorMessage(errorMsg));
     } finally {
       setLoading(false);
+      dispatch(setHeaderLoading(false));
     }
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     fetchBestCategories();
@@ -258,7 +269,7 @@ const Header = () => {
                 <img
                   src="/main-logo1.jpg"
                   alt="Jinhua Hanji Company Logo"
-                  className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
+                  className="h-10 sm:h-12 lg:h-14 w-16 sm:w-20 lg:w-24 object-contain"
                   loading="lazy"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display =
@@ -282,7 +293,7 @@ const Header = () => {
                   Collections
                 </Link>
 
-                {categories?.slice(0, 4).map((cat) => (
+                {categories?.slice(0, 2).map((cat) => (
                   <Link
                     key={cat.id}
                     to={`/categories/${cat.slug}`}
@@ -324,7 +335,7 @@ const Header = () => {
                         className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-200 z-50"
                         role="menu"
                       >
-                        {categories.slice(4).map((cat) => (
+                        {categories.slice(2).map((cat) => (
                           <Link
                             key={cat.id}
                             to={`/categories/${cat.slug}`}

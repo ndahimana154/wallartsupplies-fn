@@ -17,7 +17,7 @@ const AdminHeader = () => {
           <motion.img
             src="/main-logo1.jpg"
             alt="Jinhua Hanji Company LTD"
-            className="h-8"
+            className="h-8 w-12 object-contain"
             whileHover={{ scale: 1.08, rotate: 2 }}
             transition={{ type: 'spring', stiffness: 300 }}
           />

@@ -53,9 +53,11 @@ function Chatbot() {
     try {
       const response = await chatbotRequests.askChatbot(input);
 
+      // Extract reply from response (response is already unwrapped from response.data)
       const reply =
-        response?.data?.reply ??
         response?.reply ??
+        response?.message ??
+        response?.data?.reply ??
         response?.data?.message ??
         '';
 
@@ -70,7 +72,11 @@ function Chatbot() {
       } else {
         setMessages((prev) => [...prev, { sender: 'bot', text: reply }]);
       }
+
+      // Explicitly clear loading state after message processing
+      setLoading(false);
     } catch (err) {
+      console.error('Chatbot error:', err);
       setMessages((prev) => [
         ...prev,
         {
@@ -78,7 +84,7 @@ function Chatbot() {
           text: 'Sorry, I ran into a hiccup. 😅 Please try again in a moment or reach out to us directly.',
         },
       ]);
-    } finally {
+      // Explicitly clear loading state on error
       setLoading(false);
     }
   };
