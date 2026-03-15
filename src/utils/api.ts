@@ -25,7 +25,11 @@ export const apiRequest = async <T = any>(
 
         return response.data;
     } catch (error) {
-        return handleError(error);
+        const errorDetails = handleError(error);
+        return {
+            success: false,
+            message: errorDetails.message,
+        };
     }
 };
 
