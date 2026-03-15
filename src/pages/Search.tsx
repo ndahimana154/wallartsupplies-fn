@@ -43,7 +43,7 @@ const Search = () => {
 
         const response = await productRequests.getRecentFrames(
           { search: searchText },
-          { page, limit: pagination.limit }
+          { page, limit: pagination.limit },
         );
 
         if (response.success === true) {
@@ -54,7 +54,7 @@ const Search = () => {
               page,
               limit: pagination.limit,
               totalPages: 1,
-            }
+            },
           );
         } else {
           throw new Error(response.message || 'Failed to load products');
@@ -63,13 +63,13 @@ const Search = () => {
         console.error('Error fetching frames:', error);
         setError(
           error.message ||
-            'An error occurred while loading products. Please try again later.'
+            'An error occurred while loading products. Please try again later.',
         );
       } finally {
         setLoading(false);
       }
     },
-    [searchText, pagination.limit, currentPage]
+    [searchText, pagination.limit, currentPage],
   );
 
   const handlePageChange = (newPage: number) => {
@@ -119,7 +119,7 @@ const Search = () => {
       >
         <FaChevronLeft className="text-sm mr-1" />
         Previous
-      </motion.button>
+      </motion.button>,
     );
 
     if (startPage > 1) {
@@ -130,13 +130,13 @@ const Search = () => {
           className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           1
-        </button>
+        </button>,
       );
       if (startPage > 2) {
         buttons.push(
           <span key="ellipsis1" className="px-2 py-2">
             ...
-          </span>
+          </span>,
         );
       }
     }
@@ -155,7 +155,7 @@ const Search = () => {
           }`}
         >
           {i}
-        </motion.button>
+        </motion.button>,
       );
     }
 
@@ -164,7 +164,7 @@ const Search = () => {
         buttons.push(
           <span key="ellipsis2" className="px-2 py-2">
             ...
-          </span>
+          </span>,
         );
       }
       buttons.push(
@@ -174,7 +174,7 @@ const Search = () => {
           className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           {totalPages}
-        </button>
+        </button>,
       );
     }
 
@@ -189,7 +189,7 @@ const Search = () => {
       >
         Next
         <FaChevronRight className="text-sm ml-1" />
-      </motion.button>
+      </motion.button>,
     );
 
     return buttons;
@@ -210,8 +210,11 @@ const Search = () => {
   }, [searchText, currentPage]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-8 lg:py-24 px-4 sm:px-6">
-      <div className="py-16  md:py-20"></div>{' '}
+    <div
+      className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white 
+    px-4 sm:px-6"
+    >
+      <div className="py-4"></div>{' '}
       <motion.div
         className="max-w-7xl mx-auto text-center mb-12 lg:mb-20"
         initial={{ opacity: 0, y: 20 }}
@@ -263,21 +266,6 @@ const Search = () => {
 
         <div className="w-24 h-[2px] bg-gray-300 mx-auto"></div>
       </motion.div>
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="text-gray-600">
-            Showing {(currentPage - 1) * pagination.limit + 1} -{' '}
-            {Math.min(currentPage * pagination.limit, pagination.total)} of{' '}
-            {pagination.total} products
-            {searchText && (
-              <span>
-                {' '}
-                for "<strong>{searchText}</strong>"
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
       {loading && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -330,7 +318,7 @@ const Search = () => {
         </motion.div>
       )}
       {!loading && !error && (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto pb-4">
           {framesData.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
@@ -373,7 +361,7 @@ const Search = () => {
             </motion.div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8 mb-12">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-12">
                 <AnimatePresence>
                   {framesData.map((frame: ProductData, index) => (
                     <Product product={frame} index={index} />

@@ -269,7 +269,7 @@ const Header = () => {
                 <img
                   src="/main-logo1.jpg"
                   alt="Jinhua Hanji Company Logo"
-                  className="h-10 sm:h-12 lg:h-14 w-16 sm:w-20 lg:w-24 object-contain"
+                  className="h-12 sm:h-16 lg:h-20 w-24 sm:w-28 lg:w-32 object-contain"
                   loading="lazy"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display =
