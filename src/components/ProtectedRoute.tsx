@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import auth from '../utils/auth';
+import { useAuth } from '../hooks/useAuth';
 
 type Props = {
   children: React.ReactElement;
@@ -8,14 +8,17 @@ type Props = {
 
 const ProtectedRoute = ({ children }: Props) => {
   const location = useLocation();
+  const { isAuthenticated, isLoading } = useAuth();
 
-  const token = auth.getToken();
-  const expired = auth.isExpired();
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F04E23]"></div>
+      </div>
+    );
+  }
 
-  if (!token || expired) {
-    try {
-      auth.clearAuth();
-    } catch (e) {}
+  if (!isAuthenticated) {
     return <Navigate to="/a/login" state={{ from: location }} replace />;
   }
 

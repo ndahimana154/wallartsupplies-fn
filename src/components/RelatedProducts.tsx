@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import type { ProductData } from '../types/product';
-import ProductItemRelatedSection from './a/ProductItemRelatedSection';
+import Product from './Product';
 
 interface RelatedProductsProps {
   relatedProducts?: ProductData[];
@@ -36,16 +36,12 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {relatedProducts
           .filter((product) => product.slug !== currentProductSlug)
           .slice(0, 6)
           .map((product, index) => (
-            <ProductItemRelatedSection
-              key={index}
-              index={index}
-              product={product}
-            />
+            <Product key={index} index={index} product={product} />
           ))}
       </div>
 

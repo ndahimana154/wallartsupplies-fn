@@ -6,6 +6,7 @@ import AppRouter from './routes';
 import ScrollToTop from './components/ScrollTop';
 import { initializeOptimizations } from './utils/performanceOptimization';
 import { store } from './redux/store';
+import { AuthProvider } from './hooks/useAuth';
 
 const App = () => {
   useEffect(() => {
@@ -15,12 +16,14 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <HelmetProvider>
-        <BrowserRouter>
-          <ScrollToTop />
-          <AppRouter />
-        </BrowserRouter>
-      </HelmetProvider>
+      <AuthProvider>
+        <HelmetProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <AppRouter />
+          </BrowserRouter>
+        </HelmetProvider>
+      </AuthProvider>
     </Provider>
   );
 };

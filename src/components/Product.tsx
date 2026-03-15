@@ -12,6 +12,7 @@ const Product = ({
   index: number;
 }) => {
   const { handleProductClick } = useNavigation();
+
   const handleWhatsAppClick = (frame: ProductData) => {
     const productLink = `${frontendUrl}/product-detail/${frame.slug}`;
     const message = `Hello, I want to know more information about ${frame.name}. Product link: ${productLink}`;
@@ -20,90 +21,88 @@ const Product = ({
 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
+
   return (
     <motion.div
       key={product.id}
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
+      transition={{ duration: 0.4, delay: index * 0.08 }}
       viewport={{ once: true }}
-      className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100"
+      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-xl transition-all duration-300"
     >
+      {/* IMAGE */}
       <div
-        className="relative overflow-hidden cursor-pointer"
+        className="relative cursor-pointer overflow-hidden"
         onClick={() => handleProductClick(product.slug)}
       >
         <img
           src={String(product.images?.[0] || '/placeholder-image.jpg')}
           alt={product.name}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-52 sm:h-60 md:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
           onError={(e) => {
             e.currentTarget.src = '/placeholder-image.jpg';
           }}
-          loading="lazy"
         />
 
-        <div className="absolute top-4 left-4">
-          <div className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full shadow-lg">
-            <FaGift className="text-sm" />
-            <span className="text-xs font-semibold">FREE Sample</span>
-          </div>
+        {/* FREE SAMPLE BADGE */}
+        <div className="absolute top-4 left-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-md">
+          <FaGift />
+          FREE Sample
         </div>
 
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all duration-300" />
-
-        <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-2xl px-3 py-2 shadow-lg">
-          <span className="text-[#F04E23] font-light text-lg">
-            ${product.price}
-          </span>
-        </div>
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition" />
       </div>
 
-      <div className="p-6">
+      {/* CONTENT */}
+      <div className="p-5 flex flex-col gap-4">
+        {/* TITLE */}
         <h3
-          className="text-xl font-light text-gray-900 mb-3 cursor-pointer hover:text-[#F04E23] transition-colors line-clamp-2"
           onClick={() => handleProductClick(product.slug)}
+          className="text-lg font-medium text-gray-900 cursor-pointer hover:text-[#F04E23] line-clamp-2"
         >
           {product.name}
         </h3>
 
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col">
+            <span className="text-2xl font-semibold text-[#F04E23]">
+              ${product.price}
+            </span>
+
+            <span className="text-xs text-gray-500">
+              MOQ: {product.moq} units
+            </span>
+          </div>
+        </div>
+
         {product.customAttr && product.customAttr.length > 0 && (
-          <div className="mb-4 space-y-2">
-            {product.customAttr.slice(0, 2).map((attr, attrIndex) => (
-              <div key={attrIndex} className="flex justify-between text-sm">
-                <span className="text-gray-600 font-light">{attr.key}:</span>
-                <span className="text-gray-900 font-medium">{attr.value}</span>
+          <div className="flex flex-wrap gap-2">
+            {product.customAttr.slice(0, 4).map((attr, i) => (
+              <div
+                key={i}
+                className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-700"
+              >
+                <span className="font-medium">{attr.key}:</span> {attr.value}
               </div>
             ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            <div className="text-sm text-gray-500 font-light">
-              MOQ: {product.moq} units
-            </div>
-            <div className="flex items-center gap-1 mt-1">
-              <FaGift className="text-green-500 text-xs" />
-              <span className="text-xs text-green-600 font-medium">
-                Free sample available
-              </span>
-            </div>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleWhatsAppClick(product);
-            }}
-            className="bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white px-5 py-2.5 rounded-full flex items-center gap-2 font-medium hover:shadow-lg transition-all text-sm shadow-md"
-          >
-            <FaWhatsapp className="text-base" />
-            Order
-          </motion.button>
-        </div>
+        <motion.button
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleWhatsAppClick(product);
+          }}
+          className="mt-2 w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white py-2.5 rounded-xl flex items-center justify-center gap-2 font-medium shadow-md hover:shadow-lg transition"
+        >
+          <FaWhatsapp />
+          <span className="md:hidden">Order</span>
+          <span className="hidden md:inline">Order via WhatsApp</span>
+        </motion.button>
       </div>
     </motion.div>
   );
