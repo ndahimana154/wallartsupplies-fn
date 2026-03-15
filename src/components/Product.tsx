@@ -55,12 +55,10 @@ const Product = ({
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition" />
       </div>
 
-      {/* CONTENT */}
       <div className="p-5 flex flex-col gap-4">
-        {/* TITLE */}
         <h3
           onClick={() => handleProductClick(product.slug)}
-          className="text-lg font-medium text-gray-900 cursor-pointer hover:text-[#F04E23] line-clamp-2"
+          className="text-lg md:text-md font-medium text-gray-900 cursor-pointer hover:text-[#F04E23] line-clamp-4"
         >
           {product.name}
         </h3>
