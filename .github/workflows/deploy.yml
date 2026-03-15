@@ -4,11 +4,28 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - develop
 
 jobs:
-  deploy:
+  deploy-check:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    steps:
+      - name: Check deploy script (dry run)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 137.184.42.115
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Validate deploy script for syntax errors before merge
+            bash -n /var/www/deploy.sh
 
+  deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
