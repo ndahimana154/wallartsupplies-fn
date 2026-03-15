@@ -17,7 +17,7 @@ const Product = ({
     const productLink = `${frontendUrl}/product-detail/${frame.slug}`;
     const message = `Hello, I want to know more information about ${frame.name}. Product link: ${productLink}`;
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${adminPhone}?text=${encodedMessage} `;
 
     window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   };
