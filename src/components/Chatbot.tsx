@@ -211,7 +211,6 @@ function Chatbot() {
             } bg-white shadow-2xl rounded-2xl overflow-hidden z-[999999] flex flex-col`}
             ref={chatContainerRef}
           >
-            {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b bg-gradient-to-r from-white to-gray-50 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div

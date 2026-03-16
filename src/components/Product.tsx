@@ -75,19 +75,6 @@ const Product = ({
           </div>
         </div>
 
-        {product.customAttr && product.customAttr.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {product.customAttr.slice(0, 4).map((attr, i) => (
-              <div
-                key={i}
-                className="text-xs bg-gray-100 px-3 py-1 rounded-full text-gray-700"
-              >
-                <span className="font-medium">{attr.key}:</span> {attr.value}
-              </div>
-            ))}
-          </div>
-        )}
-
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.95 }}

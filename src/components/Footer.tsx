@@ -65,8 +65,8 @@ const Footer = () => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
                   const next = (e.currentTarget as HTMLImageElement)
                     .nextElementSibling;
-       
-                    if (next) next.classList.remove('hidden');
+
+                  if (next) next.classList.remove('hidden');
                 }}
               />
               <h1 className="text-xl sm:text-2xl font-semibold text-[#F04E23] hidden">
@@ -102,7 +102,7 @@ const Footer = () => {
                   Failed to load categories
                 </span>
               ) : (
-                displayCategories.slice(0, 6).map((category) => (
+                displayCategories.map((category) => (
                   <Link
                     key={category.id}
                     to={`/categories/${category.slug}`}
