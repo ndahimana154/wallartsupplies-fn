@@ -55,6 +55,7 @@ const Header = () => {
       setLoading(true);
       setError('');
       const response = await productRequests.getBestCategories();
+
       if (response.success === true) {
         setCategories(response.data.data || []);
       } else {
