@@ -195,7 +195,7 @@ I'd like to know more about customization options and shipping.`;
                 {product.customAttr?.find(
                   (attr) =>
                     attr.key.toLowerCase().includes('sale') ||
-                    attr.key.toLowerCase().includes('discount')
+                    attr.key.toLowerCase().includes('discount'),
                 ) && (
                   <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
                     Sale
@@ -273,7 +273,7 @@ I'd like to know more about customization options and shipping.`;
                   Key Specifications
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {product.customAttr.slice(0, 4).map((attr, index) => (
+                  {product.customAttr.map((attr, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-[#F04E23] rounded-full flex-shrink-0"></div>
                       <div>
@@ -396,81 +396,6 @@ I'd like to know more about customization options and shipping.`;
                 />
               </div>
 
-              {product.customAttr && product.customAttr.length > 0 && (
-                <div>
-                  <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6">
-                    Specifications
-                  </h2>
-                  <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="bg-gray-50/80 border-b border-gray-200">
-                            <th className="text-left py-4 px-6 font-light text-gray-600 text-sm uppercase tracking-wider">
-                              #
-                            </th>
-                            <th className="text-left py-4 px-6 font-light text-gray-600 text-sm uppercase tracking-wider">
-                              Attribute
-                            </th>
-                            <th className="text-left py-4 px-6 font-light text-gray-600 text-sm uppercase tracking-wider">
-                              Value
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                          {product.customAttr.map((attr, index) => (
-                            <tr
-                              key={index}
-                              className="hover:bg-gray-50/50 transition-colors duration-200"
-                            >
-                              <td className="py-4 px-6 font-light text-gray-500">
-                                {index + 1}
-                              </td>
-                              <td className="py-4 px-6">
-                                <span className="font-light text-gray-700">
-                                  {attr.key}
-                                </span>
-                              </td>
-                              <td className="py-4 px-6">
-                                <span className="font-medium text-gray-900">
-                                  {attr.value}
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {product.customAttr && product.customAttr.length > 0 && (
-                <div className="hidden">
-                  {' '}
-                  <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-6">
-                    Technical Details
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {product.customAttr.map((attr, index) => (
-                      <div
-                        key={index}
-                        className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow duration-200"
-                      >
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="w-2 h-2 bg-[#F04E23] rounded-full flex-shrink-0"></div>
-                          <span className="font-light text-gray-600 text-sm uppercase tracking-wide">
-                            {attr.key}
-                          </span>
-                        </div>
-                        <p className="text-lg font-medium text-gray-900">
-                          {attr.value}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
               <ShippingTab
                 product={product}
                 quantity={quantity}

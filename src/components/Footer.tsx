@@ -59,13 +59,14 @@ const Footer = () => {
               <img
                 src="/main-logo1.jpg"
                 alt="Jinhua Hanji Company LTD Logo"
-                className="w-24 sm:w-32 md:w-36 h-auto object-contain"
+                className="w-full  h-auto object-contain"
                 loading="lazy"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';
                   const next = (e.currentTarget as HTMLImageElement)
                     .nextElementSibling;
-                  if (next) next.classList.remove('hidden');
+       
+                    if (next) next.classList.remove('hidden');
                 }}
               />
               <h1 className="text-xl sm:text-2xl font-semibold text-[#F04E23] hidden">
