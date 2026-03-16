@@ -108,11 +108,9 @@ const Dashboard = () => {
     }
   };
 
-  const fetchCategories = async (page: number = 1) => {
+  const fetchCategories = async () => {
     try {
       const queries: QueryOptions = {
-        page,
-        limit: 100,
         sortBy: 'updatedAt',
         order: 'DESC',
       };

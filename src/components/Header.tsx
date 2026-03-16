@@ -179,13 +179,7 @@ const Header = () => {
   }
 
   if (error) {
-    return (
-      <HeaderError
-        menuOpen={menuOpen}
-        setMenuOpen={setMenuOpen}
-        fetchBestCategories={fetchBestCategories}
-      />
-    );
+    return <HeaderError menuOpen={menuOpen} setMenuOpen={setMenuOpen} />;
   }
 
   return (
@@ -350,6 +344,14 @@ const Header = () => {
 
                         <div className="border-t border-gray-100">
                           <Link
+                            to="/categories"
+                            className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F04E23] transition-colors border-b border-gray-100 last:border-b-0"
+                            onClick={() => setShowMoreMenu(false)}
+                            role="menuitem"
+                          >
+                            Categories
+                          </Link>
+                          <Link
                             to="/about-us"
                             className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#F04E23] transition-colors border-b border-gray-100 last:border-b-0"
                             onClick={() => setShowMoreMenu(false)}
@@ -470,6 +472,13 @@ const Header = () => {
                     </Link>
                   ))}
 
+                  <Link
+                    to="/categories"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#F04E23] transition-colors font-medium"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Categories
+                  </Link>
                   <Link
                     to="/about-us"
                     className="block px-4 py-2 text-gray-700 hover:bg-gray-100 hover:text-[#F04E23] transition-colors font-medium"

@@ -42,11 +42,9 @@ const Products = () => {
     return currentImageIndices[productId] || 0;
   };
 
-  const fetchCategories = async (page: number = 1) => {
+  const fetchCategories = async () => {
     try {
       const queries: QueryOptions = {
-        page,
-        limit: 100,
         sortBy: 'updatedAt',
         order: 'DESC',
       };

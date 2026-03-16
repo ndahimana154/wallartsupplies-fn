@@ -3,14 +3,7 @@ import NewCategoryModal from '../../components/a/NewCategoryModal';
 import productRequests from '../../utils/requests/productRequests';
 import toast, { Toaster } from 'react-hot-toast';
 import type { CategoriesFilters, CategoryData } from '../../types/product';
-import {
-  Edit,
-  Image as ImageIcon,
-  Plus,
-  Search,
-  ChevronLeft,
-  ChevronRight,
-} from 'lucide-react';
+import { Edit, Image as ImageIcon, Plus, Search } from 'lucide-react';
 import SeoSetup from '../../components/SeoSetup';
 import EditCategoryModal from '../../components/a/EditCategoryModal';
 import type { QueryOptions } from '../../types/heroAd';
@@ -22,13 +15,9 @@ const Categories = () => {
   const [catToEdit, setCatToEdit] = useState<CategoryData>();
   const [loading, setLoading] = useState(true);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
-  const limit = 10;
 
-  const fetchCategories = async (page: number = 1, search: string = '') => {
+  const fetchCategories = async (search: string = '') => {
     try {
       setLoading(true);
 
@@ -38,8 +27,6 @@ const Categories = () => {
       }
 
       const queries: QueryOptions = {
-        page,
-        limit,
         sortBy: 'updatedAt',
         order: 'DESC',
       };
@@ -48,8 +35,6 @@ const Categories = () => {
 
       if (response.success === true) {
         setCategories(response.data.data || []);
-        setTotalPages(response.data.pagination?.totalPages || 1);
-        setTotalCount(response.data.pagination?.total || 0);
       } else {
         throw new Error('Failed to fetch categories');
       }
@@ -61,44 +46,17 @@ const Categories = () => {
   };
 
   useEffect(() => {
-    fetchCategories(1, '');
+    fetchCategories('');
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setCurrentPage(1);
-    fetchCategories(1, searchTerm);
+    fetchCategories(searchTerm);
   };
 
   const clearSearch = () => {
     setSearchTerm('');
-    setCurrentPage(1);
-    fetchCategories(1, '');
-  };
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setCurrentPage(newPage);
-      fetchCategories(newPage, searchTerm);
-    }
-  };
-
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
+    fetchCategories('');
   };
 
   return (
@@ -224,7 +182,7 @@ const Categories = () => {
                     >
                       <td className="p-3">
                         <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-lg font-semibold text-gray-600 text-sm">
-                          {(currentPage - 1) * limit + index + 1}
+                          {index + 1}
                         </div>
                       </td>
                       <td className="p-3">
@@ -276,67 +234,6 @@ const Categories = () => {
                 </tbody>
               </table>
             </div>
-
-            <div className="bg-gray-50 px-3 py-2 border-t border-gray-200">
-              <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
-                <p className="text-xs text-gray-700">
-                  Showing{' '}
-                  <span className="font-semibold">
-                    {(currentPage - 1) * limit + 1} -{' '}
-                    {Math.min(currentPage * limit, totalCount)}
-                  </span>{' '}
-                  of <span className="font-semibold">{totalCount}</span>{' '}
-                  categories
-                  {searchTerm && (
-                    <span className="ml-2 text-gray-500">
-                      (filtered by "{searchTerm}")
-                    </span>
-                  )}
-                </p>
-
-                {totalPages > 1 && (
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className={`p-1.5 rounded-md border ${
-                        currentPage === 1
-                          ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-                          : 'text-gray-700 border-gray-300 hover:bg-gray-100'
-                      }`}
-                    >
-                      <ChevronLeft className="w-3.5 h-3.5" />
-                    </button>
-
-                    {getPageNumbers().map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`px-2.5 py-1 text-xs rounded-md border ${
-                          currentPage === page
-                            ? 'bg-[#e67e22] text-white border-[#e67e22]'
-                            : 'text-gray-700 border-gray-300 hover:bg-gray-100'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
-
-                    <button
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className={`p-1.5 rounded-md border ${
-                        currentPage === totalPages
-                          ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-                          : 'text-gray-700 border-gray-300 hover:bg-gray-100'
-                      }`}
-                    >
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
           </>
         )}
       </div>
@@ -344,7 +241,7 @@ const Categories = () => {
       {isNewModalOpen && (
         <NewCategoryModal
           onClose={() => {
-            fetchCategories(currentPage, searchTerm);
+            fetchCategories(searchTerm);
             setIsNewModalOpen(false);
           }}
         />
@@ -354,7 +251,7 @@ const Categories = () => {
         <EditCategoryModal
           category={catToEdit}
           onClose={() => {
-            fetchCategories(currentPage, searchTerm);
+            fetchCategories(searchTerm);
             setIsEditOpen(false);
           }}
         />
