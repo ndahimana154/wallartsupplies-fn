@@ -6,14 +6,9 @@ import { Link } from 'react-router-dom';
 interface HeaderErrorProps {
   menuOpen: boolean;
   setMenuOpen: (open: boolean) => void;
-  fetchBestCategories: () => void;
 }
 
-const HeaderError = ({
-  menuOpen,
-  setMenuOpen,
-  fetchBestCategories,
-}: HeaderErrorProps) => {
+const HeaderError = ({ menuOpen, setMenuOpen }: HeaderErrorProps) => {
   return (
     <>
       <header className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-40">
@@ -87,7 +82,7 @@ const HeaderError = ({
             We're experiencing some technical issues. Please try again later.
           </p>
           <button
-            onClick={fetchBestCategories}
+            onClick={() => window.location.reload()}
             className="bg-[#e67e22] text-white px-6 py-2 rounded-full font-medium hover:bg-[#cf711f] transition-colors"
           >
             Try Again
