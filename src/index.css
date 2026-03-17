@@ -1,6 +1,29 @@
 @import "tailwindcss";
 
+/* Global font size and spacing reduction */
+html {
+    font-size: 14px;
+}
 
+@media (max-width: 768px) {
+    html {
+        font-size: 13px;
+    }
+}
+
+body {
+    line-height: 1.4;
+}
+
+/* Reduce default margins and paddings */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+p {
+    margin-bottom: 0.5rem;
+}
 
 .hero-fade {
     animation: fadeIn 0.4s ease-in-out;

@@ -247,32 +247,32 @@ I'd like to know more about customization options and shipping.`;
               </div>
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">
               {product.name}
             </h1>
 
-            <div className="flex items-baseline gap-4">
+            <div className="flex items-baseline gap-2 md:gap-4">
               <div>
-                <p className="text-4xl font-bold text-[#F04E23]">
+                <p className="text-2xl md:text-3xl font-bold text-[#F04E23]">
                   ${product.price}
                 </p>
-                <p className="text-gray-500 mt-1">per unit</p>
+                <p className="text-xs md:text-sm text-gray-500 mt-1">per unit</p>
               </div>
-              <div className="h-8 w-px bg-gray-300"></div>
+              <div className="h-6 w-px bg-gray-300"></div>
               <div>
-                <p className="text-lg font-semibold text-gray-900">
+                <p className="text-sm md:text-base font-semibold text-gray-900">
                   MOQ: {product.moq} units
                 </p>
-                <p className="text-sm text-gray-500">Minimum order quantity</p>
+                <p className="text-xs text-gray-500">Minimum order quantity</p>
               </div>
             </div>
 
             {product.customAttr && product.customAttr.length > 0 && (
-              <div className="bg-gray-50 rounded-2xl p-6">
-                <h3 className="font-semibold text-gray-900 mb-4">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-2 text-sm">
                   Key Specifications
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {product.customAttr.map((attr, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-[#F04E23] rounded-full flex-shrink-0"></div>

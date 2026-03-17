@@ -36,7 +36,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
         {relatedProducts
           .filter((product) => product.slug !== currentProductSlug)
           .slice(0, 6)

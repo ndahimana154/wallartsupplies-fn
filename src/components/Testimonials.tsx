@@ -59,7 +59,7 @@ const TestimonialsGrid = () => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   return (
-    <div className="px-6 py-20 max-w-7xl mx-auto ">
+    <div className="px-4 md:px-6 lg:px-8 py-20 max-w-7xl mx-auto">
       <motion.div
         className="text-center mb-16"
         initial={{ opacity: 0, y: 30 }}
@@ -75,7 +75,7 @@ const TestimonialsGrid = () => {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {testimonialsData.map((testimonial, index) => (
           <motion.div
             key={testimonial.id}
@@ -145,9 +145,12 @@ const TestimonialsGrid = () => {
         transition={{ delay: 0.8 }}
       >
         <p className="text-gray-600 mb-6">Ready to join our happy customers?</p>
+        <div className="p-2"></div>
         <Link
           to={'/contact-us'}
-          className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 
+           rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all 
+           duration-300 hover:scale-105"
         >
           Get Started Today
         </Link>
