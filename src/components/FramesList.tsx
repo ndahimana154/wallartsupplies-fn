@@ -46,21 +46,21 @@ const FramesGallery = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-24 px-6">
+    <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-white py-12 px-4 md:px-6 lg:px-8">
       <motion.div
-        className="max-w-7xl mx-auto text-center mb-20"
+        className="max-w-7xl mx-auto text-center mb-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
       >
-        <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6">
+        <h1 className="text-3xl md:text-4xl font-light text-gray-900 mb-3">
           Recent Collection
         </h1>
-        <p className="text-gray-600 max-w-2xl mx-auto text-lg font-light leading-relaxed">
+        <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base font-light leading-relaxed">
           Explore our latest handcrafted frames — designed to elevate your art,
           photography, and spaces with timeless craftsmanship.
         </p>
-        <div className="w-24 h-[2px] bg-gray-300 mx-auto mt-8"></div>
+        <div className="w-24 h-[2px] bg-gray-300 mx-auto mt-4"></div>
       </motion.div>
 
       {loading && <ProductsSkeleton />}
@@ -69,7 +69,7 @@ const FramesGallery = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-7xl mx-auto"
         >
           <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
             <div className="flex justify-center mb-4">
@@ -129,7 +129,7 @@ const FramesGallery = () => {
               </div>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 px-4 md:px-0">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
               {framesData.map((product: ProductData, index) => (
                 <Product product={product} index={index} />
               ))}

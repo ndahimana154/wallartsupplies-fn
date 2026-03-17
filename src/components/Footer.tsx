@@ -47,7 +47,7 @@ const Footer = () => {
   const displayCategories = Array.isArray(categories) ? categories : [];
 
   return (
-    <footer className="bg-gradient-to-b from-[#0b0b0b] to-[#1a1a1a] text-white pt-8 sm:pt-12 pb-4 sm:pb-6 px-4 sm:px-6 md:px-8 lg:px-20">
+    <footer className="bg-gradient-to-b from-[#0b0b0b] to-[#1a1a1a] text-white pt-8 sm:pt-12 pb-4 sm:pb-6 px-4 sm:px-6 md:px-8 lg:px-8\">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 border-b border-gray-700 pb-6 sm:pb-10">
           <div className="flex flex-col items-start text-left">
@@ -57,9 +57,9 @@ const Footer = () => {
               aria-label="Go to home"
             >
               <img
-                src="/main-logo1.jpg"
+                src="/e943a37a-2ef4-4ec4-91d9-6d5b23428d0f.JPG"
                 alt="Jinhua Hanji Company LTD Logo"
-                className="w-full  h-auto object-contain"
+                className="w-[70%]  h-auto object-contain"
                 loading="lazy"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = 'none';

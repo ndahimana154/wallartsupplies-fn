@@ -4,11 +4,11 @@ import Skeleton from '../Skeleton';
 
 const CategoriesSkeleton: React.FC = () => {
   return (
-    <div className="bg-white py-16 px-6">
+    <div className="bg-white py-8 px-4 md:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Skeleton */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-8"
           initial={{ opacity: 0.6 }}
           animate={{ opacity: 1 }}
           transition={{
@@ -17,13 +17,13 @@ const CategoriesSkeleton: React.FC = () => {
             repeatType: 'reverse',
           }}
         >
-          <Skeleton className="h-12 w-64 mx-auto mb-4" />
-          <Skeleton className="h-6 w-96 mx-auto mb-4" />
+          <Skeleton className="h-8 w-56 mx-auto mb-3" />
+          <Skeleton className="h-4 w-80 mx-auto mb-2" />
         </motion.div>
 
         {/* Grid Skeleton */}
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3"
           initial={{ opacity: 0.6 }}
           animate={{ opacity: 1 }}
           transition={{
@@ -32,10 +32,10 @@ const CategoriesSkeleton: React.FC = () => {
             repeatType: 'reverse',
           }}
         >
-          {[...Array(6)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className="rounded-2xl overflow-hidden bg-gray-200 h-64"
+              className="rounded-lg overflow-hidden bg-gray-200 h-32 md:h-40"
             >
               <div className="w-full h-full bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
             </div>
