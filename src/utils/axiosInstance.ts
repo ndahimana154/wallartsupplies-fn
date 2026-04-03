@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
     }
 })
 
-export const adminPhone = "+8613255793008"
+export const adminPhone = "+8618967445758"
 export const frontendUrl = "https://www.hanjji.com"
 export const adminEmail = "sales@hanjji.com"
 export const companyAddress = "Jindong District, Jinhua City, Zhejiang Province, china"

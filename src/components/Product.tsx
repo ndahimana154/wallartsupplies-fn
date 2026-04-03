@@ -90,8 +90,8 @@ const Product = ({
             className="mt-0.5 w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white py-1 rounded-md flex items-center justify-center gap-0.5 font-medium shadow-md hover:shadow-lg transition text-xs"
           >
             <FaWhatsapp />
-            <span className="md:hidden">Order</span>
-            <span className="hidden md:inline">Order via WhatsApp</span>
+            <span className="md:hidden">Chat</span>
+            <span className="hidden md:inline">Chat on WhatsApp</span>
           </motion.button>
         </div>
       </div>
