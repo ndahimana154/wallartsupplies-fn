@@ -91,7 +91,7 @@ const Product = ({
           >
             <FaWhatsapp />
             <span className="md:hidden">Order</span>
-            <span className="hidden md:inline">Order via WhatsApp</span>
+            <span className="hidden md:inline">Chat on WhatsApp</span>
           </motion.button>
         </div>
       </div>
